@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Screen AI Reader",
+  "description": "Reads text from screen",
+  "{{chrome}}.action": {
+    "default_popup": "src/pages/popup/popup.html"
+  },
+  "{{firefox}}.browser_action": {
+    "default_popup": "src/pages/popup/popup.html"
+  },
+  "permissions": [""]
+}
