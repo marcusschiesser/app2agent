@@ -3,7 +3,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useScreenCapture } from "@/hooks/use-screen-capture";
 import { useLiveAPIContext } from "@/contexts/LiveAPIContext";
-// import { AudioRecorder } from "@/lib/audio-recorder";
+import { AudioRecorder } from "@/lib/audio-recorder";
 
 export function Popup() {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -18,8 +18,8 @@ export function Popup() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const renderCanvasRef = useRef<HTMLCanvasElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
-  // const [audioRecorder] = useState(() => new AudioRecorder());
-  // const [muted, setMuted] = useState(false);
+  const [audioRecorder] = useState(() => new AudioRecorder());
+  const [muted, setMuted] = useState(false);
 
   // Load initial state from storage
   useEffect(() => {
@@ -30,28 +30,28 @@ export function Popup() {
     });
   }, []);
 
-  // useEffect(() => {
-  //   const onData = (base64: string) => {
-  //     if (client && connected) {
-  //       client.sendRealtimeInput([
-  //         {
-  //           mimeType: "audio/pcm;rate=16000",
-  //           data: base64,
-  //         },
-  //       ]);
-  //     }
-  //   };
+  useEffect(() => {
+    const onData = (base64: string) => {
+      if (client && connected) {
+        client.sendRealtimeInput([
+          {
+            mimeType: "audio/pcm;rate=16000",
+            data: base64,
+          },
+        ]);
+      }
+    };
 
-  //   if (connected && !muted && isEnabled) {
-  //     audioRecorder.on("data", onData).start();
-  //   } else {
-  //     audioRecorder.stop();
-  //   }
+    if (connected && !muted && isEnabled) {
+      audioRecorder.on("data", onData).start();
+    } else {
+      audioRecorder.stop();
+    }
 
-  //   return () => {
-  //     audioRecorder.off("data", onData);
-  //   };
-  // }, [connected, client, muted, isEnabled, audioRecorder]);
+    return () => {
+      audioRecorder.off("data", onData);
+    };
+  }, [connected, client, muted, isEnabled, audioRecorder]);
 
   useEffect(() => {
     if (isEnabled && !isStreaming) {

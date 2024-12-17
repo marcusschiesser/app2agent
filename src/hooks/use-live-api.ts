@@ -21,7 +21,7 @@ import {
 } from "../lib/multimodal-live-client";
 import { LiveConfig } from "../multimodal-live-types";
 import { AudioStreamer } from "../lib/audio-streamer";
-import { audioContext } from "../lib/utils2";
+import { audioContext } from "../lib/audio-context";
 
 export type UseLiveAPIResults = {
   client: MultimodalLiveClient;
@@ -54,6 +54,13 @@ export function useLiveAPI({
     if (!audioStreamerRef.current) {
       audioContext({ id: "audio-out" }).then((audioCtx: AudioContext) => {
         audioStreamerRef.current = new AudioStreamer(audioCtx);
+        audioStreamerRef.current
+          .addWorklet<any>("vol-meter", (ev: any) => {
+            setVolume(ev.data.volume);
+          })
+          .then(() => {
+            // Successfully added worklet
+          });
       });
     }
   }, [audioStreamerRef]);
@@ -63,7 +70,7 @@ export function useLiveAPI({
       setConnected(false);
     };
 
-    const stopAudioStreamer = () => audioStreamerRef.current?.reset();
+    const stopAudioStreamer = () => audioStreamerRef.current?.stop();
 
     const onAudio = (data: ArrayBuffer) =>
       audioStreamerRef.current?.addPCM16(new Uint8Array(data));
