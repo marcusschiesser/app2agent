@@ -9,7 +9,7 @@
     "default_popup": "src/pages/popup/popup.html"
   },
   "options_page": "src/pages/options/options.html",
-  "permissions": ["storage"],
+  "permissions": ["storage", "tabCapture"],
   "web_accessible_resources": [
     {
       "resources": ["docs/worklets/*"],

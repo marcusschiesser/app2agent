@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { useScreenCapture } from "@/hooks/use-screen-capture";
+import { useChromeTabCapture } from "@/hooks/use-chrome-tab-capture";
 import { useLiveAPIContext } from "@/contexts/LiveAPIContext";
 import { AudioRecorder } from "@/lib/audio-recorder";
 
@@ -12,7 +12,7 @@ export function Popup() {
     isStreaming,
     start: startCapture,
     stop: stopCapture,
-  } = useScreenCapture();
+  } = useChromeTabCapture();
   const { client, connect, disconnect, connected } = useLiveAPIContext();
 
   const videoRef = useRef<HTMLVideoElement>(null);
