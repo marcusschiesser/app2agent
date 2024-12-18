@@ -14,10 +14,13 @@ export const audioContext: (
 
   return async (options?: GetAudioContextOptions) => {
     try {
-      const a = new Audio();
-      a.src =
-        "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
-      await a.play();
+      // Request audio permissions from background script
+      const response = await chrome.runtime.sendMessage({
+        type: "REQUEST_AUDIO_PERMISSIONS",
+      });
+      if (!response.success) {
+        throw new Error("Failed to get audio permissions");
+      }
       if (options?.id && map.has(options.id)) {
         const ctx = map.get(options.id);
         if (ctx) {
@@ -51,6 +54,8 @@ export const loadAudioWorklet = async (
   workletName: string,
 ): Promise<void> => {
   try {
+    // In Chrome extensions, worklets need to be declared in web_accessible_resources
+    // and loaded using the extension's URL pattern
     const workletUrl = chrome.runtime.getURL(`worklets/${workletName}.js`);
     await context.audioWorklet.addModule(workletUrl);
   } catch (error) {

@@ -1,3 +1,17 @@
+// Request audio permissions
+async function requestAudioPermissions(): Promise<boolean> {
+  try {
+    const audio = new Audio();
+    audio.src =
+      "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
+    await audio.play();
+    return true;
+  } catch (error) {
+    console.error("Failed to get audio permissions:", error);
+    return false;
+  }
+}
+
 // Send the toggle message when extension icon is clicked
 chrome.action.onClicked.addListener(async (tab) => {
   if (!tab.id) return;
@@ -6,6 +20,13 @@ chrome.action.onClicked.addListener(async (tab) => {
 
 // Handle tab capture requests
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.type === "REQUEST_AUDIO_PERMISSIONS") {
+    requestAudioPermissions().then((success) => {
+      sendResponse({ success });
+    });
+    return true;
+  }
+
   if (request.type === "GET_TAB_STREAM") {
     if (!sender.tab?.id) {
       sendResponse({ success: false, error: "No tab ID found" });
