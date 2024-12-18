@@ -50,20 +50,20 @@ export function useLiveAPI({
   const [volume, setVolume] = useState(0);
 
   // register audio for streaming server -> speakers
-  useEffect(() => {
-    if (!audioStreamerRef.current) {
-      audioContext({ id: "audio-out" }).then((audioCtx: AudioContext) => {
-        audioStreamerRef.current = new AudioStreamer(audioCtx);
-        audioStreamerRef.current
-          .addWorklet<any>("vol-meter", (ev: any) => {
-            setVolume(ev.data.volume);
-          })
-          .then(() => {
-            // Successfully added worklet
-          });
-      });
-    }
-  }, [audioStreamerRef]);
+  // useEffect(() => {
+  //   if (!audioStreamerRef.current) {
+  //     audioContext({ id: "audio-out" }).then((audioCtx: AudioContext) => {
+  //       audioStreamerRef.current = new AudioStreamer(audioCtx);
+  //       audioStreamerRef.current
+  //         .addWorklet<any>("vol-meter", (ev: any) => {
+  //           setVolume(ev.data.volume);
+  //         })
+  //         .then(() => {
+  //           // Successfully added worklet
+  //         });
+  //     });
+  //   }
+  // }, [audioStreamerRef]);
 
   useEffect(() => {
     const onClose = () => {

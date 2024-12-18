@@ -2,14 +2,19 @@
   "manifest_version": 3,
   "name": "Screen AI Reader",
   "description": "Reads text from screen",
-  "{{chrome}}.action": {
-    "default_popup": "src/pages/popup/popup.html"
-  },
-  "{{firefox}}.browser_action": {
-    "default_popup": "src/pages/popup/popup.html"
-  },
+  "{{chrome}}.action": {},
+  "{{firefox}}.browser_action": {},
   "options_page": "src/pages/options/options.html",
-  "permissions": ["storage", "tabCapture"],
+  "permissions": ["storage", "tabCapture", "activeTab"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/pages/content/recorder-modal.tsx"]
+    }
+  ],
+  "background": {
+    "service_worker": "src/background/recorder-controller.ts"
+  },
   "web_accessible_resources": [
     {
       "resources": ["docs/worklets/*"],

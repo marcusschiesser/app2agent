@@ -1,5 +1,5 @@
 /**
- * Hook for capturing tab content using Chrome's tabCapture API
+ * Hook for capturing tab content using Chrome's tabCapture API via background script
  */
 import { useState, useEffect } from "react";
 import { UseMediaStreamResult } from "./use-media-stream-mux";
@@ -30,51 +30,37 @@ export function useChromeTabCapture(): UseMediaStreamResult {
   }, [stream]);
 
   const start = async () => {
-    // Get the current tab
-    const [tab] = await chrome.tabs.query({
-      active: true,
-      currentWindow: true,
-    });
-    if (!tab.id) {
-      throw new Error("No active tab found");
-    }
+    try {
+      // Request stream ID from background script
+      const response = await chrome.runtime.sendMessage({
+        type: "GET_TAB_STREAM",
+      });
 
-    const mediaStream = await new Promise<MediaStream>((resolve, reject) => {
-      chrome.tabCapture.getMediaStreamId(
-        { targetTabId: tab.id },
-        async (id) => {
-          if (!id) {
-            reject(new Error("Failed to get media stream ID"));
-            return;
-          }
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: {
-              mandatory: {
-                chromeMediaSource: "tab",
-                chromeMediaSourceId: id,
-                maxWidth: 1920,
-                maxHeight: 1080,
-                maxFrameRate: 60,
-              },
-            },
-          });
+      if (!response.success) {
+        throw new Error(response.error || "Failed to get stream ID");
+      }
 
-          if (chrome.runtime.lastError) {
-            reject(new Error(chrome.runtime.lastError.message));
-            return;
-          }
-          if (!stream) {
-            reject(new Error("Failed to capture tab"));
-            return;
-          }
-          resolve(stream);
+      if (!response.streamId) {
+        throw new Error("No stream ID received from background");
+      }
+
+      // Create media stream using the received stream ID
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          mandatory: {
+            chromeMediaSource: "tab",
+            chromeMediaSourceId: response.streamId,
+          },
         },
-      );
-    });
+      });
 
-    setStream(mediaStream);
-    setIsStreaming(true);
-    return mediaStream;
+      setStream(mediaStream);
+      setIsStreaming(true);
+      return mediaStream;
+    } catch (error) {
+      console.error("Error starting tab capture:", error);
+      throw error;
+    }
   };
 
   const stop = () => {
@@ -84,6 +70,7 @@ export function useChromeTabCapture(): UseMediaStreamResult {
       setIsStreaming(false);
     }
   };
+
   const result: UseMediaStreamResult = {
     type: "screen",
     start,
