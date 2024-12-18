@@ -52,12 +52,13 @@ export const audioContext: (
 export const loadAudioWorklet = async (
   context: AudioContext,
   workletName: string,
-): Promise<void> => {
+): Promise<AudioWorkletNode> => {
   try {
     // In Chrome extensions, worklets need to be declared in web_accessible_resources
     // and loaded using the extension's URL pattern
     const workletUrl = chrome.runtime.getURL(`worklets/${workletName}.js`);
     await context.audioWorklet.addModule(workletUrl);
+    return new AudioWorkletNode(context, workletName);
   } catch (error) {
     console.error(`Failed to load audio worklet: ${workletName}`, error);
     throw error;

@@ -59,8 +59,7 @@ export class AudioRecorder extends EventEmitter {
         this.source = this.audioContext.createMediaStreamSource(this.stream);
 
         const workletName = "audio-processing";
-        await loadAudioWorklet(this.audioContext, workletName);
-        this.recordingWorklet = new AudioWorkletNode(
+        this.recordingWorklet = await loadAudioWorklet(
           this.audioContext,
           workletName,
         );
@@ -77,8 +76,10 @@ export class AudioRecorder extends EventEmitter {
 
         // vu meter worklet
         const vuWorkletName = "vol-meter";
-        await loadAudioWorklet(this.audioContext, vuWorkletName);
-        this.vuWorklet = new AudioWorkletNode(this.audioContext, vuWorkletName);
+        this.vuWorklet = await loadAudioWorklet(
+          this.audioContext,
+          vuWorkletName,
+        );
         this.vuWorklet.port.onmessage = (ev: MessageEvent) => {
           this.emit("volume", ev.data.volume);
         };

@@ -4,7 +4,6 @@
   "description": "Reads text from screen",
   "{{chrome}}.action": {},
   "{{firefox}}.browser_action": {},
-  "options_page": "src/pages/options/options.html",
   "permissions": ["storage", "tabCapture", "activeTab"],
   "content_scripts": [
     {

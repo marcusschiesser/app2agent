@@ -70,10 +70,7 @@ export class AudioStreamer {
     // create new record to fill in as becomes available
     workletsRecord[workletName] = { handlers: [handler] };
 
-    await loadAudioWorklet(this.context, workletName);
-    const worklet = new AudioWorkletNode(this.context, workletName);
-
-    //add the node into the map
+    const worklet = await loadAudioWorklet(this.context, workletName);
     workletsRecord[workletName].node = worklet;
 
     return this;
