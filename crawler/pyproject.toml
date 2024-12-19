@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "crawler"
+version = "0.1.0"
+description = "Web crawler to markdown"
+authors = ["Marcus Schiesser"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+scrapy = "^2.11.0"
+html2text = "^2020.1.16"
+
+[tool.poetry.scripts]
+linkedin = "crawler.scripts.linkedin:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
