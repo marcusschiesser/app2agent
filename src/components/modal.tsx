@@ -20,18 +20,6 @@ export function Modal({
   children: React.ReactNode;
   onClose?: () => void;
 }) {
-  useEffect(() => {
-    const artdecoModal = document.querySelector(
-      "#artdeco-modal-outlet",
-    ) as HTMLElement;
-    if (artdecoModal) {
-      artdecoModal.style.visibility = "hidden";
-      return () => {
-        artdecoModal.style.visibility = "visible";
-      };
-    }
-  }, []);
-
   return (
     <div className="bg-white rounded-lg p-4 shadow-lg relative">
       {onClose && (

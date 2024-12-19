@@ -47,6 +47,7 @@ export function useChromeTabCapture(): UseMediaStreamResult {
       // Create media stream using the received stream ID
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
+          // @ts-ignore - Chrome-specific type
           mandatory: {
             chromeMediaSource: "tab",
             chromeMediaSourceId: response.streamId,
