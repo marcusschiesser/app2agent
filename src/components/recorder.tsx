@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useChromeTabCapture } from "@/hooks/use-chrome-tab-capture";
 import { useLiveAPIContext } from "@/contexts/LiveAPIContext";
 import { AudioRecorder } from "@/lib/audio-recorder";
-import { ScreenCaptureForm } from "./screen-capture-form";
+import { CallForm } from "./call-form";
 
 export function Recorder() {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -105,7 +105,7 @@ export function Recorder() {
 
   return (
     <div className="p-4 min-w-[200px]">
-      <ScreenCaptureForm
+      <CallForm
         isEnabled={isEnabled}
         onToggle={(checked) => {
           setIsEnabled(checked);
