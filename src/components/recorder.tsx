@@ -1,9 +1,8 @@
 import { useEffect, useState, useRef } from "react";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { useChromeTabCapture } from "@/hooks/use-chrome-tab-capture";
 import { useLiveAPIContext } from "@/contexts/LiveAPIContext";
 import { AudioRecorder } from "@/lib/audio-recorder";
+import { ScreenCaptureForm } from "./screen-capture-form";
 
 export function Recorder() {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -106,23 +105,14 @@ export function Recorder() {
 
   return (
     <div className="p-4 min-w-[200px]">
-      <form onSubmit={(e) => e.preventDefault()}>
-        <div className="flex items-center space-x-2">
-          <Switch
-            id="screen-capture"
-            checked={isEnabled}
-            onCheckedChange={(checked) => {
-              setIsEnabled(checked);
-              // Save state to storage
-              chrome.storage.local.set({ isEnabled: checked });
-              return false;
-            }}
-            role="switch"
-            type="button"
-          />
-          <Label htmlFor="screen-capture">Screen Capture</Label>
-        </div>
-      </form>
+      <ScreenCaptureForm
+        isEnabled={isEnabled}
+        onToggle={(checked) => {
+          setIsEnabled(checked);
+          // Save state to storage
+          chrome.storage.local.set({ isEnabled: checked });
+        }}
+      />
       <video ref={videoRef} style={{ display: "none" }} autoPlay />
       <canvas ref={renderCanvasRef} style={{ display: "none" }} />
       <audio ref={audioRef} style={{ display: "none" }} />
