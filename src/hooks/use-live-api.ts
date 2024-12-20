@@ -49,7 +49,17 @@ export function useLiveAPI({
     systemInstruction: {
       parts: [
         {
-          text: 'If the user asks to change their LinkedIn password, provide these steps:\n1. Log in to your LinkedIn account.\n2. Click on your profile picture in the top-right corner and select "Settings & Privacy."\n3. Navigate to the "Sign-in & security" section.\n4. Click on "Change password."\n5. Enter your current password, then type and confirm your new password.\n6. Click "Save password."',
+          text: "You're IT support. If the user connects, welcome him/her with a suitable greeting.",
+        },
+        {
+          text: `If the user asks how to use the #OpenToWork feature:
+          To enable the #OpenToWork feature:
+Click the  Me icon at the top of your LinkedIn homepage.
+Click View profile.
+snapshot
+Click the Open to button.
+Click Finding a new job.
+Provide the requested information in the pop-up window that appears.`,
         },
       ],
     },
