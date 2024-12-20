@@ -3,6 +3,9 @@ import { useChromeTabCapture } from "@/hooks/use-chrome-tab-capture";
 import { useLiveAPIContext } from "@/contexts/LiveAPIContext";
 import { AudioRecorder } from "@/lib/audio-recorder";
 import { CallForm } from "./call-form";
+import { audioContext } from "@/lib/audio-context";
+import { createDialingTone } from "@/lib/dialing-tone";
+import { playConnectedTone } from "@/lib/connected-tone";
 
 export function Recorder() {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -20,6 +23,7 @@ export function Recorder() {
   const [audioRecorder] = useState(() => new AudioRecorder());
   const [muted, setMuted] = useState(false);
   const [inVolume, setInVolume] = useState(0);
+  const dialingToneRef = useRef<{ stop: () => void } | null>(null);
 
   // Load initial state from storage
   useEffect(() => {
@@ -52,6 +56,26 @@ export function Recorder() {
       audioRecorder.off("data", onData).off("volume", setInVolume);
     };
   }, [connected, client, muted, isEnabled, audioRecorder]);
+
+  useEffect(() => {
+    if (isEnabled && !connected) {
+      // Start dialing tone when attempting to connect
+      audioContext({ id: "audio-out" }).then((ctx) => {
+        dialingToneRef.current = createDialingTone(ctx);
+      });
+    } else if (dialingToneRef.current) {
+      // Stop dialing tone when connected or disabled
+      dialingToneRef.current.stop();
+      dialingToneRef.current = null;
+
+      // Play connected tone if we're still enabled
+      if (isEnabled && connected) {
+        audioContext({ id: "audio-out" }).then((ctx) => {
+          playConnectedTone(ctx);
+        });
+      }
+    }
+  }, [isEnabled, connected]);
 
   useEffect(() => {
     if (isEnabled && !isStreaming) {
