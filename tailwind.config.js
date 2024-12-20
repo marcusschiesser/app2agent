@@ -4,6 +4,15 @@ module.exports = {
   content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
     extend: {
+      keyframes: {
+        pulse: {
+          "0%, 100%": { transform: "scale(0.95)", opacity: "0.5" },
+          "50%": { transform: "scale(1)", opacity: "0.3" },
+        },
+      },
+      animation: {
+        "pulse-slow": "pulse 2s infinite",
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

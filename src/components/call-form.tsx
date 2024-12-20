@@ -19,10 +19,9 @@ export function CallForm({ isEnabled, onToggle, volume }: CallFormProps) {
           {isEnabled && (
             <>
               <div
-                className="absolute inset-0 rounded-full transition-all duration-200"
+                className="absolute inset-0 rounded-full transition-all duration-200 animate-pulse-slow"
                 style={{
                   boxShadow: `0 0 0 ${volumeSize}px rgba(239, 68, 68, 0.15)`,
-                  animation: "pulse 2s infinite",
                 }}
               />
               <div
@@ -71,22 +70,6 @@ export function CallForm({ isEnabled, onToggle, volume }: CallFormProps) {
           {isEnabled ? "End Call" : "Start Call"}
         </span>
       </div>
-      <style jsx>{`
-        @keyframes pulse {
-          0% {
-            transform: scale(0.95);
-            opacity: 0.5;
-          }
-          50% {
-            transform: scale(1);
-            opacity: 0.3;
-          }
-          100% {
-            transform: scale(0.95);
-            opacity: 0.5;
-          }
-        }
-      `}</style>
     </div>
   );
 }
