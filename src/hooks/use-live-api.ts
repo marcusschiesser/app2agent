@@ -46,6 +46,13 @@ export function useLiveAPI({
   const [connected, setConnected] = useState(false);
   const [config, setConfig] = useState<LiveConfig>({
     model: "models/gemini-2.0-flash-exp",
+    systemInstruction: {
+      parts: [
+        {
+          text: 'If the user asks to change their LinkedIn password, provide these steps:\n1. Log in to your LinkedIn account.\n2. Click on your profile picture in the top-right corner and select "Settings & Privacy."\n3. Navigate to the "Sign-in & security" section.\n4. Click on "Change password."\n5. Enter your current password, then type and confirm your new password.\n6. Click "Save password."',
+        },
+      ],
+    },
   });
   const [volume, setVolume] = useState(0);
 
