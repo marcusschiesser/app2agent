@@ -19,6 +19,7 @@ export function Recorder() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [audioRecorder] = useState(() => new AudioRecorder());
   const [muted, setMuted] = useState(false);
+  const [inVolume, setInVolume] = useState(0);
 
   // Load initial state from storage
   useEffect(() => {
@@ -42,13 +43,13 @@ export function Recorder() {
     };
 
     if (connected && !muted && isEnabled) {
-      audioRecorder.on("data", onData).start();
+      audioRecorder.on("data", onData).on("volume", setInVolume).start();
     } else {
       audioRecorder.stop();
     }
 
     return () => {
-      audioRecorder.off("data", onData);
+      audioRecorder.off("data", onData).off("volume", setInVolume);
     };
   }, [connected, client, muted, isEnabled, audioRecorder]);
 
@@ -112,6 +113,7 @@ export function Recorder() {
           // Save state to storage
           chrome.storage.local.set({ isEnabled: checked });
         }}
+        volume={inVolume}
       />
       <video ref={videoRef} style={{ display: "none" }} autoPlay />
       <canvas ref={renderCanvasRef} style={{ display: "none" }} />
