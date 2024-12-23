@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Screen AI Reader",
-  "description": "Reads text from screen",
+  "name": "IT Support",
+  "description": "Your friendly IT support",
   "{{chrome}}.action": {},
   "{{firefox}}.browser_action": {},
   "permissions": ["storage", "tabCapture", "activeTab"],
