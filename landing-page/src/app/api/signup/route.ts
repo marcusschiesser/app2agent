@@ -1,8 +1,13 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { Resend } from "resend";
+import { generateConfirmationEmail } from "@/emails/confirmation";
+import { generateNotificationEmail } from "@/emails/notification";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY!;
+const resend = new Resend(process.env.RESEND_API_KEY);
+const ADMIN_EMAIL = "marcus.schiesser@gmail.com";
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
@@ -33,6 +38,28 @@ export async function POST(request: Request) {
       }
       throw error;
     }
+
+    // Send confirmation email to user
+    const confirmationEmail = generateConfirmationEmail(email, name);
+    await resend.emails.send({
+      from: "Marcus Schiesser <marcus.schiesser@gmail.com>",
+      to: email,
+      subject: confirmationEmail.subject,
+      html: confirmationEmail.html,
+    });
+
+    // Send notification email to admin
+    const notificationEmail = generateNotificationEmail(
+      email,
+      name,
+      intendedUsage,
+    );
+    await resend.emails.send({
+      from: "app2agent<noreply@app2agent.com>",
+      to: ADMIN_EMAIL,
+      subject: notificationEmail.subject,
+      html: notificationEmail.html,
+    });
 
     return NextResponse.json(
       { message: "Successfully signed up!" },
