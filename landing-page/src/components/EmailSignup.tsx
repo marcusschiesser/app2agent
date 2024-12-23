@@ -4,29 +4,44 @@ import { FormEvent, useState } from "react";
 
 export default function EmailSignup() {
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [intendedUsage, setIntendedUsage] = useState("");
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
       setStatus("idle");
+      setErrorMessage("");
       const response = await fetch("/api/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({
+          email,
+          name: name || null,
+          intendedUsage: intendedUsage || null,
+        }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error("Failed to sign up");
+        setStatus("error");
+        setErrorMessage(data.error || "Failed to sign up");
+        return;
       }
 
       setStatus("success");
       setEmail("");
+      setName("");
+      setIntendedUsage("");
     } catch (error) {
       console.error("Error:", error);
       setStatus("error");
+      setErrorMessage("Something went wrong. Please try again.");
     }
   };
 
@@ -40,14 +55,27 @@ export default function EmailSignup() {
           Join the waitlist for early access and special pricing
         </p>
         <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col gap-4">
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="flex-grow px-4 py-3 rounded-full text-gray-900"
+              className="px-4 py-3 rounded-lg text-gray-900"
               required
+            />
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your name (optional)"
+              className="px-4 py-3 rounded-lg text-gray-900"
+            />
+            <textarea
+              value={intendedUsage}
+              onChange={(e) => setIntendedUsage(e.target.value)}
+              placeholder="How do you plan to use our solution? (optional)"
+              className="px-4 py-3 rounded-lg text-gray-900 min-h-[100px]"
             />
             <button
               type="submit"
@@ -62,9 +90,7 @@ export default function EmailSignup() {
             </p>
           )}
           {status === "error" && (
-            <p className="mt-4 text-red-400">
-              Something went wrong. Please try again.
-            </p>
+            <p className="mt-4 text-red-400">{errorMessage}</p>
           )}
         </form>
       </div>
