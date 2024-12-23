@@ -5,6 +5,7 @@ import { FormEvent, useState } from "react";
 export default function EmailSignup() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [companyName, setCompanyName] = useState("");
   const [intendedUsage, setIntendedUsage] = useState("");
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -22,6 +23,7 @@ export default function EmailSignup() {
         body: JSON.stringify({
           email,
           name: name || null,
+          companyName: companyName || null,
           intendedUsage: intendedUsage || null,
         }),
       });
@@ -37,6 +39,7 @@ export default function EmailSignup() {
       setStatus("success");
       setEmail("");
       setName("");
+      setCompanyName("");
       setIntendedUsage("");
     } catch (error) {
       console.error("Error:", error);
@@ -69,6 +72,13 @@ export default function EmailSignup() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Your name (optional)"
+              className="px-4 py-3 rounded-lg text-gray-900"
+            />
+            <input
+              type="text"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              placeholder="Company name (optional)"
               className="px-4 py-3 rounded-lg text-gray-900"
             />
             <textarea
