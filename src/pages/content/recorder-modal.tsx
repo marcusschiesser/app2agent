@@ -30,7 +30,7 @@ function RecorderModalApp() {
 
   return (
     <Modal onClose={handleClose}>
-      <Recorder onConnectionClosed={handleClose} />
+      <Recorder onFinished={handleClose} />
     </Modal>
   );
 }

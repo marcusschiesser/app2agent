@@ -3,16 +3,18 @@ import { useChromeTabCapture } from "@/hooks/use-chrome-tab-capture";
 import { useLiveAPIContext } from "@/contexts/LiveAPIContext";
 import { AudioRecorder } from "@/lib/audio-recorder";
 import { CallForm } from "./call-form";
+import { Feedback } from "./feedback";
 import { audioContext } from "@/lib/audio-context";
 import { createDialingTone } from "@/lib/dialing-tone";
 import { playConnectedTone } from "@/lib/connected-tone";
 
 export interface RecorderProps {
-  onConnectionClosed?: () => void;
+  onFinished?: () => void;
 }
 
-export function Recorder({ onConnectionClosed }: RecorderProps) {
+export function Recorder({ onFinished }: RecorderProps) {
   const [isEnabled, setIsEnabled] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
   const {
     stream,
     isStreaming,
@@ -89,10 +91,7 @@ export function Recorder({ onConnectionClosed }: RecorderProps) {
     } else if (!isEnabled && isStreaming) {
       stopCapture();
       disconnect();
-      // Notify parent when connection is closed
-      if (onConnectionClosed) {
-        onConnectionClosed();
-      }
+      setShowFeedback(true);
     }
   }, [isEnabled, isStreaming]);
 
@@ -142,11 +141,27 @@ export function Recorder({ onConnectionClosed }: RecorderProps) {
         isEnabled={isEnabled}
         onToggle={(checked) => {
           setIsEnabled(checked);
+          if (!checked) {
+            setShowFeedback(true);
+          }
           // Save state to storage
           chrome.storage.local.set({ isEnabled: checked });
         }}
         volume={inVolume}
       />
+      {showFeedback && !isEnabled && (
+        <Feedback
+          onSubmit={(rating) => {
+            // Here you can handle the feedback submission
+            console.log("Call feedback:", rating);
+            setShowFeedback(false);
+            // Call onFinished after feedback is submitted
+            if (onFinished) {
+              onFinished();
+            }
+          }}
+        />
+      )}
       <video ref={videoRef} style={{ display: "none" }} autoPlay />
       <canvas ref={renderCanvasRef} style={{ display: "none" }} />
       <audio ref={audioRef} style={{ display: "none" }} />
