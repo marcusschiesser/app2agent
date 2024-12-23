@@ -15,6 +15,16 @@ export default function EmailSignup() {
     try {
       setStatus("idle");
       setErrorMessage("");
+
+      // Check for gmail addresses
+      if (email.toLowerCase().endsWith("@gmail.com")) {
+        setStatus("error");
+        setErrorMessage(
+          "Please use your company email address instead of Gmail",
+        );
+        return;
+      }
+
       const response = await fetch("/api/signup", {
         method: "POST",
         headers: {
