@@ -16,6 +16,18 @@ export default function EmailSignup() {
       setStatus("idle");
       setErrorMessage("");
 
+      if (!name.trim()) {
+        setStatus("error");
+        setErrorMessage("Please enter your name");
+        return;
+      }
+
+      if (!companyName.trim()) {
+        setStatus("error");
+        setErrorMessage("Please enter your company name");
+        return;
+      }
+
       // Check for gmail addresses
       if (email.toLowerCase().endsWith("@gmail.com")) {
         setStatus("error");
@@ -81,15 +93,17 @@ export default function EmailSignup() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Your name (optional)"
+              placeholder="Your name"
               className="px-4 py-3 rounded-lg text-gray-900"
+              required
             />
             <input
               type="text"
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
-              placeholder="Company name (optional)"
+              placeholder="Company name"
               className="px-4 py-3 rounded-lg text-gray-900"
+              required
             />
             <textarea
               value={intendedUsage}
