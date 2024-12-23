@@ -31,15 +31,6 @@ export function Recorder({ onFinished }: RecorderProps) {
   const [inVolume, setInVolume] = useState(0);
   const dialingToneRef = useRef<{ stop: () => void } | null>(null);
 
-  // Load initial state from storage
-  useEffect(() => {
-    chrome.storage.local.get(["isEnabled"], (result) => {
-      if (result.isEnabled !== undefined) {
-        setIsEnabled(result.isEnabled);
-      }
-    });
-  }, []);
-
   useEffect(() => {
     const onData = (base64: string) => {
       if (client && connected) {
@@ -83,17 +74,18 @@ export function Recorder({ onFinished }: RecorderProps) {
     }
   }, [isEnabled, connected]);
 
-  useEffect(() => {
-    if (isEnabled && !isStreaming) {
-      startCapture().then(() => {
-        connect();
-      });
-    } else if (!isEnabled && isStreaming) {
+  const handleToggleEnabled = async (checked: boolean) => {
+    if (checked) {
+      setIsEnabled(true);
+      await startCapture();
+      connect();
+    } else {
+      setIsEnabled(false);
+      setShowFeedback(true);
       stopCapture();
       disconnect();
-      setShowFeedback(true);
     }
-  }, [isEnabled, isStreaming]);
+  };
 
   useEffect(() => {
     if (videoRef.current) {
@@ -139,14 +131,7 @@ export function Recorder({ onFinished }: RecorderProps) {
     <div className="p-4 min-w-[200px]">
       <CallForm
         isEnabled={isEnabled}
-        onToggle={(checked) => {
-          setIsEnabled(checked);
-          if (!checked) {
-            setShowFeedback(true);
-          }
-          // Save state to storage
-          chrome.storage.local.set({ isEnabled: checked });
-        }}
+        onToggle={handleToggleEnabled}
         volume={inVolume}
       />
       {showFeedback && !isEnabled && (
