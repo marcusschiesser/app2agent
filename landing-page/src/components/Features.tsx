@@ -5,13 +5,13 @@ const features = [
     icon: FaRobot,
     title: "AI-Powered Support",
     description:
-      "Intelligent agent that learns from your documentation to provide accurate support",
+      "Intelligent agent that learns from your documentation to provide accurate app support",
   },
   {
     icon: FaCode,
     title: "No-Code Integration",
     description:
-      "Add to your existing web app without writing a single line of code",
+      "Add to your existing web app without writing a single line of code using a browser extension",
   },
   {
     icon: FaClock,
@@ -20,8 +20,8 @@ const features = [
   },
   {
     icon: FaChartLine,
-    title: "Scalable Solution",
-    description: "Handle growing support requests without increasing headcount",
+    title: "Feedback",
+    description: "Gather anonymous feedback from users to improve the agent",
   },
 ];
 
@@ -30,7 +30,7 @@ export default function Features() {
     <section className="py-20 bg-gray-50">
       <div className="container mx-auto px-4 max-w-6xl">
         <h2 className="text-3xl font-bold text-center mb-12">
-          Why Choose IT-Support?
+          Why Choose app2agent?
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (

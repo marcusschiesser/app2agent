@@ -6,11 +6,11 @@ export default function Hero() {
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center">
           <h1 className="text-5xl font-bold mb-6">
-            Add AI-Powered IT Support to Your App in Minutes
+            Add an AI Agent to Your App in Minutes
           </h1>
           <p className="text-xl mb-8 text-blue-100">
-            Transform your web app with an intelligent IT support agent that
-            understands your documentation
+            Enhance your enterprise web app with an intelligent support agent
+            using your existing app documentation
           </p>
           <button
             onClick={() =>
@@ -20,7 +20,7 @@ export default function Hero() {
             }
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full transition-colors"
           >
-            Try IT-Support Free
+            Try app2agent
           </button>
         </div>
       </div>

@@ -49,7 +49,7 @@ export default function EmailSignup() {
     <section id="email-signup" className="py-20 bg-blue-900 text-white">
       <div className="container mx-auto px-4 max-w-6xl text-center">
         <h2 className="text-3xl font-bold mb-6">
-          Ready to Transform Your Support?
+          Ready to Transform Your Apps?
         </h2>
         <p className="text-xl mb-8 text-blue-100">
           Join the waitlist for early access and special pricing
