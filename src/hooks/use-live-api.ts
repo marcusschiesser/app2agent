@@ -52,14 +52,16 @@ export function useLiveAPI({
           text: "You're IT support. If the user connects, welcome him/her with a suitable greeting.",
         },
         {
-          text: `If the user asks how to use the #OpenToWork feature:
-          To enable the #OpenToWork feature:
-Click the  Me icon at the top of your LinkedIn homepage.
-Click View profile.
-snapshot
-Click the Open to button.
-Click Finding a new job.
-Provide the requested information in the pop-up window that appears.`,
+          text: `Use the following context if helpful: 
+###
+To edit the services that a user provides on LinkedIn, follow these steps:
+1. Click the Me icon at the top of your LinkedIn homepage.
+2. Click "View profile".
+3. Click the "View my Services" button.
+4. Click on "Edit Services".
+   Modify the services you want to edit in the pop-up window that appears.
+###
+`,
         },
       ],
     },
