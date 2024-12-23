@@ -8,8 +8,26 @@ export default function EmailSignup() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setStatus("success"); // In a real app, you'd handle the API call here
-    setEmail("");
+    try {
+      setStatus("idle");
+      const response = await fetch("/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to sign up");
+      }
+
+      setStatus("success");
+      setEmail("");
+    } catch (error) {
+      console.error("Error:", error);
+      setStatus("error");
+    }
   };
 
   return (
@@ -41,6 +59,11 @@ export default function EmailSignup() {
           {status === "success" && (
             <p className="mt-4 text-green-400">
               Thanks for signing up! We&apos;ll be in touch soon.
+            </p>
+          )}
+          {status === "error" && (
+            <p className="mt-4 text-red-400">
+              Something went wrong. Please try again.
             </p>
           )}
         </form>
