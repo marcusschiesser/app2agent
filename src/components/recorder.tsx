@@ -7,7 +7,11 @@ import { audioContext } from "@/lib/audio-context";
 import { createDialingTone } from "@/lib/dialing-tone";
 import { playConnectedTone } from "@/lib/connected-tone";
 
-export function Recorder() {
+export interface RecorderProps {
+  onConnectionClosed?: () => void;
+}
+
+export function Recorder({ onConnectionClosed }: RecorderProps) {
   const [isEnabled, setIsEnabled] = useState(false);
   const {
     stream,
@@ -85,6 +89,10 @@ export function Recorder() {
     } else if (!isEnabled && isStreaming) {
       stopCapture();
       disconnect();
+      // Notify parent when connection is closed
+      if (onConnectionClosed) {
+        onConnectionClosed();
+      }
     }
   }, [isEnabled, isStreaming]);
 

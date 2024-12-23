@@ -22,11 +22,15 @@ function RecorderModalApp() {
     };
   }, []);
 
+  const handleClose = () => {
+    setIsVisible(false);
+  };
+
   if (!isVisible) return null;
 
   return (
-    <Modal onClose={() => setIsVisible(false)}>
-      <Recorder />
+    <Modal onClose={handleClose}>
+      <Recorder onConnectionClosed={handleClose} />
     </Modal>
   );
 }
