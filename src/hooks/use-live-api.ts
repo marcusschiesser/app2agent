@@ -22,6 +22,7 @@ import {
 import { LiveConfig } from "../multimodal-live-types";
 import { AudioStreamer } from "../lib/audio-streamer";
 import { audioContext } from "../lib/audio-context";
+import { useManualLookup } from "./use-manual-lookup";
 
 export type UseLiveAPIResults = {
   client: MultimodalLiveClient;
@@ -42,6 +43,7 @@ export function useLiveAPI({
     [url, apiKey],
   );
   const audioStreamerRef = useRef<AudioStreamer | null>(null);
+  const manual = useManualLookup();
 
   const [connected, setConnected] = useState(false);
   const [config, setConfig] = useState<LiveConfig>({
@@ -54,12 +56,7 @@ export function useLiveAPI({
         {
           text: `Use the following context if helpful: 
 ###
-To edit the services that a user provides on LinkedIn, follow these steps:
-1. Click the Me icon at the top of your LinkedIn homepage.
-2. Click "View profile".
-3. Click the "View my Services" button.
-4. Click on "Edit Services".
-   Modify the services you want to edit in the pop-up window that appears.
+${manual}
 ###
 `,
         },
