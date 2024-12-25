@@ -13,16 +13,20 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export async function POST(request: Request) {
   try {
-    const { email, name, intendedUsage } = await request.json();
+    const { email, name, companyName, intendedUsage } = await request.json();
 
-    if (!email) {
-      return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    if (!email || !companyName || !name) {
+      return NextResponse.json(
+        { error: "Email, name and company name are required" },
+        { status: 400 },
+      );
     }
 
     const { error } = await supabase.from("email_signups").insert([
       {
         email,
         name,
+        company_name: companyName,
         intended_usage: intendedUsage,
         created_at: new Date().toISOString(),
       },
