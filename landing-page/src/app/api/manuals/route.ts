@@ -39,6 +39,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ content: data.content });
   } catch (error) {
+    console.error("Error fetching markdown file:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
