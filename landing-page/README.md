@@ -2,6 +2,12 @@
 
 This is the landing page for app2agent's IT-Support product - an AI-powered IT support solution that can be added to any web app without code.
 
+## Setup Supabase for local development
+
+```bash
+pnpm supabase:start
+```
+
 ## Getting Started
 
 First, install the dependencies:
