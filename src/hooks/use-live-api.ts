@@ -34,6 +34,9 @@ export type UseLiveAPIResults = {
   volume: number;
 };
 
+const DEFAULT_INSTRUCTION =
+  "You're IT support. If the user connects, welcome him/her with a suitable greeting.";
+
 export function useLiveAPI({
   url,
   apiKey,
@@ -48,22 +51,20 @@ export function useLiveAPI({
   const [connected, setConnected] = useState(false);
   const [config, setConfig] = useState<LiveConfig>({
     model: "models/gemini-2.0-flash-exp",
-    systemInstruction: {
-      parts: [
-        {
-          text: "You're IT support. If the user connects, welcome him/her with a suitable greeting.",
-        },
-        {
-          text: `Use the following context if helpful: 
-###
-${manual}
-###
-`,
-        },
-      ],
-    },
+    systemInstruction: { parts: [{ text: DEFAULT_INSTRUCTION }] },
   });
   const [volume, setVolume] = useState(0);
+
+  useEffect(() => {
+    if (manual) {
+      const MANUAL_INSTRUCTION = `Use the following context if helpful:\n###\n${manual}\n###\n`;
+      const parts = [
+        { text: DEFAULT_INSTRUCTION },
+        { text: MANUAL_INSTRUCTION },
+      ];
+      setConfig((prev) => ({ ...prev, systemInstruction: { parts } }));
+    }
+  }, [manual]);
 
   // register audio for streaming server -> speakers
   useEffect(() => {
