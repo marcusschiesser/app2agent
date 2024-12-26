@@ -17,7 +17,8 @@ npx supabase status
 Create a `.env` file in the root landing-page project and add the following variables:
 
 NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
-SUPABASE_SERVICE_KEY= service_role key
+SUPABASE_SERVICE_KEY= __service_role key__
+NEXT_PUBLIC_SUPABASE_ANON_KEY = __anon key__
 RESEND_API_KEY=Resend API key // get it here: https://resend.com/api-keys
 
 ## Getting Started
