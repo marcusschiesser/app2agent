@@ -6,6 +6,9 @@ import { getModalRoot, Modal } from "@/components/modal";
 import { Recorder } from "@/components/recorder";
 import { LiveAPIProvider } from "@/contexts/LiveAPIContext";
 
+const host = "generativelanguage.googleapis.com";
+const uri = `wss://${host}/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent`;
+
 function RecorderModalApp() {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -35,9 +38,6 @@ function RecorderModalApp() {
   );
 }
 
-const host = "generativelanguage.googleapis.com";
-const uri = `wss://${host}/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent`;
-
 // Initialize the modal root
 getModalRoot().then((root) => {
   root.render(
@@ -50,3 +50,5 @@ getModalRoot().then((root) => {
 });
 
 console.log("app2agent loaded");
+
+export { RecorderModalApp };

@@ -1,5 +1,5 @@
 // Request audio permissions
-async function requestAudioPermissions(): Promise<boolean> {
+export async function requestAudioPermissions(): Promise<boolean> {
   try {
     const audio = new Audio();
     audio.src =
@@ -12,65 +12,56 @@ async function requestAudioPermissions(): Promise<boolean> {
   }
 }
 
-// Send the toggle message when extension icon is clicked
-chrome.action.onClicked.addListener(async (tab) => {
+// Handle recorder toggle
+export async function handleRecorderToggle(
+  tab: chrome.tabs.Tab,
+): Promise<void> {
   if (!tab.id) return;
   await chrome.tabs.sendMessage(tab.id, { type: "TOGGLE_RECORDER" });
-});
+}
 
-// Handle tab capture requests
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.type === "REQUEST_AUDIO_PERMISSIONS") {
-    requestAudioPermissions().then((success) => {
-      sendResponse({ success });
-    });
-    return true;
+// Handle tab capture
+export function handleTabCapture(
+  sender: chrome.runtime.MessageSender,
+  sendResponse: (response: { success: boolean; error?: string }) => void,
+): void {
+  if (!sender.tab?.id) {
+    sendResponse({ success: false, error: "No tab ID found" });
+    return;
   }
 
-  if (request.type === "GET_TAB_STREAM") {
-    if (!sender.tab?.id) {
-      sendResponse({ success: false, error: "No tab ID found" });
-      return true;
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const tab = tabs[0];
+    if (!tab.id) {
+      sendResponse({ success: false, error: "No active tab found" });
+      return;
     }
 
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const tab = tabs[0];
-      if (!tab.id) {
-        sendResponse({ success: false, error: "No active tab found" });
-        return;
-      }
-
-      chrome.tabCapture.getMediaStreamId(
-        {
-          targetTabId: tab.id,
-          consumerTabId: sender.tab!.id,
-        },
-        (streamId) => {
-          if (chrome.runtime.lastError) {
-            console.error("Capture error:", chrome.runtime.lastError);
-            sendResponse({
-              success: false,
-              error: chrome.runtime.lastError.message,
-            });
-            return;
-          }
-
-          if (!streamId) {
-            sendResponse({
-              success: false,
-              error: "Failed to get stream ID",
-            });
-            return;
-          }
-
+    chrome.tabCapture.getMediaStreamId(
+      {
+        targetTabId: tab.id,
+        consumerTabId: sender.tab!.id,
+      },
+      (streamId) => {
+        if (chrome.runtime.lastError) {
+          console.error("Capture error:", chrome.runtime.lastError);
           sendResponse({
-            success: true,
-            streamId: streamId,
+            success: false,
+            error: chrome.runtime.lastError.message,
           });
-        },
-      );
-    });
+          return;
+        }
 
-    return true; // Will respond asynchronously
-  }
-});
+        if (!streamId) {
+          sendResponse({
+            success: false,
+            error: "Failed to get stream ID",
+          });
+          return;
+        }
+
+        sendResponse({ success: true });
+      },
+    );
+  });
+}
