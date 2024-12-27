@@ -4,14 +4,7 @@
   "description": "Your friendly IT support",
   "{{chrome}}.action": {},
   "{{firefox}}.browser_action": {},
-  "permissions": [
-    "storage",
-    "tabCapture",
-    "activeTab",
-    "scripting",
-    "contextMenus",
-    "tabs"
-  ],
+  "permissions": ["storage", "tabCapture", "activeTab", "scripting", "tabs"],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
