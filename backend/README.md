@@ -14,7 +14,7 @@ Retrieve supabase status:
 npx supabase status
 ```
 
-Create a `.env` file in the root landing-page project and add the following variables:
+Create a `.env` file in this project and add the following variables:
 
 NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
 SUPABASE_SERVICE_KEY= **service_role key**
