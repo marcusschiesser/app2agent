@@ -22,7 +22,6 @@ export function useManualLookup() {
       } finally {
         setIsLoading(false);
       }
-
     }
 
     fetchManual();

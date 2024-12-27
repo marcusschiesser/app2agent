@@ -77,7 +77,11 @@ export function CallForm({
           )}
         </div>
         <span className="text-sm text-gray-500">
-          {isManualLoading ? "Loading manual..." : isEnabled ? "End Call" : "Start Call"}
+          {isManualLoading
+            ? "Loading manual..."
+            : isEnabled
+              ? "End Call"
+              : "Start Call"}
         </span>
       </div>
     </div>
