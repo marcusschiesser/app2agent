@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-export default async function DashboardLayout({
+export default async function AccountLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -25,15 +25,15 @@ export default async function DashboardLayout({
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
                 <Link href="/" className="text-xl font-bold text-indigo-600">
-                  Screen Extension
+                  App2Agent
                 </Link>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                 <Link
-                  href="/dashboard"
+                  href="/account"
                   className="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                 >
-                  Dashboard
+                  Account
                 </Link>
               </div>
             </div>

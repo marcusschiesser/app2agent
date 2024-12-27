@@ -1,6 +1,6 @@
 "use client";
 
-import { AuthState, authAction } from "@/app/actions";
+import { AuthState, authAction } from "@/app/actions/auth";
 import { useActionState, useState } from "react";
 
 export function AuthForm() {

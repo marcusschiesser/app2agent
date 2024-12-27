@@ -21,6 +21,12 @@ SUPABASE_SERVICE_KEY= **service_role key**
 NEXT_PUBLIC_SUPABASE_ANON_KEY = **anon key**
 RESEND_API_KEY=Resend API key // get it here: https://resend.com/api-keys
 
+To apply migrations to your local DB, run:
+
+```bash
+supabase migration up
+```
+
 ## Getting Started
 
 First, install the dependencies:

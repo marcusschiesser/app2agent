@@ -29,15 +29,13 @@ export const signUpAction = async (formData: FormData): Promise<AuthState> => {
     return { type: "error", message: "Email and password are required" };
   }
 
-  const { error, data } = await supabase.auth.signUp({
+  const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       emailRedirectTo: `${origin}/auth/callback`,
     },
   });
-
-  console.log(data);
 
   if (error) {
     console.error(error.code + " " + error.message);
@@ -65,7 +63,7 @@ export const signInAction = async (formData: FormData): Promise<AuthState> => {
     return { type: "error", message: error.message };
   }
 
-  return redirect("/dashboard");
+  return redirect("/account");
 };
 
 export const signOutAction = async () => {
