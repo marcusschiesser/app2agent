@@ -135,6 +135,14 @@ max_frequency = "1s"
 otp_length = 6
 # Number of seconds before the email OTP expires (defaults to 1 hour).
 otp_expiry = 3600
+# Email address that will be used as the sender for all emails.
+sender_name = "app2agent"
+sender_address = "noreply@app2agent.com"
+
+# Email templates for authentication emails.
+[auth.email.template.confirmation]
+subject = "Confirm Your App2Agent Account"
+content_path = "supabase/templates/confirmation.html"
 
 # Use a production-ready SMTP server
 # [auth.email.smtp]
