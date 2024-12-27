@@ -12,10 +12,12 @@ async function requestAudioPermissions(): Promise<boolean> {
   }
 }
 
-// Send the toggle message when extension icon is clicked
+// Initialize side panel behavior
+chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+
+// Add action listener to grant activeTab permission
 chrome.action.onClicked.addListener(async (tab) => {
-  if (!tab.id) return;
-  await chrome.tabs.sendMessage(tab.id, { type: "TOGGLE_RECORDER" });
+  // Empty listener to enable activeTab permission
 });
 
 // Handle tab capture requests
@@ -28,48 +30,55 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.type === "GET_TAB_STREAM") {
-    if (!sender.tab?.id) {
-      sendResponse({ success: false, error: "No tab ID found" });
-      return true;
-    }
+    // Get the active tab from the current window, excluding the sidepanel
+    chrome.tabs.query(
+      { active: true, currentWindow: true, windowType: "normal" },
+      async (tabs) => {
+        const tab = tabs[0];
+        if (!tab?.id) {
+          sendResponse({ success: false, error: "No active tab found" });
+          return;
+        }
 
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const tab = tabs[0];
-      if (!tab.id) {
-        sendResponse({ success: false, error: "No active tab found" });
-        return;
-      }
-
-      chrome.tabCapture.getMediaStreamId(
-        {
-          targetTabId: tab.id,
-          consumerTabId: sender.tab!.id,
-        },
-        (streamId) => {
-          if (chrome.runtime.lastError) {
-            console.error("Capture error:", chrome.runtime.lastError);
-            sendResponse({
-              success: false,
-              error: chrome.runtime.lastError.message,
-            });
-            return;
-          }
-
-          if (!streamId) {
-            sendResponse({
-              success: false,
-              error: "Failed to get stream ID",
-            });
-            return;
-          }
-
+        // Check if this is a chrome:// URL
+        if (tab.url?.startsWith("chrome://")) {
           sendResponse({
-            success: true,
-            streamId: streamId,
+            success: false,
+            error: "Chrome system pages cannot be captured",
           });
-        },
-      );
-    });
+          return;
+        }
+
+        chrome.tabCapture.getMediaStreamId(
+          {
+            targetTabId: tab.id,
+          },
+          (streamId) => {
+            if (chrome.runtime.lastError) {
+              console.error("Capture error:", chrome.runtime.lastError);
+              sendResponse({
+                success: false,
+                error: chrome.runtime.lastError.message,
+              });
+              return;
+            }
+
+            if (!streamId) {
+              sendResponse({
+                success: false,
+                error: "Failed to get stream ID",
+              });
+              return;
+            }
+
+            sendResponse({
+              success: true,
+              streamId: streamId,
+            });
+          },
+        );
+      },
+    );
 
     return true; // Will respond asynchronously
   }

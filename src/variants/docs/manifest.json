@@ -4,13 +4,10 @@
   "description": "Your friendly IT support",
   "{{chrome}}.action": {},
   "{{firefox}}.browser_action": {},
-  "permissions": ["storage", "tabCapture", "activeTab"],
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["src/pages/content/recorder-modal.tsx"]
-    }
-  ],
+  "permissions": ["storage", "tabCapture", "activeTab", "sidePanel"],
+  "side_panel": {
+    "default_path": "src/pages/sidepanel/index.html"
+  },
   "background": {
     "service_worker": "src/background/recorder-controller.ts"
   },
