@@ -22,6 +22,7 @@ import {
 import { LiveConfig } from "../multimodal-live-types";
 import { AudioStreamer } from "../lib/audio-streamer";
 import { audioContext } from "../lib/audio-context";
+import { useManualLookup } from "./use-manual-lookup";
 
 export type UseLiveAPIResults = {
   client: MultimodalLiveClient;
@@ -31,7 +32,11 @@ export type UseLiveAPIResults = {
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
   volume: number;
+  isManualLoading: boolean;
 };
+
+const DEFAULT_INSTRUCTION =
+  "You're IT support. If the user connects, welcome him/her with a suitable greeting.";
 
 export function useLiveAPI({
   url,
@@ -42,31 +47,25 @@ export function useLiveAPI({
     [url, apiKey],
   );
   const audioStreamerRef = useRef<AudioStreamer | null>(null);
+  const { manual, isLoading: isManualLoading } = useManualLookup();
 
   const [connected, setConnected] = useState(false);
   const [config, setConfig] = useState<LiveConfig>({
     model: "models/gemini-2.0-flash-exp",
-    systemInstruction: {
-      parts: [
-        {
-          text: "You're IT support. If the user connects, welcome him/her with a suitable greeting.",
-        },
-        {
-          text: `Use the following context if helpful: 
-###
-To edit the services that a user provides on LinkedIn, follow these steps:
-1. Click the Me icon at the top of your LinkedIn homepage.
-2. Click "View profile".
-3. Click the "View my Services" button.
-4. Click on "Edit Services".
-   Modify the services you want to edit in the pop-up window that appears.
-###
-`,
-        },
-      ],
-    },
+    systemInstruction: { parts: [{ text: DEFAULT_INSTRUCTION }] },
   });
   const [volume, setVolume] = useState(0);
+
+  useEffect(() => {
+    if (manual) {
+      const MANUAL_INSTRUCTION = `Use the following context if helpful:\n###\n${manual}\n###\n`;
+      const parts = [
+        { text: DEFAULT_INSTRUCTION },
+        { text: MANUAL_INSTRUCTION },
+      ];
+      setConfig((prev) => ({ ...prev, systemInstruction: { parts } }));
+    }
+  }, [manual]);
 
   // register audio for streaming server -> speakers
   useEffect(() => {
@@ -130,5 +129,6 @@ To edit the services that a user provides on LinkedIn, follow these steps:
     connect,
     disconnect,
     volume,
+    isManualLoading,
   };
 }

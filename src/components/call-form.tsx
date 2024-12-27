@@ -2,10 +2,18 @@ interface CallFormProps {
   isEnabled: boolean;
   onToggle: (checked: boolean) => void;
   volume: number;
+  isManualLoading: boolean;
 }
 
-export function CallForm({ isEnabled, onToggle, volume }: CallFormProps) {
+export function CallForm({
+  isEnabled,
+  onToggle,
+  volume,
+  isManualLoading,
+}: CallFormProps) {
   const volumeSize = Math.max(8, Math.min(volume * 400, 24));
+
+  console.log("isManualLoading", isManualLoading);
 
   return (
     <div className="p-6">
@@ -34,8 +42,9 @@ export function CallForm({ isEnabled, onToggle, volume }: CallFormProps) {
           )}
           {!isEnabled ? (
             <button
+              disabled={isManualLoading}
               onClick={() => onToggle(true)}
-              className="relative z-10 flex items-center justify-center w-full h-full bg-green-500 hover:bg-green-600 text-white rounded-full transition-all duration-200 transform hover:scale-105"
+              className="relative z-10 flex items-center justify-center w-full h-full bg-green-500 hover:bg-green-600 text-white rounded-full transition-all duration-200 transform hover:scale-105 disabled:bg-slate-500 disabled:hover:bg-slate-500"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -48,8 +57,9 @@ export function CallForm({ isEnabled, onToggle, volume }: CallFormProps) {
             </button>
           ) : (
             <button
+              disabled={isManualLoading}
               onClick={() => onToggle(false)}
-              className="relative z-10 flex items-center justify-center w-full h-full bg-red-500 hover:bg-red-600 text-white rounded-full transition-all duration-200 transform hover:scale-105"
+              className="relative z-10 flex items-center justify-center w-full h-full bg-red-500 hover:bg-red-600 text-white rounded-full transition-all duration-200 transform hover:scale-105 disabled:bg-slate-500 disabled:hover:bg-slate-500"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -67,7 +77,11 @@ export function CallForm({ isEnabled, onToggle, volume }: CallFormProps) {
           )}
         </div>
         <span className="text-sm text-gray-500">
-          {isEnabled ? "End Call" : "Start Call"}
+          {isManualLoading
+            ? "Loading manual..."
+            : isEnabled
+              ? "End Call"
+              : "Start Call"}
         </span>
       </div>
     </div>
