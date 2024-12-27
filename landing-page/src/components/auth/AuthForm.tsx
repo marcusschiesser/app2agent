@@ -1,11 +1,32 @@
 "use client";
 
-import { authAction } from "@/app/actions";
+import { AuthState, authAction } from "@/app/actions";
 import { useActionState, useState } from "react";
 
 export function AuthForm() {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [state, formAction, isPending] = useActionState(authAction, {});
+  let initialState: AuthState = {};
+
+  if (typeof window !== "undefined") {
+    const hash = window.location.hash.substring(1);
+    if (hash) {
+      const params = new URLSearchParams(hash);
+      const error = params.get("error");
+      const error_description = params.get("error_description");
+
+      if (error && error_description) {
+        initialState = {
+          type: "error",
+          message: decodeURIComponent(error_description),
+        };
+      }
+    }
+  }
+
+  const [state, formAction, isPending] = useActionState(
+    authAction,
+    initialState,
+  );
 
   if (state.type === "success" && state.message) {
     return (
@@ -30,6 +51,11 @@ export function AuthForm() {
             : "Sign in to app2agent"}
         </p>
       </div>
+      {state.type === "error" && state.message && (
+        <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
+          <p className="text-sm text-red-600">{state.message}</p>
+        </div>
+      )}
       <div className="w-full max-w-md mx-auto p-6">
         <form
           className="space-y-4"
@@ -66,9 +92,6 @@ export function AuthForm() {
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             />
           </div>
-          {state.type === "error" && state.message && (
-            <div className="text-red-500 text-sm">{state.message}</div>
-          )}
           <button
             type="submit"
             disabled={isPending}
