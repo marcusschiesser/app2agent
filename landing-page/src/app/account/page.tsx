@@ -1,9 +1,9 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { signOutAction } from "../actions";
+import { signOutAction } from "../actions/auth";
 import Settings from "@/components/Settings";
 
-export default async function DashboardPage() {
+export default async function AccountPage() {
   const supabase = await createClient();
 
   const {
