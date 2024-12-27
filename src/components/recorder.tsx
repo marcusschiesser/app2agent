@@ -21,7 +21,8 @@ export function Recorder({ onFinished }: RecorderProps) {
     start: startCapture,
     stop: stopCapture,
   } = useChromeTabCapture();
-  const { client, connect, disconnect, connected } = useLiveAPIContext();
+  const { client, connect, disconnect, connected, isManualLoading } =
+    useLiveAPIContext();
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const renderCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -133,6 +134,7 @@ export function Recorder({ onFinished }: RecorderProps) {
         isEnabled={isEnabled}
         onToggle={handleToggleEnabled}
         volume={inVolume}
+        isManualLoading={isManualLoading}
       />
       {showFeedback && !isEnabled && (
         <Feedback

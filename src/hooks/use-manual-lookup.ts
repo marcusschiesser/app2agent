@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 const backend = "https://app2agent.com/api";
 
 export function useManualLookup() {
+  const [isLoading, setIsLoading] = useState(false);
   const [manual, setManual] = useState<string>("");
 
   useEffect(() => {
     async function fetchManual() {
       try {
+        setIsLoading(true);
         const rootHostname = getCurrentDomain();
         const response = await fetch(
           `${backend}/manuals?url=${encodeURIComponent(rootHostname)}`,
@@ -17,13 +19,16 @@ export function useManualLookup() {
       } catch (error) {
         console.error("Error fetching manual:", error);
         setManual(""); // Reset to empty string on error
+      } finally {
+        setIsLoading(false);
       }
+
     }
 
     fetchManual();
   }, []);
 
-  return manual;
+  return { manual, isLoading };
 }
 
 /**

@@ -32,6 +32,7 @@ export type UseLiveAPIResults = {
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
   volume: number;
+  isManualLoading: boolean;
 };
 
 const DEFAULT_INSTRUCTION =
@@ -46,7 +47,7 @@ export function useLiveAPI({
     [url, apiKey],
   );
   const audioStreamerRef = useRef<AudioStreamer | null>(null);
-  const manual = useManualLookup();
+  const { manual, isLoading: isManualLoading } = useManualLookup();
 
   const [connected, setConnected] = useState(false);
   const [config, setConfig] = useState<LiveConfig>({
@@ -128,5 +129,6 @@ export function useLiveAPI({
     connect,
     disconnect,
     volume,
+    isManualLoading,
   };
 }
