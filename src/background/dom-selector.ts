@@ -1,4 +1,4 @@
-import { NavigationPlan } from "@/lib/page-navigation";
+import { NavigationAction } from "@/lib/page-navigation";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 declare const __GEMINI_API_KEY__: string;
@@ -19,7 +19,7 @@ function cleanJsonResponse(text: string): string {
 export async function createActionPlan(
   dom: string,
   actionDescription: string,
-): Promise<NavigationPlan> {
+): Promise<NavigationAction> {
   const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
 
   const prompt = `Given this DOM structure:
@@ -28,13 +28,12 @@ ${dom}
 \`\`\`
 
 Analyze this action description: "${actionDescription}"
-Find the most appropriate selectors for this action. Consider using multiple selector types for better reliability.
+Find the most appropriate xpath selector for this action.
 Return ONLY a JSON object in this exact format (no other text):
 {
   "type": "click" | "input" | "scroll" | "url",
-  "selectors": [
-    { "type": "id" | "text" | "aria-label" | "role" | "class" | "xpath", "value": "selector value" }
-  ],
+  "selector": { "type": "xpath", "value": "xpath selector value" },
+  "description": "${actionDescription}",
   "value": "optional value for input/url actions"
 }`;
 
@@ -43,27 +42,12 @@ Return ONLY a JSON object in this exact format (no other text):
   const text = response.text();
 
   try {
-    // Sometimes Gemini returns a JSON object with a code block, sometimes not.
-    // This function cleans the response to extract the JSON object.
     const cleanedText = cleanJsonResponse(text);
-    const selectorInfo = JSON.parse(cleanedText);
-
-    const navigationPlan: NavigationPlan = {
-      targetPage: actionDescription,
-      actions: [
-        {
-          type: selectorInfo.type,
-          selectors: selectorInfo.selectors,
-          description: actionDescription,
-          value: selectorInfo.value,
-        },
-      ],
-    };
-
-    return navigationPlan;
+    const action: NavigationAction = JSON.parse(cleanedText);
+    return action;
   } catch (error) {
     console.error("Failed to parse Gemini response:", error);
     console.error("Raw response:", text);
-    throw new Error("Failed to create navigation plan from Gemini response");
+    throw new Error("Failed to create navigation action from Gemini response");
   }
 }

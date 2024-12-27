@@ -4,7 +4,7 @@ import { contentNavigationHelper } from "@/lib/page-navigation";
 window.addEventListener("message", async (event) => {
   if (event.data?.type === "A2A_EXECUTE_PLAN") {
     try {
-      const result = await contentNavigationHelper.navigate(event.data.plan);
+      const result = await contentNavigationHelper.navigate(event.data.action);
       window.postMessage(
         {
           type: "A2A_EXECUTE_PLAN_RESULT",

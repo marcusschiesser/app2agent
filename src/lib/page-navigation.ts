@@ -7,7 +7,7 @@ export interface ElementSelector {
 
 export interface NavigationAction {
   type: "click" | "input" | "scroll" | "url";
-  selectors: ElementSelector[];
+  selector: ElementSelector;
   value?: string;
   description: string;
 }
@@ -22,70 +22,49 @@ export interface NavigationPlan {
 }
 
 class ContentNavigationHelper extends EventEmitter {
+  private cleanDOM(element: Element): Element {
+    const clone = element.cloneNode(true) as Element;
+
+    // Remove script tags, style tags, and comments
+    const removeNodes = clone.querySelectorAll("script, style, link, noscript");
+    removeNodes.forEach((node) => node.remove());
+
+    // Remove hidden elements
+    const hiddenElements = clone.querySelectorAll(
+      '[hidden], [style*="display: none"], [style*="visibility: hidden"]',
+    );
+    hiddenElements.forEach((node) => node.remove());
+
+    return clone;
+  }
+
   private async findElement(
-    selectors: ElementSelector[],
+    selector: ElementSelector,
   ): Promise<Element | null> {
-    for (const selector of selectors) {
-      try {
-        switch (selector.type) {
-          case "id": {
-            const elementById = document.getElementById(selector.value);
-            if (elementById) return elementById;
-            break;
-          }
+    const cleanedDoc = this.cleanDOM(document.documentElement);
 
-          case "text": {
-            const xpathText = `//*[contains(text(), "${selector.value}")]`;
-            const textResult = document.evaluate(
-              xpathText,
-              document,
-              null,
-              XPathResult.FIRST_ORDERED_NODE_TYPE,
-              null,
-            );
-            if (textResult.singleNodeValue)
-              return textResult.singleNodeValue as Element;
-            break;
-          }
-
-          case "aria-label": {
-            const elementByAriaLabel = document.querySelector(
-              `[aria-label="${selector.value}"]`,
-            );
-            if (elementByAriaLabel) return elementByAriaLabel;
-            break;
-          }
-
-          case "role": {
-            const elementByRole = document.querySelector(
-              `[role="${selector.value}"]`,
-            );
-            if (elementByRole) return elementByRole;
-            break;
-          }
-
-          case "class": {
-            const elementByClass = document.querySelector(`.${selector.value}`);
-            if (elementByClass) return elementByClass;
-            break;
-          }
-
-          case "xpath": {
-            const xpathResult = document.evaluate(
-              selector.value,
-              document,
-              null,
-              XPathResult.FIRST_ORDERED_NODE_TYPE,
-              null,
-            );
-            if (xpathResult.singleNodeValue)
-              return xpathResult.singleNodeValue as Element;
-            break;
-          }
-        }
-      } catch (error) {
-        console.error(`Error finding element with selector:`, selector, error);
+    try {
+      const xpathResult = document.evaluate(
+        selector.value,
+        cleanedDoc,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null,
+      );
+      if (xpathResult.singleNodeValue) {
+        // Map the found element from cleaned DOM back to actual DOM
+        const xpath = selector.value;
+        const realElement = document.evaluate(
+          xpath,
+          document,
+          null,
+          XPathResult.FIRST_ORDERED_NODE_TYPE,
+          null,
+        ).singleNodeValue as Element;
+        return realElement;
       }
+    } catch (error) {
+      console.error(`Error finding element with selector:`, selector, error);
     }
     return null;
   }
@@ -93,7 +72,7 @@ class ContentNavigationHelper extends EventEmitter {
   private async executeAction(
     action: NavigationAction,
   ): Promise<{ success: boolean; error?: string }> {
-    const element = await this.findElement(action.selectors);
+    const element = await this.findElement(action.selector);
     if (!element) {
       console.error(`Element not found for action:`, action);
       return { success: false, error: "Element not found. DOM: " + document };
@@ -143,47 +122,16 @@ class ContentNavigationHelper extends EventEmitter {
   }
 
   async navigate(
-    plan: NavigationPlan,
+    action: NavigationAction,
   ): Promise<{ success: boolean; error?: string }> {
-    this.emit("start", { targetPage: plan.targetPage });
+    this.emit("start", { description: action.description });
 
-    for (const action of plan.actions) {
-      const { success, error } = await this.executeAction(action);
-      if (!success) {
-        if (plan.fallback) {
-          this.emit("fallback", { type: "start" });
-
-          if (plan.fallback.url) {
-            window.location.href = plan.fallback.url;
-            this.emit("fallback", { type: "url", url: plan.fallback.url });
-            return { success: true };
-          }
-
-          if (plan.fallback.path) {
-            for (const pathSegment of plan.fallback.path) {
-              const found = await this.findElement([
-                { type: "text", value: pathSegment },
-              ]);
-              if (found && found instanceof HTMLElement) {
-                found.click();
-                await new Promise((resolve) => setTimeout(resolve, 500));
-                this.emit("fallback", { type: "path", segment: pathSegment });
-              } else {
-                this.emit("fallback", { type: "failed" });
-                return {
-                  success: false,
-                  error: "Fallback path segment not found",
-                };
-              }
-            }
-            return { success: true };
-          }
-        }
-        return { success: false, error };
-      }
-      await new Promise((resolve) => setTimeout(resolve, 500));
+    const { success, error } = await this.executeAction(action);
+    if (!success) {
+      return { success: false, error };
     }
 
+    await new Promise((resolve) => setTimeout(resolve, 500));
     this.emit("complete", { success: true });
     return { success: true };
   }
