@@ -30,10 +30,10 @@ export default async function DashboardLayout({
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                 <Link
-                  href="/dashboard"
+                  href="/settings"
                   className="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                 >
-                  Dashboard
+                  Settings
                 </Link>
               </div>
             </div>

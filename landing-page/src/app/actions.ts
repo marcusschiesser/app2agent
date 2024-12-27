@@ -65,7 +65,7 @@ export const signInAction = async (formData: FormData): Promise<AuthState> => {
     return { type: "error", message: error.message };
   }
 
-  return redirect("/dashboard");
+  return redirect("/settings");
 };
 
 export const signOutAction = async () => {
