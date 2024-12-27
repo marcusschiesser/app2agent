@@ -16,7 +16,7 @@
     {
       "matches": ["<all_urls>"],
       "js": [
-        "src/pages/content/navigation-helper.ts",
+        "src/pages/content/page-navigation.ts",
         "src/pages/content/app2agent-inject.ts",
         "src/pages/content/recorder-modal.tsx"
       ]
