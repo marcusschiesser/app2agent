@@ -12,18 +12,14 @@ export async function requestAudioPermissions(): Promise<boolean> {
   }
 }
 
-// Handle recorder toggle
-export async function handleRecorderToggle(
-  tab: chrome.tabs.Tab,
-): Promise<void> {
-  if (!tab.id) return;
-  await chrome.tabs.sendMessage(tab.id, { type: "TOGGLE_RECORDER" });
-}
-
 // Handle tab capture
 export function handleTabCapture(
   sender: chrome.runtime.MessageSender,
-  sendResponse: (response: { success: boolean; error?: string }) => void,
+  sendResponse: (response: {
+    success: boolean;
+    error?: string;
+    streamId?: string;
+  }) => void,
 ): void {
   if (!sender.tab?.id) {
     sendResponse({ success: false, error: "No tab ID found" });
@@ -60,7 +56,7 @@ export function handleTabCapture(
           return;
         }
 
-        sendResponse({ success: true });
+        sendResponse({ success: true, streamId: streamId });
       },
     );
   });
