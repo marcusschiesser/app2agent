@@ -36,13 +36,13 @@ const updateSession = async (request: NextRequest) => {
   const user = await supabase.auth.getUser();
 
   // protected routes
-  if (request.nextUrl.pathname.startsWith("/settings") && user.error) {
+  if (request.nextUrl.pathname.startsWith("/account") && user.error) {
     return NextResponse.redirect(new URL("/auth", request.url));
   }
 
-  // redirect to settings if user is already logged in and trying to access auth page
+  // redirect to account if user is already logged in and trying to access auth page
   if (request.nextUrl.pathname === "/auth" && !user.error) {
-    return NextResponse.redirect(new URL("/settings", request.url));
+    return NextResponse.redirect(new URL("/account", request.url));
   }
 
   return response;
