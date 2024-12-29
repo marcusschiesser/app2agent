@@ -20,7 +20,6 @@ import { useConfig } from "../hooks/use-config";
 
 type LiveAPIContextValue = {
   liveAPI: UseLiveAPIResults | null;
-  isConfigLoading: boolean;
 };
 
 const LiveAPIContext = createContext<LiveAPIContextValue | undefined>(
@@ -58,7 +57,6 @@ export const LiveAPIProvider: FC<LiveAPIProviderProps> = ({
 
   const contextValue: LiveAPIContextValue = {
     liveAPI: api,
-    isConfigLoading: isLoading,
   };
 
   return (
