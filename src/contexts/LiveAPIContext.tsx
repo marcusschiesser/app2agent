@@ -14,26 +14,55 @@
  * limitations under the License.
  */
 
-import { createContext, FC, ReactNode, useContext } from "react";
+import { createContext, FC, ReactNode, useContext, useMemo } from "react";
 import { useLiveAPI, UseLiveAPIResults } from "../hooks/use-live-api";
+import { useConfig } from "../hooks/use-config";
 
-const LiveAPIContext = createContext<UseLiveAPIResults | undefined>(undefined);
+type LiveAPIContextValue = {
+  liveAPI: UseLiveAPIResults | null;
+  isConfigLoading: boolean;
+};
+
+const LiveAPIContext = createContext<LiveAPIContextValue | undefined>(
+  undefined,
+);
 
 export type LiveAPIProviderProps = {
   children: ReactNode;
   url?: string;
-  apiKey: string;
 };
+
+const DEFAULT_INSTRUCTION =
+  "You're IT support. If the user connects, welcome him/her with a suitable greeting.";
 
 export const LiveAPIProvider: FC<LiveAPIProviderProps> = ({
   url,
-  apiKey,
   children,
 }) => {
-  const liveAPI = useLiveAPI({ url, apiKey });
+  const { manual, apiKey, isLoading } = useConfig();
+
+  const api = useMemo(() => {
+    if (isLoading || !apiKey || !manual) return null;
+    const api = useLiveAPI({
+      url,
+      apiKey,
+    });
+    const MANUAL_INSTRUCTION = `Use the following context if helpful:\n###\n${manual}\n###\n`;
+    const parts = [{ text: DEFAULT_INSTRUCTION }, { text: MANUAL_INSTRUCTION }];
+    api.setConfig({
+      model: "models/gemini-2.0-flash-exp",
+      systemInstruction: { parts },
+    });
+    return api;
+  }, [manual, isLoading, apiKey]);
+
+  const contextValue: LiveAPIContextValue = {
+    liveAPI: api,
+    isConfigLoading: isLoading,
+  };
 
   return (
-    <LiveAPIContext.Provider value={liveAPI}>
+    <LiveAPIContext.Provider value={contextValue}>
       {children}
     </LiveAPIContext.Provider>
   );
@@ -42,7 +71,7 @@ export const LiveAPIProvider: FC<LiveAPIProviderProps> = ({
 export const useLiveAPIContext = () => {
   const context = useContext(LiveAPIContext);
   if (!context) {
-    throw new Error("useLiveAPIContext must be used wihin a LiveAPIProvider");
+    throw new Error("useLiveAPIContext must be used within a LiveAPIProvider");
   }
   return context;
 };

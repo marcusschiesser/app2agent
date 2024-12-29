@@ -42,7 +42,8 @@ const uri = `wss://${host}/ws/google.ai.generativelanguage.v1alpha.GenerativeSer
 getModalRoot().then((root) => {
   root.render(
     <React.StrictMode>
-      <LiveAPIProvider url={uri} apiKey={__GEMINI_API_KEY__}>
+      <LiveAPIProvider url={uri}>
+        {/* TODO pass the api key from app2agent: apiKey={__GEMINI_API_KEY__}> */}
         <RecorderModalApp />
       </LiveAPIProvider>
     </React.StrictMode>,
