@@ -22,7 +22,7 @@ import {
 import { LiveConfig } from "../multimodal-live-types";
 import { AudioStreamer } from "../lib/audio-streamer";
 import { audioContext } from "../lib/audio-context";
-import { useManualLookup } from "./use-manual-lookup";
+import { useConfig } from "./use-config";
 
 export type UseLiveAPIResults = {
   client: MultimodalLiveClient;
@@ -47,7 +47,7 @@ export function useLiveAPI({
     [url, apiKey],
   );
   const audioStreamerRef = useRef<AudioStreamer | null>(null);
-  const { manual, isLoading: isManualLoading } = useManualLookup();
+  const { manual, isLoading: isConfigLoading } = useConfig();
 
   const [connected, setConnected] = useState(false);
   const [config, setConfig] = useState<LiveConfig>({
@@ -129,6 +129,6 @@ export function useLiveAPI({
     connect,
     disconnect,
     volume,
-    isManualLoading,
+    isManualLoading: isConfigLoading,
   };
 }

@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 
 const backend = "https://app2agent.com/api";
 
-export function useManualLookup() {
+export function useConfig() {
   const [isLoading, setIsLoading] = useState(false);
   const [manual, setManual] = useState<string>("");
+  const [apiKey, setApiKey] = useState<string>("");
 
   useEffect(() => {
     async function fetchManual() {
@@ -14,11 +15,16 @@ export function useManualLookup() {
         const response = await fetch(
           `${backend}/manuals?url=${encodeURIComponent(rootHostname)}`,
         );
-        const data = (await response.json()) as { content: string };
+        const data = (await response.json()) as {
+          content: string;
+          apiKey: string;
+        };
         setManual(data.content);
+        setApiKey(data.apiKey);
       } catch (error) {
         console.error("Error fetching manual:", error);
         setManual(""); // Reset to empty string on error
+        setApiKey(""); // Reset API key on error
       } finally {
         setIsLoading(false);
       }
@@ -27,7 +33,7 @@ export function useManualLookup() {
     fetchManual();
   }, []);
 
-  return { manual, isLoading };
+  return { manual, apiKey, isLoading };
 }
 
 /**

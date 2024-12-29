@@ -19,7 +19,7 @@ export async function GET(request: Request) {
 
     const { data, error } = await supabase
       .from("user_manuals")
-      .select("content")
+      .select("content,gemini_key")
       .eq("url", url)
       .single();
 
@@ -37,7 +37,10 @@ export async function GET(request: Request) {
       );
     }
 
-    return NextResponse.json({ content: data.content });
+    return NextResponse.json({
+      content: data.content,
+      apiKey: data.gemini_key,
+    });
   } catch (error) {
     console.error("Error fetching markdown file:", error);
     return NextResponse.json(
