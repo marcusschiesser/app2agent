@@ -1,5 +1,11 @@
 import { SchemaType, Tool } from "@google/generative-ai";
 
+interface ExecutionResult {
+  type: string;
+  success: boolean;
+  error?: string;
+}
+
 export const navigateTool = async ({
   actionDescription,
 }: {
@@ -25,14 +31,39 @@ export const navigateTool = async ({
 
     console.log("Sending message to execute action plan");
 
-    // Execute the action using our page navigation
-    window.postMessage(
-      {
-        type: "A2A_EXECUTE_PLAN",
-        action: result,
-      },
-      window.location.origin,
-    );
+    // Create a promise that resolves when the execution is complete
+    const executionResult = await new Promise<ExecutionResult>((resolve) => {
+      // Listen for the execution result
+      const handleExecutionResult = (event: MessageEvent) => {
+        if (
+          event.origin === window.location.origin &&
+          event.data?.type === "A2A_EXECUTE_PLAN_RESULT"
+        ) {
+          window.removeEventListener("message", handleExecutionResult);
+          resolve(event.data as ExecutionResult);
+        }
+      };
+
+      window.addEventListener("message", handleExecutionResult);
+
+      // Send the execution message
+      window.postMessage(
+        {
+          type: "A2A_EXECUTE_PLAN",
+          action: result,
+        },
+        window.location.origin,
+      );
+    });
+
+    // Check the execution result
+    console.log("Execution result:", executionResult);
+    if (!executionResult.success) {
+      return {
+        success: false,
+        error: `Navigation failed: ${executionResult.error}`,
+      };
+    }
 
     return { success: true, result: "Navigation successful" };
   } catch (error) {
