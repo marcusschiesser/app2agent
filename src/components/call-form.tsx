@@ -1,3 +1,5 @@
+import { Header } from "./header";
+
 interface CallFormProps {
   isEnabled: boolean;
   onToggle: (checked: boolean) => void;
@@ -9,10 +11,7 @@ export function CallForm({ isEnabled, onToggle, volume }: CallFormProps) {
 
   return (
     <div className="p-6">
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-1">IT-Support</h1>
-        <p className="text-sm text-gray-600">by app2agent</p>
-      </div>
+      <Header />
 
       <div className="flex flex-col items-center">
         <div className="w-16 h-16 mb-4 rounded-full flex items-center justify-center relative">
