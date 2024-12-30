@@ -9,12 +9,19 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const url = searchParams.get("url");
+    const requestOrigin = request.headers.get("origin");
 
     if (!url) {
       return NextResponse.json(
         { error: "URL parameter is required" },
         { status: 400 },
       );
+    }
+
+    const urlOrigin = new URL(url).origin;
+    if (urlOrigin !== requestOrigin) {
+      // Don't allow to retrieve the configuration for another URL
+      return NextResponse.json({ error: "No permission" }, { status: 403 });
     }
 
     const { data, error } = await supabase
