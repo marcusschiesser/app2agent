@@ -136,6 +136,7 @@ export function Recorder({ onFinished }: RecorderProps) {
       console.log("Tool Call Received:", toolCall);
       try {
         const response = await toolManager.handleToolCall(toolCall);
+        console.log("Tool response:", response);
         client.sendToolResponse(response);
       } catch (error) {
         console.error("Error handling tool call:", error);
@@ -145,6 +146,7 @@ export function Recorder({ onFinished }: RecorderProps) {
     client.on("toolcall", handleToolCall);
 
     return () => {
+      console.log("Unsubscribing from toolcall");
       client.off("toolcall", handleToolCall);
     };
   }, [client]);

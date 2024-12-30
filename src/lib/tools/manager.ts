@@ -8,6 +8,7 @@ import {
   siteMapRetrieverToolConfig,
   siteMapRetrieverTool,
 } from "./retriever-tool";
+import { navigationToolConfig, navigateTool } from "./navigation-tool";
 
 // Map of tool implementations
 type ToolImplementation = (args: any) => Promise<any>;
@@ -18,7 +19,8 @@ export class ToolManager {
 
   constructor() {
     // Register available tools
-    this.registerTool(siteMapRetrieverToolConfig, siteMapRetrieverTool);
+    // this.registerTool(siteMapRetrieverToolConfig, siteMapRetrieverTool);
+    this.registerTool(navigationToolConfig, navigateTool);
   }
 
   // Register a tool and its implementation
@@ -48,7 +50,6 @@ export class ToolManager {
         }
 
         const result = await implementation(call.args);
-        console.log("Tool response:", result);
         return {
           response: result,
           id: call.id,
