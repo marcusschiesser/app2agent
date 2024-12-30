@@ -8,8 +8,8 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const url = searchParams.get("url");
-    const requestOrigin = request.headers.get("origin");
+    const url = searchParams.get("url"); // domain eg: linkedin.com
+    const requestOrigin = request.headers.get("origin"); // origin eg: https://www.linkedin.com
 
     if (!url) {
       return NextResponse.json(
@@ -18,8 +18,7 @@ export async function GET(request: Request) {
       );
     }
 
-    const urlOrigin = new URL(url).origin;
-    if (urlOrigin !== requestOrigin) {
+    if (requestOrigin && !requestOrigin.includes(url)) {
       // Don't allow to retrieve the configuration for another URL
       return NextResponse.json({ error: "No permission" }, { status: 403 });
     }
