@@ -1,6 +1,13 @@
 import { Tool } from "@google/generative-ai";
-import { ToolCall, ToolResponse } from "@/multimodal-live-types";
-import { welcomeToolConfig, handleWelcomeUser } from "./welcome-tool";
+import {
+  ToolCall,
+  ToolResponse,
+  LiveFunctionResponse,
+} from "@/multimodal-live-types";
+import {
+  siteMapRetrieverToolConfig,
+  siteMapRetrieverTool,
+} from "./retriever-tool";
 
 // Map of tool implementations
 type ToolImplementation = (args: any) => Promise<any>;
@@ -11,7 +18,7 @@ export class ToolManager {
 
   constructor() {
     // Register available tools
-    this.registerTool(welcomeToolConfig, handleWelcomeUser);
+    this.registerTool(siteMapRetrieverToolConfig, siteMapRetrieverTool);
   }
 
   // Register a tool and its implementation
@@ -33,23 +40,24 @@ export class ToolManager {
 
   // Handle tool calls from LLM
   public async handleToolCall(toolCall: ToolCall): Promise<ToolResponse> {
-    const responses = await Promise.all(
+    const functionResponses: LiveFunctionResponse[] = await Promise.all(
       toolCall.functionCalls.map(async (call) => {
         const implementation = this.toolMap.get(call.name);
         if (!implementation) {
           throw new Error(`No implementation found for tool: ${call.name}`);
         }
 
-        const response = await implementation(call.args);
+        const result = await implementation(call.args);
+        console.log("Tool response:", result);
         return {
-          response,
+          response: result,
           id: call.id,
         };
       }),
     );
 
     return {
-      functionResponses: responses,
+      functionResponses,
     };
   }
 }

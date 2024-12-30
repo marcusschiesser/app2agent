@@ -22,7 +22,8 @@ import {
 import { LiveConfig } from "../multimodal-live-types";
 import { AudioStreamer } from "../lib/audio-streamer";
 import { audioContext } from "../lib/audio-context";
-import { welcomeToolConfig } from "../lib/tools/welcome-tool";
+import { toolManager } from "../lib/tools/manager";
+
 export type UseLiveAPIResults = {
   client: MultimodalLiveClient;
   setConfig: (config: LiveConfig) => void;
@@ -54,21 +55,35 @@ export function useLiveAPI({
         {
           text: `Use the following context if helpful: 
 ###
-To edit the services that a user provides on LinkedIn, follow these steps:
-1. Click the Me icon at the top of your LinkedIn homepage.
-2. Click "View profile".
-3. Click the "View my Services" button.
-4. Click on "Edit Services".
-   Modify the services you want to edit in the pop-up window that appears.
+You will need to create a navigation plan to accomplish the user's request.
+Example:
+User: I want to complain about an issue with my account.
+Plan:
+- Go to the Business Home Page
+- Click Contact Us
+- Enter the user's email address and description of the issue
+- Click Send
+
+Then you will start executing the plan by using the tools provided, 
+ex: 
+- searching for the URL of the page that we need to navigate to.
+- get the xpath of the element that we need to click...
 ###
 `,
         },
         {
-          text: "Before calling a tool, always ask the user if they want to use the tool. Only call the tool if the user agrees.",
+          text: `You can use the following tools to help you with your task:
+${toolManager
+  .getTools()
+  .map(
+    (tool) =>
+      `- ${tool.functionDeclarations[0].name}: ${tool.functionDeclarations[0].description}`,
+  )
+  .join("\n")}`,
         },
       ],
     },
-    tools: [welcomeToolConfig],
+    tools: toolManager.getTools(),
   });
   const [volume, setVolume] = useState(0);
 
