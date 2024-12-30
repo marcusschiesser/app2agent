@@ -2,6 +2,8 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { signOutAction } from "../actions/auth";
 import Settings from "@/components/Settings";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function AccountPage() {
   const supabase = await createClient();
@@ -17,24 +19,23 @@ export default async function AccountPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-4">
-        <div className="bg-white shadow rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <h1 className="text-2xl font-semibold text-gray-900">Account</h1>
+        <Card>
+          <CardHeader>
+            <CardTitle>Account</CardTitle>
+          </CardHeader>
+          <CardContent>
             <div className="mt-4">
               <p className="text-gray-600">Welcome, {user.email}</p>
             </div>
             <div className="mt-6">
               <form action={signOutAction}>
-                <button
-                  type="submit"
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
+                <Button type="submit" variant="default">
                   Sign Out
-                </button>
+                </Button>
               </form>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
         <Settings userId={user.id} />
       </div>
     </div>

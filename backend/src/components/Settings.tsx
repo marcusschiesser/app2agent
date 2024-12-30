@@ -3,6 +3,17 @@
 import { updateSettingsAction } from "@/app/actions/settings";
 import { useActionState, useCallback, useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 type UserManual = {
   id: string;
@@ -38,94 +49,75 @@ export default function Settings({ userId }: { userId: string }) {
   }, [fetchManual, state]);
 
   return (
-    <div className="bg-white shadow rounded-lg">
-      <div className="px-4 py-5 sm:p-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Settings</h1>
-        <div className="mt-6">
-          <form action={formAction} className="space-y-6">
-            <input type="hidden" name="id" value={manual?.id || ""} />
-            <div>
-              <label
-                htmlFor="gemini_key"
-                className="block text-sm font-medium text-gray-700"
+    <Card>
+      <CardHeader>
+        <CardTitle>Application Settings</CardTitle>
+        <CardDescription>
+          Configure your application settings here.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form action={formAction} className="space-y-6">
+          <input type="hidden" name="id" value={manual?.id || ""} />
+
+          <div className="space-y-2">
+            <Label htmlFor="gemini_key">Gemini API Key</Label>
+            <Input
+              type="password"
+              name="gemini_key"
+              id="gemini_key"
+              defaultValue={manual?.gemini_key || ""}
+              placeholder="Enter your Gemini API Key"
+            />
+            <p className="text-sm text-muted-foreground">
+              Get your API key from{" "}
+              <a
+                href="https://aistudio.google.com/apikey"
+                className="text-primary hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                Gemini API Key
-              </label>
-              <input
-                type="password"
-                name="gemini_key"
-                id="gemini_key"
-                defaultValue={manual?.gemini_key || ""}
-                className="mt-1 block w-full rounded-md border px-3 py-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                placeholder="Enter your Gemini API Key"
-              />
-              <p className="mt-1 text-sm text-gray-500">
-                Get your API key from{" "}
-                <a
-                  href="https://aistudio.google.com/apikey"
-                  className="text-indigo-600 hover:text-indigo-500"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  https://aistudio.google.com/apikey
-                </a>
-              </p>
-            </div>
+                https://aistudio.google.com/apikey
+              </a>
+            </p>
+          </div>
 
-            <div>
-              <label
-                htmlFor="url"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Root Domain
-              </label>
-              <input
-                type="text"
-                name="url"
-                id="url"
-                defaultValue={manual?.url || ""}
-                onBlur={(e) => {
-                  // extract domain from URL when user leaves the input field
-                  const domain = extractDomain(e.target.value);
-                  e.target.value = domain;
-                }}
-                className="mt-1 block w-full rounded-md border px-3 py-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                placeholder="e.g., myapp.com"
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="url">Root Domain</Label>
+            <Input
+              type="text"
+              name="url"
+              id="url"
+              defaultValue={manual?.url || ""}
+              onBlur={(e) => {
+                const domain = extractDomain(e.target.value);
+                e.target.value = domain;
+              }}
+              placeholder="e.g., myapp.com"
+            />
+          </div>
 
-            <div>
-              <label
-                htmlFor="content"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Documentation
-              </label>
-              <textarea
-                name="content"
-                id="content"
-                rows={20}
-                defaultValue={manual?.content || ""}
-                className="mt-1 block w-full rounded-md border px-3 py-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                placeholder="Enter your documentation in Markdown format"
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="content">Documentation</Label>
+            <Textarea
+              name="content"
+              id="content"
+              rows={20}
+              defaultValue={manual?.content || ""}
+              placeholder="Enter your documentation in Markdown format"
+            />
+          </div>
 
-            <button
-              disabled={isPending}
-              type="submit"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isPending ? "Saving..." : "Save Settings"}
-            </button>
+          <Button type="submit" disabled={isPending}>
+            {isPending ? "Saving..." : "Save Settings"}
+          </Button>
 
-            {state.isError && (
-              <p className="mt-1 text-sm text-red-500">{state.message}</p>
-            )}
-          </form>
-        </div>
-      </div>
-    </div>
+          {state.isError && (
+            <p className="text-sm text-destructive">{state.message}</p>
+          )}
+        </form>
+      </CardContent>
+    </Card>
   );
 }
 
