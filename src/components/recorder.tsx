@@ -7,6 +7,9 @@ import { Feedback } from "./feedback";
 import { audioContext } from "@/lib/audio-context";
 import { createDialingTone } from "@/lib/dialing-tone";
 import { playConnectedTone } from "@/lib/connected-tone";
+import { welcomeToolConfig } from "@/lib/tools/welcome-tool";
+import { ToolCall } from "@/multimodal-live-types";
+import { toolManager } from "@/lib/tools/manager";
 
 export interface RecorderProps {
   onFinished?: () => void;
@@ -21,7 +24,8 @@ export function Recorder({ onFinished }: RecorderProps) {
     start: startCapture,
     stop: stopCapture,
   } = useChromeTabCapture();
-  const { client, connect, disconnect, connected } = useLiveAPIContext();
+  const { client, connect, disconnect, connected, setConfig, config } =
+    useLiveAPIContext();
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const renderCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -126,6 +130,24 @@ export function Recorder({ onFinished }: RecorderProps) {
       clearTimeout(timeoutId);
     };
   }, [connected, stream, client]);
+
+  useEffect(() => {
+    const handleToolCall = async (toolCall: ToolCall) => {
+      console.log("Tool Call Received:", toolCall);
+      try {
+        const response = await toolManager.handleToolCall(toolCall);
+        client.sendToolResponse(response);
+      } catch (error) {
+        console.error("Error handling tool call:", error);
+      }
+    };
+
+    client.on("toolcall", handleToolCall);
+
+    return () => {
+      client.off("toolcall", handleToolCall);
+    };
+  }, [client]);
 
   return (
     <div className="p-4 min-w-[200px]">

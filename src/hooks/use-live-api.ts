@@ -22,7 +22,7 @@ import {
 import { LiveConfig } from "../multimodal-live-types";
 import { AudioStreamer } from "../lib/audio-streamer";
 import { audioContext } from "../lib/audio-context";
-
+import { welcomeToolConfig } from "../lib/tools/welcome-tool";
 export type UseLiveAPIResults = {
   client: MultimodalLiveClient;
   setConfig: (config: LiveConfig) => void;
@@ -63,8 +63,12 @@ To edit the services that a user provides on LinkedIn, follow these steps:
 ###
 `,
         },
+        {
+          text: "Before calling a tool, always ask the user if they want to use the tool. Only call the tool if the user agrees.",
+        },
       ],
     },
+    tools: [welcomeToolConfig],
   });
   const [volume, setVolume] = useState(0);
 
