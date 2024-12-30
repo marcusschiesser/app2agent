@@ -14,26 +14,31 @@
  * limitations under the License.
  */
 
-import { createContext, FC, ReactNode, useContext } from "react";
+import { createContext, FC, ReactNode, useContext, useState } from "react";
+import { UserConfig } from "../hooks/use-config";
 import { useLiveAPI, UseLiveAPIResults } from "../hooks/use-live-api";
+import { LiveConfig } from "@/multimodal-live-types";
 
-const LiveAPIContext = createContext<UseLiveAPIResults | undefined>(undefined);
+type LiveAPIContextValue = {
+  liveAPI: UseLiveAPIResults | null;
+};
+
+const LiveAPIContext = createContext<LiveAPIContextValue | undefined>(
+  undefined,
+);
 
 export type LiveAPIProviderProps = {
   children: ReactNode;
   url?: string;
-  apiKey: string;
 };
 
-export const LiveAPIProvider: FC<LiveAPIProviderProps> = ({
-  url,
-  apiKey,
-  children,
-}) => {
-  const liveAPI = useLiveAPI({ url, apiKey });
-
+export const LiveAPIProvider: FC<
+  LiveAPIProviderProps & { config: UserConfig }
+> = ({ url, children, config }) => {
+  const { manual, apiKey } = config;
+  const api = useLiveAPI({ url, apiKey, config: getConfig(manual) });
   return (
-    <LiveAPIContext.Provider value={liveAPI}>
+    <LiveAPIContext.Provider value={{ liveAPI: api }}>
       {children}
     </LiveAPIContext.Provider>
   );
@@ -42,7 +47,22 @@ export const LiveAPIProvider: FC<LiveAPIProviderProps> = ({
 export const useLiveAPIContext = () => {
   const context = useContext(LiveAPIContext);
   if (!context) {
-    throw new Error("useLiveAPIContext must be used wihin a LiveAPIProvider");
+    throw new Error("useLiveAPIContext must be used within a LiveAPIProvider");
   }
   return context;
 };
+
+function getConfig(manual: string): LiveConfig {
+  const systemInstruction = {
+    parts: [
+      {
+        text: "You're IT support. If the user connects, welcome him/her with a suitable greeting.",
+      },
+      { text: `Use the following context if helpful:\n###\n${manual}\n###\n` },
+    ],
+  };
+  return {
+    model: "models/gemini-2.0-flash-exp",
+    systemInstruction,
+  };
+}

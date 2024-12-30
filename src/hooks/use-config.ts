@@ -1,33 +1,46 @@
 import { useEffect, useState } from "react";
+import { secureFetch } from "@/lib/secure-fetch";
 
 const backend = "https://app2agent.com/api";
 
-export function useManualLookup() {
+export type UserConfig = {
+  manual: string;
+  apiKey: string;
+  isLoading: boolean;
+};
+
+export function useConfig() {
   const [isLoading, setIsLoading] = useState(false);
   const [manual, setManual] = useState<string>("");
+  const [apiKey, setApiKey] = useState<string>("");
 
   useEffect(() => {
-    async function fetchManual() {
+    async function fetchConfig() {
       try {
         setIsLoading(true);
         const rootHostname = getCurrentDomain();
-        const response = await fetch(
-          `${backend}/manuals?url=${encodeURIComponent(rootHostname)}`,
+        const response = await secureFetch(
+          `${backend}/config?url=${encodeURIComponent(rootHostname)}`,
         );
-        const data = (await response.json()) as { content: string };
+        const data = (await response.json()) as {
+          content: string;
+          apiKey: string;
+        };
         setManual(data.content);
+        setApiKey(data.apiKey);
       } catch (error) {
-        console.error("Error fetching manual:", error);
+        console.error("Error fetching config:", error);
         setManual(""); // Reset to empty string on error
+        setApiKey(""); // Reset API key on error
       } finally {
         setIsLoading(false);
       }
     }
 
-    fetchManual();
+    fetchConfig();
   }, []);
 
-  return { manual, isLoading };
+  return { manual, apiKey, isLoading };
 }
 
 /**

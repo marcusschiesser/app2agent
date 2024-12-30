@@ -21,8 +21,9 @@ export function Recorder({ onFinished }: RecorderProps) {
     start: startCapture,
     stop: stopCapture,
   } = useChromeTabCapture();
-  const { client, connect, disconnect, connected, isManualLoading } =
-    useLiveAPIContext();
+  const { liveAPI } = useLiveAPIContext();
+  const connected = liveAPI?.connected ?? false;
+  const client = liveAPI?.client;
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const renderCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -76,15 +77,20 @@ export function Recorder({ onFinished }: RecorderProps) {
   }, [isEnabled, connected]);
 
   const handleToggleEnabled = async (checked: boolean) => {
+    if (!liveAPI) {
+      console.error("LiveAPI is not ready");
+      return;
+    }
+
     if (checked) {
       setIsEnabled(true);
       await startCapture();
-      connect();
+      liveAPI.connect();
     } else {
       setIsEnabled(false);
       setShowFeedback(true);
       stopCapture();
-      disconnect();
+      liveAPI.disconnect();
     }
   };
 
@@ -99,7 +105,7 @@ export function Recorder({ onFinished }: RecorderProps) {
       const video = videoRef.current;
       const canvas = renderCanvasRef.current;
 
-      if (!video || !canvas) {
+      if (!video || !canvas || !client) {
         return;
       }
 
@@ -134,7 +140,6 @@ export function Recorder({ onFinished }: RecorderProps) {
         isEnabled={isEnabled}
         onToggle={handleToggleEnabled}
         volume={inVolume}
-        isManualLoading={isManualLoading}
       />
       {showFeedback && !isEnabled && (
         <Feedback

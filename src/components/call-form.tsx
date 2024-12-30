@@ -1,26 +1,17 @@
+import { Header } from "./header";
+
 interface CallFormProps {
   isEnabled: boolean;
   onToggle: (checked: boolean) => void;
   volume: number;
-  isManualLoading: boolean;
 }
 
-export function CallForm({
-  isEnabled,
-  onToggle,
-  volume,
-  isManualLoading,
-}: CallFormProps) {
+export function CallForm({ isEnabled, onToggle, volume }: CallFormProps) {
   const volumeSize = Math.max(8, Math.min(volume * 400, 24));
-
-  console.log("isManualLoading", isManualLoading);
 
   return (
     <div className="p-6">
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-1">IT-Support</h1>
-        <p className="text-sm text-gray-600">by app2agent</p>
-      </div>
+      <Header />
 
       <div className="flex flex-col items-center">
         <div className="w-16 h-16 mb-4 rounded-full flex items-center justify-center relative">
@@ -42,7 +33,6 @@ export function CallForm({
           )}
           {!isEnabled ? (
             <button
-              disabled={isManualLoading}
               onClick={() => onToggle(true)}
               className="relative z-10 flex items-center justify-center w-full h-full bg-green-500 hover:bg-green-600 text-white rounded-full transition-all duration-200 transform hover:scale-105 disabled:bg-slate-500 disabled:hover:bg-slate-500"
             >
@@ -57,7 +47,6 @@ export function CallForm({
             </button>
           ) : (
             <button
-              disabled={isManualLoading}
               onClick={() => onToggle(false)}
               className="relative z-10 flex items-center justify-center w-full h-full bg-red-500 hover:bg-red-600 text-white rounded-full transition-all duration-200 transform hover:scale-105 disabled:bg-slate-500 disabled:hover:bg-slate-500"
             >
@@ -77,11 +66,7 @@ export function CallForm({
           )}
         </div>
         <span className="text-sm text-gray-500">
-          {isManualLoading
-            ? "Loading manual..."
-            : isEnabled
-              ? "End Call"
-              : "Start Call"}
+          {isEnabled ? "End Call" : "Start Call"}
         </span>
       </div>
     </div>

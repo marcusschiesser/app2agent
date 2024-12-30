@@ -83,7 +83,7 @@
 
 @layer base {
   .form2content-styles {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground rounded-lg;
   }
   .form2content-styles * {
     @apply border-border;

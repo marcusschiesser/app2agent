@@ -22,50 +22,31 @@ import {
 import { LiveConfig } from "../multimodal-live-types";
 import { AudioStreamer } from "../lib/audio-streamer";
 import { audioContext } from "../lib/audio-context";
-import { useManualLookup } from "./use-manual-lookup";
 
 export type UseLiveAPIResults = {
   client: MultimodalLiveClient;
-  setConfig: (config: LiveConfig) => void;
-  config: LiveConfig;
   connected: boolean;
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
   volume: number;
-  isManualLoading: boolean;
 };
 
-const DEFAULT_INSTRUCTION =
-  "You're IT support. If the user connects, welcome him/her with a suitable greeting.";
+type UseLiveAPIProps = MultimodalLiveAPIClientConnection & {
+  config: LiveConfig;
+};
 
 export function useLiveAPI({
   url,
   apiKey,
-}: MultimodalLiveAPIClientConnection): UseLiveAPIResults {
+  config,
+}: UseLiveAPIProps): UseLiveAPIResults {
   const client = useMemo(
     () => new MultimodalLiveClient({ url, apiKey }),
     [url, apiKey],
   );
   const audioStreamerRef = useRef<AudioStreamer | null>(null);
-  const { manual, isLoading: isManualLoading } = useManualLookup();
-
   const [connected, setConnected] = useState(false);
-  const [config, setConfig] = useState<LiveConfig>({
-    model: "models/gemini-2.0-flash-exp",
-    systemInstruction: { parts: [{ text: DEFAULT_INSTRUCTION }] },
-  });
   const [volume, setVolume] = useState(0);
-
-  useEffect(() => {
-    if (manual) {
-      const MANUAL_INSTRUCTION = `Use the following context if helpful:\n###\n${manual}\n###\n`;
-      const parts = [
-        { text: DEFAULT_INSTRUCTION },
-        { text: MANUAL_INSTRUCTION },
-      ];
-      setConfig((prev) => ({ ...prev, systemInstruction: { parts } }));
-    }
-  }, [manual]);
 
   // register audio for streaming server -> speakers
   useEffect(() => {
@@ -123,12 +104,9 @@ export function useLiveAPI({
 
   return {
     client,
-    config,
-    setConfig,
     connected,
     connect,
     disconnect,
     volume,
-    isManualLoading,
   };
 }

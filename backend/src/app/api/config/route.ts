@@ -8,7 +8,8 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const url = searchParams.get("url");
+    const url = searchParams.get("url"); // domain eg: linkedin.com
+    const requestOrigin = request.headers.get("origin"); // origin eg: https://www.linkedin.com
 
     if (!url) {
       return NextResponse.json(
@@ -17,9 +18,14 @@ export async function GET(request: Request) {
       );
     }
 
+    if (requestOrigin && !requestOrigin.includes(url)) {
+      // Don't allow to retrieve the configuration for another URL
+      return NextResponse.json({ error: "No permission" }, { status: 403 });
+    }
+
     const { data, error } = await supabase
       .from("user_manuals")
-      .select("content")
+      .select("content,gemini_key")
       .eq("url", url)
       .single();
 
@@ -37,7 +43,10 @@ export async function GET(request: Request) {
       );
     }
 
-    return NextResponse.json({ content: data.content });
+    return NextResponse.json({
+      content: data.content,
+      apiKey: data.gemini_key,
+    });
   } catch (error) {
     console.error("Error fetching markdown file:", error);
     return NextResponse.json(
