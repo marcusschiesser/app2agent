@@ -2,15 +2,9 @@ interface CallFormProps {
   isEnabled: boolean;
   onToggle: (checked: boolean) => void;
   volume: number;
-  isConfigLoading: boolean;
 }
 
-export function CallForm({
-  isEnabled,
-  onToggle,
-  volume,
-  isConfigLoading,
-}: CallFormProps) {
+export function CallForm({ isEnabled, onToggle, volume }: CallFormProps) {
   const volumeSize = Math.max(8, Math.min(volume * 400, 24));
 
   return (
@@ -40,7 +34,6 @@ export function CallForm({
           )}
           {!isEnabled ? (
             <button
-              disabled={isConfigLoading}
               onClick={() => onToggle(true)}
               className="relative z-10 flex items-center justify-center w-full h-full bg-green-500 hover:bg-green-600 text-white rounded-full transition-all duration-200 transform hover:scale-105 disabled:bg-slate-500 disabled:hover:bg-slate-500"
             >
@@ -55,7 +48,6 @@ export function CallForm({
             </button>
           ) : (
             <button
-              disabled={isConfigLoading}
               onClick={() => onToggle(false)}
               className="relative z-10 flex items-center justify-center w-full h-full bg-red-500 hover:bg-red-600 text-white rounded-full transition-all duration-200 transform hover:scale-105 disabled:bg-slate-500 disabled:hover:bg-slate-500"
             >
@@ -75,11 +67,7 @@ export function CallForm({
           )}
         </div>
         <span className="text-sm text-gray-500">
-          {isConfigLoading
-            ? "Loading config..."
-            : isEnabled
-              ? "End Call"
-              : "Start Call"}
+          {isEnabled ? "End Call" : "Start Call"}
         </span>
       </div>
     </div>

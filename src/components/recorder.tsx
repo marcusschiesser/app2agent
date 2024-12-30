@@ -140,7 +140,6 @@ export function Recorder({ onFinished }: RecorderProps) {
         isEnabled={isEnabled}
         onToggle={handleToggleEnabled}
         volume={inVolume}
-        isConfigLoading={!liveAPI}
       />
       {showFeedback && !isEnabled && (
         <Feedback
