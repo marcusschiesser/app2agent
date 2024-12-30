@@ -3,12 +3,7 @@ import { redirect } from "next/navigation";
 import { signOutAction } from "../actions/auth";
 import Settings from "@/components/Settings";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function AccountPage() {
   const supabase = await createClient();

@@ -52,12 +52,14 @@ export default function Settings({ userId }: { userId: string }) {
     <Card>
       <CardHeader>
         <CardTitle>Application Settings</CardTitle>
-        <CardDescription>Configure your application settings here.</CardDescription>
+        <CardDescription>
+          Configure your application settings here.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-6">
           <input type="hidden" name="id" value={manual?.id || ""} />
-          
+
           <div className="space-y-2">
             <Label htmlFor="gemini_key">Gemini API Key</Label>
             <Input
