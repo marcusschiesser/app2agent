@@ -25,8 +25,6 @@ import { audioContext } from "../lib/audio-context";
 
 export type UseLiveAPIResults = {
   client: MultimodalLiveClient;
-  setConfig: (config: LiveConfig) => void;
-  config: LiveConfig;
   connected: boolean;
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
@@ -34,25 +32,20 @@ export type UseLiveAPIResults = {
 };
 
 type UseLiveAPIProps = MultimodalLiveAPIClientConnection & {
-  manual: string;
+  config: LiveConfig;
 };
 
 export function useLiveAPI({
   url,
   apiKey,
-  manual,
+  config,
 }: UseLiveAPIProps): UseLiveAPIResults {
   const client = useMemo(
     () => new MultimodalLiveClient({ url, apiKey }),
     [url, apiKey],
   );
   const audioStreamerRef = useRef<AudioStreamer | null>(null);
-
   const [connected, setConnected] = useState(false);
-  const [config, setConfig] = useState<LiveConfig>({
-    model: "models/gemini-2.0-flash-exp",
-    systemInstruction: getInstruction(manual),
-  });
   const [volume, setVolume] = useState(0);
 
   // register audio for streaming server -> speakers
@@ -111,22 +104,9 @@ export function useLiveAPI({
 
   return {
     client,
-    config,
-    setConfig,
     connected,
     connect,
     disconnect,
     volume,
-  };
-}
-
-function getInstruction(manual: string) {
-  return {
-    parts: [
-      {
-        text: "You're IT support. If the user connects, welcome him/her with a suitable greeting.",
-      },
-      { text: `Use the following context if helpful:\n###\n${manual}\n###\n` },
-    ],
   };
 }
