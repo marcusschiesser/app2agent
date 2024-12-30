@@ -6,7 +6,7 @@ import { getModalRoot, Modal } from "@/components/modal";
 import { Recorder } from "@/components/recorder";
 import { LiveAPIProvider } from "@/contexts/LiveAPIContext";
 import { useConfig } from "@/hooks/use-config";
-import { Loader2 } from "lucide-react";
+import { Loading } from "@/components/loading";
 
 function RecorderModalApp() {
   const config = useConfig();
@@ -37,16 +37,15 @@ function RecorderModalApp() {
   return (
     <Modal onClose={handleClose}>
       {isLoading ? (
-        <div className="p-4 min-w-[200px] h-[180px] flex flex-col justify-center items-center gap-2">
-          <Loader2 className="animate-spin size-10" />
-          <div className="text-slate-500">Loading configuration...</div>
+        <div className="p-4 min-w-[200px] h-[180px] flex flex-col justify-center">
+          <Loading text="Loading configuration" />
         </div>
       ) : hasSetup ? (
         <LiveAPIProvider config={config} url={uri}>
           <Recorder onFinished={handleClose} />
         </LiveAPIProvider>
       ) : (
-        <div className="p-4 min-w-[200px] h-[180px] flex flex-col justify-center items-center gap-2">
+        <div className="p-4 min-w-[200px] h-[180px] flex flex-col justify-center">
           <div className="text-slate-500">No manual or API key found</div>
         </div>
       )}
