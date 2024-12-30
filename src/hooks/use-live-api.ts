@@ -33,11 +33,14 @@ export type UseLiveAPIResults = {
   volume: number;
 };
 
-type UseLiveAPIProps = MultimodalLiveAPIClientConnection;
+type UseLiveAPIProps = MultimodalLiveAPIClientConnection & {
+  manual: string;
+};
 
 export function useLiveAPI({
   url,
   apiKey,
+  manual,
 }: UseLiveAPIProps): UseLiveAPIResults {
   const client = useMemo(
     () => new MultimodalLiveClient({ url, apiKey }),
@@ -48,6 +51,7 @@ export function useLiveAPI({
   const [connected, setConnected] = useState(false);
   const [config, setConfig] = useState<LiveConfig>({
     model: "models/gemini-2.0-flash-exp",
+    systemInstruction: getInstruction(manual),
   });
   const [volume, setVolume] = useState(0);
 
@@ -113,5 +117,16 @@ export function useLiveAPI({
     connect,
     disconnect,
     volume,
+  };
+}
+
+function getInstruction(manual: string) {
+  return {
+    parts: [
+      {
+        text: "You're IT support. If the user connects, welcome him/her with a suitable greeting.",
+      },
+      { text: `Use the following context if helpful:\n###\n${manual}\n###\n` },
+    ],
   };
 }

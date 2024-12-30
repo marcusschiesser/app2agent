@@ -3,6 +3,12 @@ import { secureFetch } from "@/lib/secure-fetch";
 
 const backend = "https://app2agent.com/api";
 
+export type UserConfig = {
+  manual: string;
+  apiKey: string;
+  isLoading: boolean;
+};
+
 export function useConfig() {
   const [isLoading, setIsLoading] = useState(false);
   const [manual, setManual] = useState<string>("");

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { createContext, FC, ReactNode, useContext, useMemo } from "react";
+import { createContext, FC, ReactNode, useContext } from "react";
+import { UserConfig } from "../hooks/use-config";
 import { useLiveAPI, UseLiveAPIResults } from "../hooks/use-live-api";
-import { useConfig } from "../hooks/use-config";
 
 type LiveAPIContextValue = {
   liveAPI: UseLiveAPIResults | null;
@@ -31,36 +31,13 @@ export type LiveAPIProviderProps = {
   url?: string;
 };
 
-const DEFAULT_INSTRUCTION =
-  "You're IT support. If the user connects, welcome him/her with a suitable greeting.";
-
-export const LiveAPIProvider: FC<LiveAPIProviderProps> = ({
-  url,
-  children,
-}) => {
-  const { manual, apiKey, isLoading } = useConfig();
-
-  const api = useMemo(() => {
-    if (isLoading || !apiKey || !manual) return null;
-    const api = useLiveAPI({
-      url,
-      apiKey,
-    });
-    const MANUAL_INSTRUCTION = `Use the following context if helpful:\n###\n${manual}\n###\n`;
-    const parts = [{ text: DEFAULT_INSTRUCTION }, { text: MANUAL_INSTRUCTION }];
-    api.setConfig({
-      model: "models/gemini-2.0-flash-exp",
-      systemInstruction: { parts },
-    });
-    return api;
-  }, [manual, isLoading, apiKey]);
-
-  const contextValue: LiveAPIContextValue = {
-    liveAPI: api,
-  };
-
+export const LiveAPIProvider: FC<
+  LiveAPIProviderProps & { config: UserConfig }
+> = ({ url, children, config }) => {
+  const { manual, apiKey } = config;
+  const api = useLiveAPI({ url, apiKey, manual });
   return (
-    <LiveAPIContext.Provider value={contextValue}>
+    <LiveAPIContext.Provider value={{ liveAPI: api }}>
       {children}
     </LiveAPIContext.Provider>
   );

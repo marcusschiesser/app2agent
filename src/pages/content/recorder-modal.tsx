@@ -5,8 +5,11 @@ import React, { useEffect, useState } from "react";
 import { getModalRoot, Modal } from "@/components/modal";
 import { Recorder } from "@/components/recorder";
 import { LiveAPIProvider } from "@/contexts/LiveAPIContext";
+import { useConfig } from "@/hooks/use-config";
+import { Loader2 } from "lucide-react";
 
 function RecorderModalApp() {
+  const config = useConfig();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -28,9 +31,25 @@ function RecorderModalApp() {
 
   if (!isVisible) return null;
 
+  const isLoading = config.isLoading;
+  const hasSetup = config.manual && config.apiKey;
+
   return (
     <Modal onClose={handleClose}>
-      <Recorder onFinished={handleClose} />
+      {isLoading ? (
+        <div className="p-4 min-w-[200px] h-[180px] flex flex-col justify-center items-center gap-2">
+          <Loader2 className="animate-spin size-10" />
+          <div className="text-slate-500">Loading configuration...</div>
+        </div>
+      ) : hasSetup ? (
+        <LiveAPIProvider config={config} url={uri}>
+          <Recorder onFinished={handleClose} />
+        </LiveAPIProvider>
+      ) : (
+        <div className="p-4 min-w-[200px] h-[180px] flex flex-col justify-center items-center gap-2">
+          <div className="text-slate-500">No manual or API key found</div>
+        </div>
+      )}
     </Modal>
   );
 }
@@ -42,10 +61,7 @@ const uri = `wss://${host}/ws/google.ai.generativelanguage.v1alpha.GenerativeSer
 getModalRoot().then((root) => {
   root.render(
     <React.StrictMode>
-      <LiveAPIProvider url={uri}>
-        {/* TODO pass the api key from app2agent: apiKey={__GEMINI_API_KEY__}> */}
-        <RecorderModalApp />
-      </LiveAPIProvider>
+      <RecorderModalApp />
     </React.StrictMode>,
   );
 });
