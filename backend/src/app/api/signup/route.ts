@@ -7,7 +7,8 @@ import { generateNotificationEmail } from "@/emails/notification";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY!;
 const resend = new Resend(process.env.RESEND_API_KEY);
-const ADMIN_EMAIL = "marcus.schiesser@gmail.com";
+const ADMIN_EMAIL = "marcus@app2agent.com";
+const ADMIN_NAME = "Marcus Schiesser";
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
@@ -46,7 +47,7 @@ export async function POST(request: Request) {
     // Send confirmation email to user
     const confirmationEmail = generateConfirmationEmail(email, name);
     await resend.emails.send({
-      from: "Marcus Schiesser <marcus.schiesser@gmail.com>",
+      from: `${ADMIN_NAME} <${ADMIN_EMAIL}>`,
       to: email,
       subject: confirmationEmail.subject,
       html: confirmationEmail.html,
