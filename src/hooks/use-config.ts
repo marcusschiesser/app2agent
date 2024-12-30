@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { secureFetch } from "@/lib/secure-fetch";
 
 const backend = "https://app2agent.com/api";
 
@@ -8,12 +9,12 @@ export function useConfig() {
   const [apiKey, setApiKey] = useState<string>("");
 
   useEffect(() => {
-    async function fetchManual() {
+    async function fetchConfig() {
       try {
         setIsLoading(true);
         const rootHostname = getCurrentDomain();
-        const response = await fetch(
-          `${backend}/manuals?url=${encodeURIComponent(rootHostname)}`,
+        const response = await secureFetch(
+          `${backend}/config?url=${encodeURIComponent(rootHostname)}`,
         );
         const data = (await response.json()) as {
           content: string;
@@ -22,7 +23,7 @@ export function useConfig() {
         setManual(data.content);
         setApiKey(data.apiKey);
       } catch (error) {
-        console.error("Error fetching manual:", error);
+        console.error("Error fetching config:", error);
         setManual(""); // Reset to empty string on error
         setApiKey(""); // Reset API key on error
       } finally {
@@ -30,7 +31,7 @@ export function useConfig() {
       }
     }
 
-    fetchManual();
+    fetchConfig();
   }, []);
 
   return { manual, apiKey, isLoading };

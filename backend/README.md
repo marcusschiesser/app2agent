@@ -27,6 +27,25 @@ To apply migrations to your local DB, run:
 supabase migration up
 ```
 
+## Chrome Extension ID Configuration
+
+To secure the communication between the Chrome extension and the backend, you need to configure the `ALLOWED_EXTENSION_IDS` environment variable. This is a security measure that ensures only authorized extensions can access the backend API.
+
+### Getting the Extension ID
+
+The extension ID can be found in two ways:
+
+1. During development: The ID is automatically logged to the console when the extension makes API calls. Look for the log message "Chrome extension ID:" in your browser's developer tools console.
+2. In production: The ID is assigned by the Chrome Web Store when you publish your extension.
+
+### Setting up ALLOWED_EXTENSION_IDS
+
+Add the following to your `.env` file:
+
+```bash
+ALLOWED_EXTENSION_IDS=your_extension_id_here
+```
+
 ## Getting Started
 
 First, install the dependencies:
