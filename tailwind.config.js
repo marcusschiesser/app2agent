@@ -1,3 +1,8 @@
+const {
+  scopedPreflightStyles,
+  isolateInsideOfContainer,
+} = require("tailwindcss-scoped-preflight");
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -76,5 +81,13 @@ module.exports = {
       },
     },
   },
-  plugins: [require("@tailwindcss/typography"), require("tailwindcss-animate")],
+  plugins: [
+    require("@tailwindcss/typography"),
+    require("tailwindcss-animate"),
+    scopedPreflightStyles({
+      // protect page elements from Tailwind's default preflight styles
+      // while allowing those styles to be applied to extension modal
+      isolationStrategy: isolateInsideOfContainer(".form2content-styles"),
+    }),
+  ],
 };
