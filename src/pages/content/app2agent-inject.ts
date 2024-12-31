@@ -1,28 +1,28 @@
 window.addEventListener("message", async (event) => {
   if (event.data?.type === "A2A_CONSOLE_NAVIGATE") {
     try {
-      console.log("Creating action plan for ", event.data.actionDescription);
+      console.log("Getting dom selector for ", event.data.actionDescription);
       const start = performance.now();
       const dom = document.documentElement.outerHTML;
       const { success, result } = await chrome.runtime.sendMessage({
-        type: "A2A_GET_ACTION_PLAN",
+        type: "A2A_GET_DOM_SELECTOR",
         dom,
         actionDescription: event.data.actionDescription,
       });
       if (!success) {
-        console.error("Failed to get action plan", result);
+        console.error("Failed to get dom selector", result);
         return;
       }
       const elapsedTime = performance.now() - start;
-      console.log("Took", elapsedTime, "ms to create action plan");
+      console.log("Took", elapsedTime, "ms to get dom selector");
       console.log("Action:", JSON.stringify(result, null, 2));
 
       console.log("Triggering action");
       // Send message to navigation helper
       window.postMessage(
         {
-          type: "A2A_EXECUTE_PLAN",
-          action: result,
+          type: "A2A_EXECUTE_ACTION",
+          domSelector: result,
         },
         window.location.origin,
       );
@@ -31,7 +31,7 @@ window.addEventListener("message", async (event) => {
     }
   }
 
-  if (event.data?.type === "A2A_EXECUTE_PLAN_RESULT") {
+  if (event.data?.type === "A2A_EXECUTE_ACTION_RESULT") {
     console.log("[app2agent] Received execute plan result:", event.data);
     if (event.data.success) {
       console.log("[app2agent] Navigation successful");

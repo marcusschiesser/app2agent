@@ -53,33 +53,23 @@ export function useLiveAPI({
           text: "You're IT support. If the user connects, welcome him/her with a suitable greeting.",
         },
         {
-          text: `Use the following context if helpful: 
-###
-You will need to create a navigation plan to accomplish the user's request.
-Example:
-User: I want to complain about an issue with my account.
-Plan:
-- Go to the Business Home Page
-- Click Contact Us
-- Enter the user's email address and description of the issue
-- Click Send
-
-Then you will start executing the plan by using the tools provided, 
-ex: 
-- searching for the URL of the page that we need to navigate to.
-- get the xpath of the element that we need to click...
-###
-`,
-        },
-        {
           text: `You can use the following tools to help you with your task:
 ${toolManager
   .getTools()
   .map(
     (tool) =>
-      `- ${tool.functionDeclarations[0].name}: ${tool.functionDeclarations[0].description}`,
+      `- ${tool.functionDeclarations?.[0]?.name}: ${tool.functionDeclarations?.[0]?.description}`,
   )
   .join("\n")}`,
+        },
+        {
+          text: `Here is your working flow:
+1. Call the createNavigationPlanTool to get the plan and tell user to wait for a moment, don't need to get there approval for plan creation.
+2. Once you get the plan, notify the user and ask for approval.
+3. Call the executeNavigationPlanTool to execute the plan.
+4. If the plan is not successful, checking the UI to see the status, collect the error from the previous step then call the createNavigationPlanTool again to get a new plan. 
+Never making up the plan, just call the tool to get the plan.
+5. Repeat steps 3 and 4 until the plan is successful.`,
         },
       ],
     },

@@ -1,4 +1,5 @@
 import { createActionPlan } from "./dom-selector";
+import { createNavigationPlan } from "./planner";
 import {
   handleTabCapture,
   requestAudioPermissions,
@@ -16,7 +17,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       handleTabCapture(sender, sendResponse);
       return true;
 
-    case "A2A_GET_ACTION_PLAN":
+    // Event for generating a navigation plan for a user's request
+    case "A2A_CREATE_NAVIGATION_PLAN":
+      createNavigationPlan(
+        message.userRequest,
+        message.currentUrl,
+        message.previousExecution,
+      )
+        .then((plan) => sendResponse({ success: true, result: plan }))
+        .catch((error) =>
+          sendResponse({ success: false, result: error.message }),
+        );
+      return true;
+
+    // Event for getting a dom selector for a specific action
+    case "A2A_GET_DOM_SELECTOR":
       createActionPlan(message.dom, message.actionDescription)
         .then((plan) => sendResponse({ success: true, result: plan }))
         .catch((error) =>
@@ -24,7 +39,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         );
       return true;
 
-    case "A2A_EXECUTE_PLAN":
+    // Event for executing an action
+    case "A2A_EXECUTE_ACTION":
       if (!sender.tab?.id) {
         sendResponse({ success: false, error: "No tab ID found" });
         return true;

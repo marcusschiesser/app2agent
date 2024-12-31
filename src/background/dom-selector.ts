@@ -20,7 +20,9 @@ export async function createActionPlan(
   dom: string,
   actionDescription: string,
 ): Promise<NavigationAction> {
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+  const model = genAI.getGenerativeModel({
+    model: "models/gemini-2.0-flash-exp",
+  });
 
   const prompt = `Given this DOM structure:
 \`\`\`html
@@ -28,10 +30,10 @@ ${dom}
 \`\`\`
 
 Analyze this action description: "${actionDescription}"
-Find the most appropriate xpath selector for this action.
+Find the most appropriate clickable xpath selector for a click action.
 Return ONLY a JSON object in this exact format (no other text):
 {
-  "type": "click" | "input" | "scroll" | "url",
+  "type": "click",
   "selector": { "type": "xpath", "value": "xpath selector value" },
   "description": "${actionDescription}",
   "value": "optional value for input/url actions"

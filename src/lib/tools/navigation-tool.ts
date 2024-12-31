@@ -6,38 +6,51 @@ interface ExecutionResult {
   error?: string;
 }
 
+function cleanDOM(): string {
+  // Get the body element
+  const body = document.body;
+
+  // Create a deep clone of body
+  const clone = body.cloneNode(true) as HTMLElement;
+
+  // Remove noisy elements
+  const noisyElements = clone.querySelectorAll(
+    "script, style, link, noscript, code, iframe, img, svg",
+  );
+  noisyElements.forEach((el) => el.remove());
+
+  return clone.innerHTML;
+}
+
 export const navigateTool = async ({
   actionDescription,
 }: {
   actionDescription: string;
 }) => {
   try {
-    // Get current DOM
-    const dom = document.documentElement.outerHTML;
+    // Get cleaned DOM
+    const dom = cleanDOM();
 
     // Use our existing system to create action plan
-    console.log("Sending message to get action plan");
+    console.log("Getting dom selector for action:", actionDescription);
     const { success, result } = await chrome.runtime.sendMessage({
-      type: "A2A_GET_ACTION_PLAN",
+      type: "A2A_GET_DOM_SELECTOR",
       dom,
       actionDescription,
     });
 
-    console.log("Received action plan:", result);
     if (!success) {
-      console.error("Failed to create action plan:", result);
+      console.error("Failed to create dom selector:", result);
       return { success: false, error: result };
     }
-
-    console.log("Sending message to execute action plan");
-
+    console.log("Executing action:", result);
     // Create a promise that resolves when the execution is complete
     const executionResult = await new Promise<ExecutionResult>((resolve) => {
       // Listen for the execution result
       const handleExecutionResult = (event: MessageEvent) => {
         if (
           event.origin === window.location.origin &&
-          event.data?.type === "A2A_EXECUTE_PLAN_RESULT"
+          event.data?.type === "A2A_EXECUTE_ACTION_RESULT"
         ) {
           window.removeEventListener("message", handleExecutionResult);
           resolve(event.data as ExecutionResult);
@@ -49,7 +62,7 @@ export const navigateTool = async ({
       // Send the execution message
       window.postMessage(
         {
-          type: "A2A_EXECUTE_PLAN",
+          type: "A2A_EXECUTE_ACTION",
           action: result,
         },
         window.location.origin,
@@ -57,7 +70,6 @@ export const navigateTool = async ({
     });
 
     // Check the execution result
-    console.log("Execution result:", executionResult);
     if (!executionResult.success) {
       return {
         success: false,
@@ -79,8 +91,7 @@ export const navigationToolConfig: Tool = {
   functionDeclarations: [
     {
       name: "navigateTool",
-      description:
-        "Navigate or perform actions on the page. It'd take a while for doing an action",
+      description: "Navigate or perform actions on the page.",
       parameters: {
         type: SchemaType.OBJECT,
         properties: {

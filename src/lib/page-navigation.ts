@@ -1,12 +1,12 @@
 import { EventEmitter } from "eventemitter3";
 
 export interface ElementSelector {
-  type: "id" | "text" | "aria-label" | "role" | "class" | "xpath";
+  type: "xpath";
   value: string;
 }
 
 export interface NavigationAction {
-  type: "click" | "input" | "scroll" | "url";
+  type: "click";
   selector: ElementSelector;
   value?: string;
   description: string;
@@ -22,31 +22,13 @@ export interface NavigationPlan {
 }
 
 class ContentNavigationHelper extends EventEmitter {
-  private cleanDOM(element: Element): Element {
-    const clone = element.cloneNode(true) as Element;
-
-    // Remove script tags, style tags, and comments
-    const removeNodes = clone.querySelectorAll("script, style, link, noscript");
-    removeNodes.forEach((node) => node.remove());
-
-    // Remove hidden elements
-    const hiddenElements = clone.querySelectorAll(
-      '[hidden], [style*="display: none"], [style*="visibility: hidden"]',
-    );
-    hiddenElements.forEach((node) => node.remove());
-
-    return clone;
-  }
-
   private async findElement(
     selector: ElementSelector,
   ): Promise<Element | null> {
-    const cleanedDoc = this.cleanDOM(document.documentElement);
-
     try {
       const xpathResult = document.evaluate(
         selector.value,
-        cleanedDoc,
+        document,
         null,
         XPathResult.FIRST_ORDERED_NODE_TYPE,
         null,
@@ -75,7 +57,10 @@ class ContentNavigationHelper extends EventEmitter {
     const element = await this.findElement(action.selector);
     if (!element) {
       console.error(`Element not found for action:`, action);
-      return { success: false, error: "Element not found. DOM: " + document };
+      return {
+        success: false,
+        error: "Element not found. DOM: " + JSON.stringify(document),
+      };
     }
 
     try {
@@ -84,19 +69,22 @@ class ContentNavigationHelper extends EventEmitter {
           (element as HTMLElement).click();
           break;
 
-        case "input":
-          if (action.value && element instanceof HTMLInputElement) {
-            element.value = action.value;
-            element.dispatchEvent(new Event("input", { bubbles: true }));
-          }
-          break;
+        // case "input":
+        //   if (action.value && element instanceof HTMLInputElement) {
+        //     element.value = action.value;
+        //     element.dispatchEvent(new Event("input", { bubbles: true }));
+        //   }
+        //   break;
 
-        case "scroll":
-          element.scrollIntoView({ behavior: "smooth", block: "center" });
-          break;
+        // case "scroll":
+        //   element.scrollIntoView({ behavior: "smooth", block: "center" });
+        //   break;
 
-        case "url":
-          window.location.href = action.value || "";
+        // case "url":
+        //   window.location.href = action.value || "";
+        //   break;
+        default:
+          console.error("Unsupported action type:", action.type);
           break;
       }
 

@@ -1,25 +1,31 @@
-import { Tool } from "@google/generative-ai";
+import { FunctionDeclarationsTool, Tool } from "@google/generative-ai";
 import {
   ToolCall,
   ToolResponse,
   LiveFunctionResponse,
 } from "@/multimodal-live-types";
-import {
-  siteMapRetrieverToolConfig,
-  siteMapRetrieverTool,
-} from "./retriever-tool";
 import { navigationToolConfig, navigateTool } from "./navigation-tool";
+import {
+  createNavigationPlanToolConfig,
+  createNavigationPlanTool,
+  executeNavigationPlanToolConfig,
+  executeNavigationPlanTool,
+} from "./planner-tool";
 
 // Map of tool implementations
 type ToolImplementation = (args: any) => Promise<any>;
 
 export class ToolManager {
   private toolMap: Map<string, ToolImplementation> = new Map();
-  private tools: Tool[] = [];
+  private tools: FunctionDeclarationsTool[] = [];
 
   constructor() {
     // Register available tools
-    // this.registerTool(siteMapRetrieverToolConfig, siteMapRetrieverTool);
+    this.registerTool(createNavigationPlanToolConfig, createNavigationPlanTool);
+    this.registerTool(
+      executeNavigationPlanToolConfig,
+      executeNavigationPlanTool,
+    );
     this.registerTool(navigationToolConfig, navigateTool);
   }
 
@@ -36,7 +42,7 @@ export class ToolManager {
   }
 
   // Get all tool configs for LLM
-  public getTools(): Tool[] {
+  public getTools(): FunctionDeclarationsTool[] {
     return this.tools;
   }
 
@@ -44,16 +50,26 @@ export class ToolManager {
   public async handleToolCall(toolCall: ToolCall): Promise<ToolResponse> {
     const functionResponses: LiveFunctionResponse[] = await Promise.all(
       toolCall.functionCalls.map(async (call) => {
-        const implementation = this.toolMap.get(call.name);
-        if (!implementation) {
-          throw new Error(`No implementation found for tool: ${call.name}`);
+        try {
+          const implementation = this.toolMap.get(call.name);
+          if (!implementation) {
+            throw new Error(`No implementation found for tool: ${call.name}`);
+          }
+          const result = await implementation(call.args);
+          console.log("Tool result:", JSON.stringify(result, null, 2));
+          return {
+            response: result,
+            id: call.id,
+          };
+        } catch (error) {
+          console.error("Error handling tool call:", error);
+          return {
+            response: {
+              text: "Error: " + JSON.stringify(error),
+            },
+            id: call.id,
+          };
         }
-
-        const result = await implementation(call.args);
-        return {
-          response: result,
-          id: call.id,
-        };
       }),
     );
 

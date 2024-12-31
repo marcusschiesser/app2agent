@@ -7,7 +7,6 @@ import { Feedback } from "./feedback";
 import { audioContext } from "@/lib/audio-context";
 import { createDialingTone } from "@/lib/dialing-tone";
 import { playConnectedTone } from "@/lib/connected-tone";
-import { welcomeToolConfig } from "@/lib/tools/welcome-tool";
 import { ToolCall } from "@/multimodal-live-types";
 import { toolManager } from "@/lib/tools/manager";
 
@@ -134,13 +133,9 @@ export function Recorder({ onFinished }: RecorderProps) {
   useEffect(() => {
     const handleToolCall = async (toolCall: ToolCall) => {
       console.log("Tool Call Received:", toolCall);
-      try {
-        const response = await toolManager.handleToolCall(toolCall);
-        console.log("Tool response:", response);
-        client.sendToolResponse(response);
-      } catch (error) {
-        console.error("Error handling tool call:", error);
-      }
+      const response = await toolManager.handleToolCall(toolCall);
+      console.log("Tool response:", response);
+      client.sendToolResponse(response);
     };
 
     client.on("toolcall", handleToolCall);
