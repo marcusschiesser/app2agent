@@ -7,14 +7,17 @@ const ALLOWED_EXTENSION_IDS =
 export const handleCORS = async (request: NextRequest) => {
   // need an origin to handle cors
   const origin = request.headers.get("origin");
+  console.log("[CORS] Check permission for origin:", origin);
+
   if (!origin) {
-    console.error("No origin found in request");
+    console.error("[CORS] No origin found in request");
     return new NextResponse("Bad Request: No origin specified", {
       status: 400,
     });
   }
 
   if (request.method === "OPTIONS") {
+    console.log("[CORS] Handling OPTIONS preflight request");
     // preflight check
     const response = new NextResponse(null, { status: 204 });
     setCORSHeaders(response, origin);
@@ -27,6 +30,7 @@ export const handleCORS = async (request: NextRequest) => {
     ALLOWED_EXTENSION_IDS.length === 0 ||
     (extensionId && ALLOWED_EXTENSION_IDS.includes(extensionId))
   ) {
+    console.log("[CORS] Request authorized");
     // allow all extensions if ALLOWED_EXTENSION_IDS is empty, otherwise only allow listed extensions
     const response = NextResponse.next({
       request: {

@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
     // For other routes, handle session
     return await handleAuth(request);
   } catch (error) {
-    console.error("Middleware error:", error);
+    console.error("[Middleware] Error:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
