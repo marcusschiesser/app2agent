@@ -14,6 +14,31 @@ export interface RecorderProps {
   onFinished?: () => void;
 }
 
+interface NavigationProgress {
+  total: number;
+  current: number;
+  action: string;
+}
+
+function NavigationProgressBar({ progress }: { progress: NavigationProgress }) {
+  const percentage = (progress.current / progress.total) * 100;
+
+  return (
+    <div className="mt-4">
+      <div className="w-full bg-gray-200 rounded-full h-2.5">
+        <div
+          className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+          style={{ width: `${percentage}%` }}
+        />
+      </div>
+      <div className="mt-2 text-sm text-gray-600">
+        {progress.action}
+        <span className="float-right">{`${progress.current}/${progress.total}`}</span>
+      </div>
+    </div>
+  );
+}
+
 export function Recorder({ onFinished }: RecorderProps) {
   const [isEnabled, setIsEnabled] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -33,6 +58,8 @@ export function Recorder({ onFinished }: RecorderProps) {
   const [muted, setMuted] = useState(false);
   const [inVolume, setInVolume] = useState(0);
   const dialingToneRef = useRef<{ stop: () => void } | null>(null);
+  const [navigationProgress, setNavigationProgress] =
+    useState<NavigationProgress | null>(null);
 
   useEffect(() => {
     const onData = (base64: string) => {
@@ -145,6 +172,22 @@ export function Recorder({ onFinished }: RecorderProps) {
     };
   }, [client]);
 
+  useEffect(() => {
+    const handleNavigationProgress = (event: MessageEvent) => {
+      if (
+        event.origin === window.location.origin &&
+        event.data?.type === "A2A_NAVIGATION_PROGRESS"
+      ) {
+        setNavigationProgress(event.data);
+      }
+    };
+
+    window.addEventListener("message", handleNavigationProgress);
+    return () => {
+      window.removeEventListener("message", handleNavigationProgress);
+    };
+  }, []);
+
   return (
     <div className="p-4 min-w-[200px]">
       <CallForm
@@ -152,13 +195,14 @@ export function Recorder({ onFinished }: RecorderProps) {
         onToggle={handleToggleEnabled}
         volume={inVolume}
       />
+      {navigationProgress && (
+        <NavigationProgressBar progress={navigationProgress} />
+      )}
       {showFeedback && !isEnabled && (
         <Feedback
           onSubmit={(rating) => {
-            // Here you can handle the feedback submission
             console.log("Call feedback:", rating);
             setShowFeedback(false);
-            // Call onFinished after feedback is submitted
             if (onFinished) {
               onFinished();
             }

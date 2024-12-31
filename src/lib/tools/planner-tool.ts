@@ -78,9 +78,34 @@ export const executeNavigationPlanTool = async ({
   navigationPlan: string[];
 }) => {
   console.log("Executing navigation plan:", navigationPlan);
-  for (const action of navigationPlan) {
+
+  // Emit initial progress
+  window.postMessage(
+    {
+      type: "A2A_NAVIGATION_PROGRESS",
+      total: navigationPlan.length,
+      current: 0,
+      action: "Starting execution...",
+    },
+    window.location.origin,
+  );
+
+  for (let i = 0; i < navigationPlan.length; i++) {
+    const action = navigationPlan[i];
     // Wait for the page is ready
     await new Promise((resolve) => setTimeout(resolve, 300));
+
+    // Emit progress before executing step
+    window.postMessage(
+      {
+        type: "A2A_NAVIGATION_PROGRESS",
+        total: navigationPlan.length,
+        current: i + 1,
+        action: action,
+      },
+      window.location.origin,
+    );
+
     const stepResult = await navigateTool({ actionDescription: action });
     if (!stepResult.success) {
       return {
