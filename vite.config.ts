@@ -8,10 +8,6 @@ if (!variant) {
   throw new Error("VARIANT environment variable is not defined");
 }
 
-if (!process.env.GEMINI_API_KEY) {
-  throw new Error("GEMINI_API_KEY environment variable is not defined");
-}
-
 const outDir = `dist/${variant}`;
 
 function generateManifest() {
