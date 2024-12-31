@@ -8,14 +8,21 @@
     "lint": "pnpm -r lint",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
-    "prepare": "[ \"$VERCEL\" = \"1\" ] || husky"
+    "prepare": "[ \"$VERCEL\" = \"1\" ] || husky",
+    "lint-staged": "lint-staged"
   },
   "devDependencies": {
     "prettier": "^3.3.3",
-    "husky": "^9.1.7"
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.0"
   },
   "engines": {
     "node": ">=20.0.0",
     "pnpm": ">=9.0.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,md}": [
+      "prettier --write"
+    ]
   }
 }
