@@ -36,13 +36,13 @@ export const handleAuth = async (request: NextRequest) => {
   const user = await supabase.auth.getUser();
 
   // protected routes
-  if (request.nextUrl.pathname.startsWith("/account") && user.error) {
+  if (request.nextUrl.pathname.startsWith("/admin") && user.error) {
     return NextResponse.redirect(new URL("/auth", request.url));
   }
 
-  // redirect to account if user is already logged in and trying to access auth page
+  // redirect to admin if user is already logged in and trying to access auth page
   if (request.nextUrl.pathname === "/auth" && !user.error) {
-    return NextResponse.redirect(new URL("/account", request.url));
+    return NextResponse.redirect(new URL("/admin", request.url));
   }
 
   return response;
