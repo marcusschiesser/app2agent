@@ -1,10 +1,10 @@
 {
-  "name": "app2agent",
+  "name": "@app2agent/backend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "cd ../extension && pnpm i && pnpm release && cd ../backend && next build && cp ../extension/dist/extension.zip public/",
+    "build": "cd ../extension && pnpm release && cd ../backend && next build && cp ../extension/dist/extension.zip public/",
     "start": "next start",
     "lint": "next lint"
   },

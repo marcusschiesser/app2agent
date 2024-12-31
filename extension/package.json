@@ -1,5 +1,5 @@
 {
-  "name": "ai-reader-extension",
+  "name": "@app2agent/extension",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -10,10 +10,7 @@
     "build": "pnpm run clean && pnpm run build:docs",
     "lint": "eslint .",
     "preview": "vite preview",
-    "format:check": "prettier --check .",
-    "format:write": "prettier --write .",
-    "release": "pnpm run build && node -e \"const AdmZip = require('adm-zip'); const zip = new AdmZip(); zip.addLocalFolder('./dist/docs'); zip.writeZip('./dist/extension.zip');\"",
-    "prepare": "[ \"$VERCEL\" = \"1\" ] || husky"
+    "release": "pnpm run build && node -e \"const AdmZip = require('adm-zip'); const zip = new AdmZip(); zip.addLocalFolder('./dist/docs'); zip.writeZip('./dist/extension.zip');\""
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
@@ -49,9 +46,7 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.14",
     "globals": "^15.11.0",
-    "husky": "^9.1.7",
     "postcss": "^8.4.31",
-    "prettier": "^3.3.3",
     "tailwindcss": "^3.3.5",
     "tailwindcss-scoped-preflight": "^3.4.10",
     "tslib": "^2.8.1",

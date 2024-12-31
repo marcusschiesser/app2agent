@@ -1,0 +1,21 @@
+{
+  "name": "app2agent",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "pnpm -r dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "format:check": "prettier --check .",
+    "format:write": "prettier --write .",
+    "prepare": "[ \"$VERCEL\" = \"1\" ] || husky"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "husky": "^9.1.7"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}
