@@ -56,7 +56,6 @@ export class ToolManager {
             throw new Error(`No implementation found for tool: ${call.name}`);
           }
           const result = await implementation(call.args);
-          console.log("Tool result:", JSON.stringify(result, null, 2));
           return {
             response: result,
             id: call.id,

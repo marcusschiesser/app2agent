@@ -132,16 +132,15 @@ export function Recorder({ onFinished }: RecorderProps) {
 
   useEffect(() => {
     const handleToolCall = async (toolCall: ToolCall) => {
-      console.log("Tool Call Received:", toolCall);
+      console.log("Tool Call Received:", JSON.stringify(toolCall, null, 2));
       const response = await toolManager.handleToolCall(toolCall);
-      console.log("Tool response:", response);
+      console.log("Tool response:", JSON.stringify(response, null, 2));
       client.sendToolResponse(response);
     };
 
     client.on("toolcall", handleToolCall);
 
     return () => {
-      console.log("Unsubscribing from toolcall");
       client.off("toolcall", handleToolCall);
     };
   }, [client]);

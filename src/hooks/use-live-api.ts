@@ -63,13 +63,16 @@ ${toolManager
   .join("\n")}`,
         },
         {
-          text: `Here is your working flow:
+          text: `Here is your working flow for a user request:
 1. Call the createNavigationPlanTool to get the plan and tell user to wait for a moment, don't need to get there approval for plan creation.
-2. Once you get the plan, notify the user and ask for approval.
+2. Once you get the plan, summary the plan and ask for execution approval.
 3. Call the executeNavigationPlanTool to execute the plan.
-4. If the plan is not successful, checking the UI to see the status, collect the error from the previous step then call the createNavigationPlanTool again to get a new plan. 
-Never making up the plan, just call the tool to get the plan.
-5. Repeat steps 3 and 4 until the plan is successful.`,
+4. If the plan is not successful, checking the UI to see the status, collect the error from the previous step then you can either call the createNavigationPlanTool again to get a new plan or request user to do it manually.
+5. Repeat steps 3 and 4 until the plan is successful, you don't need to get approval for the plan again.
+
+Important:
+Don't be verbose.
+You don't need to repeat what is the plan.`,
         },
       ],
     },

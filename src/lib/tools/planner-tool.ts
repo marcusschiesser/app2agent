@@ -33,8 +33,6 @@ export const createNavigationPlanTool = async ({
   userRequest: string;
   previousExecution: string;
 }) => {
-  console.log("Creating navigation plan for user request:", userRequest);
-
   const currentUrl = window.location.href;
 
   const actionPlan = await chrome.runtime.sendMessage({
@@ -82,8 +80,7 @@ export const executeNavigationPlanTool = async ({
   console.log("Executing navigation plan:", navigationPlan);
   for (const action of navigationPlan) {
     // Wait for the page is ready
-    await new Promise((resolve) => setTimeout(resolve, 200));
-    console.log("Executing action:", action);
+    await new Promise((resolve) => setTimeout(resolve, 300));
     const stepResult = await navigateTool({ actionDescription: action });
     if (!stepResult.success) {
       return {

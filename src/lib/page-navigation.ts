@@ -59,7 +59,8 @@ class ContentNavigationHelper extends EventEmitter {
       console.error(`Element not found for action:`, action);
       return {
         success: false,
-        error: "Element not found. DOM: " + JSON.stringify(document),
+        error:
+          "Element not found. Selector: " + JSON.stringify(action.selector),
       };
     }
 

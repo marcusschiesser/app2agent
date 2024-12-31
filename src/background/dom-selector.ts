@@ -30,7 +30,8 @@ ${dom}
 \`\`\`
 
 Analyze this action description: "${actionDescription}"
-Find the most appropriate clickable xpath selector for a click action.
+Find the most appropriate XPath selector that can be used to perform a click on that element for the action.
+Avoid using Xpath with class name. Should you label, aria-label, or text if possible.
 Return ONLY a JSON object in this exact format (no other text):
 {
   "type": "click",

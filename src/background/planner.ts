@@ -8,11 +8,7 @@ const getContext = async (request: string, currentUrl: string) => {
   return `
 To create a Service Page:
 
-Click the Me icon at the top of your LinkedIn homepage.
-
-Me icon at the top of your LinkedIn homepage.
-
-Click the View Profile button.
+Click My Profile to go to your profile page.
 
 Click the Add profile section button below your profile picture.
 
