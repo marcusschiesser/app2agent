@@ -7,9 +7,6 @@ const variant = process.env.VARIANT;
 if (!variant) {
   throw new Error("VARIANT environment variable is not defined");
 }
-if (!process.env.GEMINI_API_KEY) {
-  throw new Error("GEMINI_API_KEY environment variable is not defined");
-}
 
 const outDir = `dist/${variant}`;
 
@@ -31,7 +28,6 @@ export default defineConfig({
   publicDir: `public/${variant}`,
   define: {
     __MANIFEST__: JSON.stringify(generateManifest()),
-    __GEMINI_API_KEY__: JSON.stringify(process.env.GEMINI_API_KEY),
   },
   plugins: [
     react(),

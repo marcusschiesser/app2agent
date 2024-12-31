@@ -1,5 +1,3 @@
-declare const __GEMINI_API_KEY__: any;
-
 import "@/index.css";
 import React, { useEffect, useState } from "react";
 import { getModalRoot, Modal } from "@/components/modal";
