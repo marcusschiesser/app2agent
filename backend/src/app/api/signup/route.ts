@@ -37,7 +37,9 @@ export async function POST(request: Request) {
       // Check for unique_violation error code (23505 is PostgreSQL's unique constraint violation code)
       if (error.code === "23505") {
         return NextResponse.json(
-          { error: "You've already signed up! We'll be in touch soon." },
+          {
+            error: "You've already signed up! We'll be in touch soon.",
+          },
           { status: 409 },
         );
       }

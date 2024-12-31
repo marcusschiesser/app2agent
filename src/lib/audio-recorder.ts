@@ -55,7 +55,9 @@ export class AudioRecorder extends EventEmitter {
           reject(new Error("Could not request user media"));
           return;
         }
-        this.audioContext = await audioContext({ sampleRate: this.sampleRate });
+        this.audioContext = await audioContext({
+          sampleRate: this.sampleRate,
+        });
         this.source = this.audioContext.createMediaStreamSource(this.stream);
 
         const workletName = "audio-processing";
