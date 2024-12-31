@@ -48,7 +48,7 @@ async function sendInvitations(emailList: string[]) {
       results.push({
         email,
         status: "error",
-        message: "Email not found in signups or already verified",
+        message: "Email not found in signups or already invited",
       });
       continue;
     }
