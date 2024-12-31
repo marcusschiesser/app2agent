@@ -31,7 +31,9 @@ ${dom}
 
 Analyze this action description: "${actionDescription}"
 Find the most appropriate XPath selector that can be used to perform a click on that element for the action.
-Avoid using Xpath with class name. Should you label, aria-label, or text if possible.
+IMPORTANT:
+- Don't make up a selector, only use the ones that are already in the DOM.
+- If you can't find a selector, return an empty object.
 Return ONLY a JSON object in this exact format (no other text):
 {
   "type": "click",

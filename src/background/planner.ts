@@ -12,7 +12,7 @@ Click My Profile to go to your profile page.
 
 Click the Add profile section button below your profile picture.
 
-Click Add services.
+Click "Add services".
 
 If this is your first time creating a Service Page, review the How it works information and click the Continue button.
 
