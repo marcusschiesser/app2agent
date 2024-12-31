@@ -14,6 +14,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+const ALLOW_SIGN_UP = false;
+
 export function AuthForm({
   className,
   ...props
@@ -106,16 +108,18 @@ export function AuthForm({
                   {isPending ? "Loading..." : isSignUp ? "Sign Up" : "Sign In"}
                 </Button>
               </div>
-              <div className="text-center text-sm">
-                {isSignUp ? "Already have an account?" : "Need an account?"}
-                <button
-                  type="button"
-                  onClick={() => setIsSignUp((prev) => !prev)}
-                  className="underline underline-offset-4 ml-1"
-                >
-                  {isSignUp ? "Sign in" : "Sign up"}
-                </button>
-              </div>
+              {ALLOW_SIGN_UP && (
+                <div className="text-center text-sm">
+                  {isSignUp ? "Already have an account?" : "Need an account?"}
+                  <button
+                    type="button"
+                    onClick={() => setIsSignUp((prev) => !prev)}
+                    className="underline underline-offset-4 ml-1"
+                  >
+                    {isSignUp ? "Sign in" : "Sign up"}
+                  </button>
+                </div>
+              )}
             </div>
           </form>
         </CardContent>
