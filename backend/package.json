@@ -6,7 +6,20 @@
     "dev": "next dev --turbopack",
     "build": "cd .. && pnpm i && pnpm release && cd backend && next build && cp ../dist/extension.zip public/",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "sp:init": "npx supabase init",
+    "sp:start": "npx supabase start",
+    "sp:stop": "npx supabase stop",
+    "sp:stop:all": "npx supabase stop --all",
+    "sp:status": "npx supabase status",
+    "sp:restart": "npm run supabase:stop && npm run supabase:start",
+    "sp:reset": "npx supabase db reset",
+    "sp:link": "npx supabase link",
+    "sp:generate-types": "npx supabase gen types typescript --local --schema public > types_db.ts",
+    "sp:generate-migration": "npx supabase db diff | npx supabase migration new",
+    "sp:generate-seed": "npx supabase db dump --data-only -f supabase/seed.sql",
+    "sp:push": "npx supabase db push",
+    "sp:pull": "npx supabase db pull"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.2",
