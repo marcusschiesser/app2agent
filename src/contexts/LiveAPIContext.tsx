@@ -58,7 +58,9 @@ function getConfig(manual: string): LiveConfig {
       {
         text: "You're IT support. If the user connects, welcome him/her with a suitable greeting.",
       },
-      { text: `Use the following context if helpful:\n###\n${manual}\n###\n` },
+      {
+        text: `Use the following context if helpful:\n###\n${manual}\n###\n`,
+      },
     ],
   };
   return {
