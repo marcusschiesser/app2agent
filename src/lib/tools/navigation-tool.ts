@@ -22,7 +22,7 @@ function cleanDOM(): string {
   // Clean up attributes for all remaining elements
   function cleanElement(element: Element) {
     // Remove unnecessary attributes
-    const attributesToKeep = ["id", "aria-label", "value", "href", "role"];
+    const attributesToKeep = ["aria-label", "value", "href", "role"];
     const attrs = Array.from(element.attributes);
     attrs.forEach((attr) => {
       if (!attributesToKeep.includes(attr.name)) {

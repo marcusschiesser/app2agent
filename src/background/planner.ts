@@ -8,6 +8,8 @@ const getContext = async (request: string, currentUrl: string) => {
   return `
 To create a Service Page:
 
+Click on "Me" button on the top bar.
+
 Click My Profile to go to your profile page.
 
 Click the Add profile section button below your profile picture.

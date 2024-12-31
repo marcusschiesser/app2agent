@@ -34,6 +34,7 @@ Find the most appropriate XPath selector that can be used to perform a click on 
 IMPORTANT:
 - Don't make up a selector, only use the ones that are already in the DOM.
 - If you can't find a selector, return an empty object.
+- When using text match selector, you should use contains(., "text") instead of exact text match.
 Return ONLY a JSON object in this exact format (no other text):
 {
   "type": "click",
