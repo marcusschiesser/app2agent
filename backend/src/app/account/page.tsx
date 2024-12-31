@@ -1,32 +1,23 @@
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
-import { signOutAction } from "../actions/auth";
-import Settings from "@/components/Settings";
+"use client";
+
+import { signOutAction } from "@/app/actions/auth";
+import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardTitle, CardHeader, CardContent } from "@/components/ui/card";
+import { useAuth } from "@/providers/AuthProvider";
 
-export default async function AccountPage() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return redirect("/auth");
-  }
-
+export default function Page() {
+  const { user } = useAuth();
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-4">
-        <Card>
+    <>
+      <PageHeader title="Account" />
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <Card className="max-w-md">
           <CardHeader>
-            <CardTitle>Account</CardTitle>
+            <CardTitle>Profile</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="mt-4">
-              <p className="text-gray-600">Welcome, {user.email}</p>
-            </div>
+            <p className="text-gray-600">Welcome, {user.email}</p>
             <div className="mt-6">
               <form action={signOutAction}>
                 <Button type="submit" variant="default">
@@ -34,10 +25,10 @@ export default async function AccountPage() {
                 </Button>
               </form>
             </div>
+            {/* TODO: We can add more sections here. Eg: Billing, Upgrade to Pro, etc. */}
           </CardContent>
         </Card>
-        <Settings userId={user.id} />
       </div>
-    </div>
+    </>
   );
 }
