@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { secureFetch } from "@/lib/secure-fetch";
 
-const backend = "https://app2agent.com/api";
+const backend =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3000/api"
+    : "https://app2agent.com/api";
 
 export type UserConfig = {
   manual: string;
