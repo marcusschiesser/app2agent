@@ -23,8 +23,11 @@ export const handleCORS = async (request: NextRequest) => {
 
   // handle actual requests after preflight (GET and POST)
   const extensionId = request.headers.get("x-extension-id");
-  if (extensionId && ALLOWED_EXTENSION_IDS.includes(extensionId)) {
-    // only allow requests from allowed chrome extensions
+  if (
+    ALLOWED_EXTENSION_IDS.length === 0 ||
+    (extensionId && ALLOWED_EXTENSION_IDS.includes(extensionId))
+  ) {
+    // allow all extensions if ALLOWED_EXTENSION_IDS is empty, otherwise only allow listed extensions
     const response = NextResponse.next({
       request: {
         headers: request.headers,
