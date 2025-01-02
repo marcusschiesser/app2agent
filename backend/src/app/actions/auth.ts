@@ -79,3 +79,34 @@ export const signOutAction = async () => {
   await supabase.auth.signOut();
   return redirect("/auth");
 };
+
+export const resetPasswordAction = async (formData: FormData) => {
+  const supabase = await createClient();
+
+  const password = formData.get("password") as string;
+  const confirmPassword = formData.get("confirmPassword") as string;
+
+  if (!password || !confirmPassword) {
+    return redirect(
+      "/admin/reset-password?success=false&message=Password and confirm password are required",
+    );
+  }
+
+  if (password !== confirmPassword) {
+    return redirect(
+      "/admin/reset-password?success=false&message=Passwords do not match",
+    );
+  }
+
+  const { error } = await supabase.auth.updateUser({ password });
+
+  if (error) {
+    return redirect(
+      `/admin/reset-password?success=false&message=${error.message}`,
+    );
+  }
+
+  return redirect(
+    "/admin/reset-password?success=true&message=Password updated",
+  );
+};
