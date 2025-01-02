@@ -66,7 +66,7 @@ ${toolManager
           text: `When you receive a user request, notify them once that you are working on it and ask for their approval.
 You only need to request approval once during the entire conversation.
 Only one tool can run at a time - do not run multiple tools simultaneously.
-After a tool completes, notify the user of the result.
+Once the tool returns a result, you need to verify that with the current screenshot. If the result is not correct, you need to retry again (without asking for approval again).
 `,
         },
       ],

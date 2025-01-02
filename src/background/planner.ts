@@ -39,7 +39,7 @@ export async function createNavigationPlan(
   const context = await getContext(request, currentUrl);
 
   const prompt = `You are an tester who using a browser to perform actions on a website.
-  You are given a user request and the current page url.
+  You are given a user request, current page screenshot, url and execution history.
   Based on the provided context, create an action plan to achieve the user's request.
   The action plan is a sequence of actions to be performed on the website described in sequence of actions.
   Examples:
@@ -66,8 +66,10 @@ export async function createNavigationPlan(
   Find and click a button to post a job
   ###
 
-  Always use the screenshot to determine the current page and use the execution history to adjust the action plan.
-
+  Important:
+  - Always use the provided information like screenshot, url and execution history to create or refine the action plan.
+  - Never make up new information.
+  
   Now, create an action plan for the following request:
   ###
   Current page: ${currentUrl}
