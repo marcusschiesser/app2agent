@@ -36,45 +36,40 @@ export async function GET(request: Request) {
 async function sendInvitations(emailList: string[]) {
   const results = [];
   for (const email of emailList) {
-    // 1. Check if email exists in signups and isn't already invited
+    // 1. Check if email exists in signups or already invited
     const { data: signup } = await supabase
       .from("email_signups")
       .select("*")
       .eq("email", email)
-      .or("invite_sent.eq.false,invite_sent.is.null")
       .single();
 
     if (!signup) {
       results.push({
         email,
         status: "error",
-        message: "Email not found in signups or already invited",
+        message: "Email not found in waitlist",
       });
       continue;
     }
 
-    // 2. Create user in Supabase Auth
-    const { error: createUserError } = await supabase.auth.admin.createUser({
-      email: email,
-      email_confirm: false,
-      user_metadata: {
-        name: signup.name,
-        company: signup.company_name,
-      },
-    });
-
-    if (createUserError) {
+    if (signup.invite_sent) {
       results.push({
         email,
         status: "error",
-        message: createUserError.message,
+        message: "Invitation already sent",
       });
       continue;
     }
 
-    // 3. Send invitation email
+    // 2. Send invitation email (will automatically create user in Supabase Auth)
     try {
-      await supabase.auth.admin.inviteUserByEmail(email);
+      await supabase.auth.admin.inviteUserByEmail(email, {
+        // store additional metadata about the user (maps to auth.users.user_metadata)
+        data: {
+          name: signup.name,
+          company: signup.company_name,
+        },
+      });
     } catch (emailError) {
       console.error("Error sending email:", emailError);
       results.push({
@@ -85,7 +80,7 @@ async function sendInvitations(emailList: string[]) {
       continue;
     }
 
-    // 4. Mark the invite as sent
+    // 3. Mark the invite as sent
     const { error: updateError } = await supabase
       .from("email_signups")
       .update({ invite_sent: true })
