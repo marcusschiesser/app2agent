@@ -4,29 +4,21 @@ import {
   ToolResponse,
   LiveFunctionResponse,
 } from "@/multimodal-live-types";
-import { navigationToolConfig, navigateTool } from "./navigation-tool";
-import {
-  createNavigationPlanToolConfig,
-  createNavigationPlanTool,
-  executeNavigationPlanToolConfig,
-  executeNavigationPlanTool,
-} from "./planner-tool";
+import { navigationToolConfig, navigationTool } from "./navigation-tool";
 
 // Map of tool implementations
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ToolImplementation = (args: any) => Promise<any>;
 
 export class ToolManager {
   private toolMap: Map<string, ToolImplementation> = new Map();
   private tools: FunctionDeclarationsTool[] = [];
+  private isToolRunning = false;
+  private currentToolName: string | null = null;
 
   constructor() {
-    // Register available tools
-    this.registerTool(createNavigationPlanToolConfig, createNavigationPlanTool);
-    this.registerTool(
-      executeNavigationPlanToolConfig,
-      executeNavigationPlanTool,
-    );
-    this.registerTool(navigationToolConfig, navigateTool);
+    // Register navigation tool
+    this.registerTool(navigationToolConfig, navigationTool);
   }
 
   // Register a tool and its implementation
@@ -48,33 +40,53 @@ export class ToolManager {
 
   // Handle tool calls from LLM
   public async handleToolCall(toolCall: ToolCall): Promise<ToolResponse> {
-    const functionResponses: LiveFunctionResponse[] = await Promise.all(
-      toolCall.functionCalls.map(async (call) => {
-        try {
-          const implementation = this.toolMap.get(call.name);
-          if (!implementation) {
-            throw new Error(`No implementation found for tool: ${call.name}`);
-          }
-          const result = await implementation(call.args);
-          return {
-            response: result,
-            id: call.id,
-          };
-        } catch (error) {
-          console.error("Error handling tool call:", error);
-          return {
-            response: {
-              text: "Error: " + JSON.stringify(error),
-            },
-            id: call.id,
-          };
-        }
-      }),
-    );
+    if (this.isToolRunning) {
+      return {
+        functionResponses: toolCall.functionCalls.map((call) => ({
+          response: {
+            success: false,
+            error: `Another tool (${this.currentToolName}) is currently running. Please wait for it to complete.`,
+          },
+          id: call.id,
+        })),
+      };
+    }
 
-    return {
-      functionResponses,
-    };
+    try {
+      this.isToolRunning = true;
+      const functionResponses: LiveFunctionResponse[] = await Promise.all(
+        toolCall.functionCalls.map(async (call) => {
+          try {
+            const implementation = this.toolMap.get(call.name);
+            if (!implementation) {
+              throw new Error(`No implementation found for tool: ${call.name}`);
+            }
+            this.currentToolName = call.name;
+            const result = await implementation(call.args);
+            return {
+              response: result,
+              id: call.id,
+            };
+          } catch (error) {
+            console.error("Error handling tool call:", error);
+            return {
+              response: {
+                success: false,
+                error: "Error: " + JSON.stringify(error),
+              },
+              id: call.id,
+            };
+          }
+        }),
+      );
+
+      return {
+        functionResponses,
+      };
+    } finally {
+      this.isToolRunning = false;
+      this.currentToolName = null;
+    }
   }
 }
 

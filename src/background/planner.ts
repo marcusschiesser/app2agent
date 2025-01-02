@@ -29,7 +29,8 @@ Click the Save button to make your Service Page viewable by members.
 export async function createNavigationPlan(
   request: string,
   currentUrl: string,
-  previousExecution: string,
+  screenshot: string,
+  executionHistory: string,
 ): Promise<string[]> {
   const model = genAI.getGenerativeModel({
     model: "models/gemini-2.0-flash-exp",
@@ -46,6 +47,7 @@ export async function createNavigationPlan(
   Current page: "https://linkedin.com"
   User request: "Post a job on LinkedIn"
   Previous execution: ""
+  The screenshot is shown that the user is not logged in yet.
   Your response in sequence of actions, each action is a single line:
   On the current page, click the "Login" button
   Click the "Login with Google account" button
@@ -53,21 +55,24 @@ export async function createNavigationPlan(
   Find and click a button to post a job
   ###
 
+
   ###
-  Current page: "https://x.com"
-  User request: "Change the display language to Spanish"
-  Previous execution: "Clicked the 'Settings' button but failed at clicking the 'Languages' button"
+  Current page: "https://linkedin.com/jobs"
+  User request: "Post a job on LinkedIn"
+  Previous execution: ""
+  The screenshot is shown that the user is already logged in and in the Home page.
   Your response in sequence of actions, each action is a single line:
-  Find and click on the languages or accessibility menu
-  Find and click on the language option
-  Choose 'Spanish' from the list of languages
+  Navigate to the "Jobs" page
+  Find and click a button to post a job
   ###
+
+  Always use the screenshot to determine the current page and use the execution history to adjust the action plan.
 
   Now, create an action plan for the following request:
   ###
   Current page: ${currentUrl}
   User request: ${request}
-  Previous execution: ${previousExecution}
+  Execution history: ${executionHistory}
   Context: ${context}
   ###
 
@@ -75,11 +80,34 @@ export async function createNavigationPlan(
 `;
 
   try {
-    const result = await model.generateContent(prompt);
+    const request = {
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              inlineData: {
+                data: screenshot,
+                mimeType: "image/png",
+              },
+            },
+            {
+              text: prompt,
+            },
+          ],
+        },
+      ],
+    };
+
+    const result = await model.generateContent(request);
     const response = await result.response;
     const text = response.text();
 
-    return text.split("\n");
+    // Filter out empty steps and ensure each step is properly formatted
+    return text
+      .split("\n")
+      .map((step) => step.trim())
+      .filter((step) => step !== "");
   } catch (error) {
     console.error("Failed to create action plan:", error);
     throw new Error("Failed to create action plan");

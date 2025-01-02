@@ -22,6 +22,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       createNavigationPlan(
         message.userRequest,
         message.currentUrl,
+        message.screenshot,
         message.previousExecution,
       )
         .then((plan) => sendResponse({ success: true, result: plan }))
