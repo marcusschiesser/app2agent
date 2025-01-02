@@ -1,10 +1,7 @@
-import { createClient } from "@supabase/supabase-js";
+import { ADMIN_EMAIL } from "@/constants/admin";
+import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY!;
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+import { createClient } from "@/utils/supabase/server";
 
 export async function GET(request: Request) {
   try {
@@ -18,7 +15,13 @@ export async function GET(request: Request) {
       );
     }
 
-    // TODO: check the user is calling this endpoint is ADMIN_EMAIL
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user?.email !== ADMIN_EMAIL) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
     const emailList = emails.split(",").map((email) => email.trim());
     const results = await sendInvitations(emailList);
@@ -34,6 +37,11 @@ export async function GET(request: Request) {
 }
 
 async function sendInvitations(emailList: string[]) {
+  const supabase = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_KEY!,
+  );
+
   const results = [];
   for (const email of emailList) {
     // 1. Check if email exists in signups or already invited
