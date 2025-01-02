@@ -23,7 +23,7 @@ export default function Page() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Link href="/extension.zip" className="w-fit">
+            <Link href="/api/admin/download" className="w-fit">
               <Button>Download Extension</Button>
             </Link>
           </CardContent>
