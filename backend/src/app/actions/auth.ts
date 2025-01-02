@@ -22,8 +22,16 @@ export const authAction = async (
 export const signUpAction = async (formData: FormData): Promise<AuthState> => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
+  const inviteCode = formData.get("invite_code")?.toString();
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
+
+  if (!inviteCode || inviteCode !== process.env.INVITE_CODE) {
+    return {
+      type: "error",
+      message: "We are in beta now, please submit waitlist form to be invited.",
+    };
+  }
 
   if (!email || !password) {
     return { type: "error", message: "Email and password are required" };
