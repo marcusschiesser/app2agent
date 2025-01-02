@@ -14,7 +14,7 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Headset, Settings2 } from "lucide-react";
+import { Download, Headset, Settings2 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
@@ -25,6 +25,11 @@ const sidebarItems = [
     name: "Settings",
     url: "/admin/settings",
     icon: Settings2,
+  },
+  {
+    name: "Download",
+    url: "/admin/download",
+    icon: Download,
   },
 ];
 
