@@ -3,12 +3,11 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { generateConfirmationEmail } from "@/emails/confirmation";
 import { generateNotificationEmail } from "@/emails/notification";
+import { ADMIN_EMAIL, ADMIN_NAME } from "@/constants/admin";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY!;
 const resend = new Resend(process.env.RESEND_API_KEY);
-const ADMIN_EMAIL = "marcus@app2agent.com";
-const ADMIN_NAME = "Marcus Schiesser";
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 

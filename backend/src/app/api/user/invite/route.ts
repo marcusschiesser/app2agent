@@ -77,6 +77,7 @@ async function sendInvitations(emailList: string[]) {
           name: signup.name,
           company: signup.company_name,
         },
+        redirectTo: `${process.env.NEXT_PUBLIC_URL}/auth/callback`,
       });
     } catch (emailError) {
       console.error("Error sending email:", emailError);
