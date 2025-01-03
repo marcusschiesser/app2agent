@@ -1,6 +1,6 @@
 "use client";
 
-import { NavUser } from "@/components/NavUser";
+import { NavUser } from "@/app/(auth)/components/NavUser";
 import {
   Sidebar,
   SidebarContent,
@@ -18,7 +18,7 @@ import { Download, Headset, Settings2 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
-import Logo from "./Logo";
+import Logo from "../../../components/Logo";
 
 const sidebarItems = [
   {

@@ -1,6 +1,6 @@
 "use client";
 
-import Logo from "./Logo";
+import Logo from "../../../components/Logo";
 
 export default function Header() {
   return (

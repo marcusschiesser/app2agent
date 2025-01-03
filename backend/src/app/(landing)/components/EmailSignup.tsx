@@ -1,6 +1,6 @@
 "use client";
 
-import { signUpAction } from "@/app/actions/auth";
+import { signUpAction } from "@/app/(auth)/actions/auth";
 import { useActionState } from "react";
 
 export default function EmailSignup() {

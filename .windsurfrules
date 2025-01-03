@@ -1,1 +1,13 @@
-/backend folder is a Next.js app with AppRouter
+## backend
+
+/backend folder is a Next.js 15 app with AppRouter using the following route groups in the `app` folder:
+(auth): Authentication related pages
+(extension): Routes used by the browser extension
+(landing): Landing page routes
+
+The shared components for a route group are stored in a `components` sub folder of the route group.
+
+route group (auth) is using shadcn UI components and Tailwind CSS.
+route group (landing) is just using Tailwind CSS.
+
+Supabase is used for authentication and data storage and its configuration is in the `supabase` folder.

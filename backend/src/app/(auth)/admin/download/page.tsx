@@ -1,4 +1,4 @@
-import { PageHeader } from "@/components/PageHeader";
+import { PageHeader } from "@/app/(auth)/components/PageHeader";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
