@@ -71,6 +71,34 @@ export function SignUp({
             <div className="grid gap-6">
               <div className="grid gap-6">
                 <div className="grid gap-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    name="name"
+                    type="text"
+                    placeholder="John Doe"
+                    required
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="companyName">Company Name</Label>
+                  <Input
+                    name="companyName"
+                    type="text"
+                    placeholder="Acme Inc"
+                    required
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="intendedUsage">
+                    Intended Usage (Optional)
+                  </Label>
+                  <Input
+                    name="intendedUsage"
+                    type="text"
+                    placeholder="How do you plan to use our product?"
+                  />
+                </div>
+                <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
                     name="email"

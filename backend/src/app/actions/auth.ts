@@ -15,11 +15,17 @@ export const signUpAction = async (
 ): Promise<AuthState> => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
+  const name = formData.get("name")?.toString();
+  const companyName = formData.get("companyName")?.toString();
+  const intendedUsage = formData.get("intendedUsage")?.toString();
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
-  if (!email || !password) {
-    return { type: "error", message: "Email and password are required" };
+  if (!email || !password || !name || !companyName) {
+    return {
+      type: "error",
+      message: "Name, company name, email, and password are required",
+    };
   }
 
   const { error } = await supabase.auth.signUp({
@@ -27,6 +33,11 @@ export const signUpAction = async (
     password,
     options: {
       emailRedirectTo: `${origin}/auth/callback`,
+      data: {
+        name,
+        company_name: companyName,
+        ...(intendedUsage ? { intended_usage: intendedUsage } : {}),
+      },
     },
   });
 
