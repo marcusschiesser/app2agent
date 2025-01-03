@@ -29,7 +29,7 @@ export const signUpAction = async (formData: FormData): Promise<AuthState> => {
   if (!inviteCode || inviteCode !== process.env.INVITE_CODE) {
     return {
       type: "error",
-      message: "We are in beta now, please submit waitlist form to be invited.",
+      message: "We are in invite only for now, please join the waitlist on www.app2agent.com to be invited.",
     };
   }
 
