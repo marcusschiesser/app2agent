@@ -9,17 +9,10 @@ export type AuthState = {
   message?: string;
 };
 
-export const authAction = async (
+export const signUpAction = async (
   prevState: AuthState,
   formData: FormData,
 ): Promise<AuthState> => {
-  const type = formData.get("type") as string;
-  const action = type === "signUp" ? signUpAction : signInAction;
-  const result = await action(formData);
-  return result;
-};
-
-export const signUpAction = async (formData: FormData): Promise<AuthState> => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
   const supabase = await createClient();
@@ -49,7 +42,10 @@ export const signUpAction = async (formData: FormData): Promise<AuthState> => {
   }
 };
 
-export const signInAction = async (formData: FormData): Promise<AuthState> => {
+export const signInAction = async (
+  prevState: AuthState,
+  formData: FormData,
+): Promise<AuthState> => {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const supabase = await createClient();

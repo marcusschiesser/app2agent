@@ -1,6 +1,6 @@
 "use client";
 
-import { AuthState, authAction } from "@/app/actions/auth";
+import { AuthState, signUpAction } from "@/app/actions/auth";
 import { useActionState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -37,7 +37,7 @@ export function SignUp({
   }
 
   const [state, formAction, isPending] = useActionState(
-    authAction,
+    signUpAction,
     initialState,
   );
 
@@ -67,12 +67,7 @@ export function SignUp({
               <p className="text-sm text-red-600">{state.message}</p>
             </div>
           )}
-          <form
-            action={(formdata) => {
-              formdata.append("type", "signUp");
-              formAction(formdata);
-            }}
-          >
+          <form action={formAction}>
             <div className="grid gap-6">
               <div className="grid gap-6">
                 <div className="grid gap-2">
