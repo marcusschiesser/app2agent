@@ -12,7 +12,7 @@
     "sp:stop": "npx supabase stop",
     "sp:stop:all": "npx supabase stop --all",
     "sp:status": "npx supabase status",
-    "sp:restart": "npm run supabase:stop && npm run supabase:start",
+    "sp:restart": "npm run sp:stop && npm run sp:start",
     "sp:reset": "npx supabase db reset",
     "sp:link": "npx supabase link",
     "sp:generate-migration": "npx supabase db diff | npx supabase migration new",

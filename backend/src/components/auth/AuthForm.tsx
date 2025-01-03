@@ -14,13 +14,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const ALLOW_SIGN_UP = false;
-
 export function AuthForm({
   className,
+  enableSignup,
+  inviteCode,
   ...props
-}: React.ComponentPropsWithoutRef<"div">) {
-  const [isSignUp, setIsSignUp] = useState(false);
+}: React.ComponentPropsWithoutRef<"div"> & {
+  enableSignup?: string;
+  inviteCode?: string;
+}) {
+  const allowSignup = enableSignup === "true" && !!inviteCode;
+  const [isSignUp, setIsSignUp] = useState(allowSignup);
   let initialState: AuthState = {};
 
   if (typeof window !== "undefined") {
@@ -77,6 +81,7 @@ export function AuthForm({
           <form
             action={(formdata) => {
               formdata.append("type", isSignUp ? "signUp" : "signIn");
+              if (inviteCode) formdata.append("invite_code", inviteCode);
               formAction(formdata);
             }}
           >
@@ -108,7 +113,7 @@ export function AuthForm({
                   {isPending ? "Loading..." : isSignUp ? "Sign Up" : "Sign In"}
                 </Button>
               </div>
-              {ALLOW_SIGN_UP && (
+              {allowSignup && (
                 <div className="text-center text-sm">
                   {isSignUp ? "Already have an account?" : "Need an account?"}
                   <button

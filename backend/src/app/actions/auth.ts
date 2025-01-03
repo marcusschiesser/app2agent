@@ -22,8 +22,17 @@ export const authAction = async (
 export const signUpAction = async (formData: FormData): Promise<AuthState> => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
+  const inviteCode = formData.get("invite_code")?.toString();
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
+
+  if (!inviteCode || inviteCode !== process.env.INVITE_CODE) {
+    return {
+      type: "error",
+      message:
+        "We are in invite only for now, please join the waitlist on www.app2agent.com to be invited.",
+    };
+  }
 
   if (!email || !password) {
     return { type: "error", message: "Email and password are required" };
@@ -70,4 +79,35 @@ export const signOutAction = async () => {
   const supabase = await createClient();
   await supabase.auth.signOut();
   return redirect("/auth");
+};
+
+export const resetPasswordAction = async (formData: FormData) => {
+  const supabase = await createClient();
+
+  const password = formData.get("password") as string;
+  const confirmPassword = formData.get("confirmPassword") as string;
+
+  if (!password || !confirmPassword) {
+    return redirect(
+      "/admin/reset-password?success=false&message=Password and confirm password are required",
+    );
+  }
+
+  if (password !== confirmPassword) {
+    return redirect(
+      "/admin/reset-password?success=false&message=Passwords do not match",
+    );
+  }
+
+  const { error } = await supabase.auth.updateUser({ password });
+
+  if (error) {
+    return redirect(
+      `/admin/reset-password?success=false&message=${error.message}`,
+    );
+  }
+
+  return redirect(
+    "/admin/reset-password?success=true&message=Password updated",
+  );
 };
