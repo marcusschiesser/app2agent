@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 export type AuthState = {
   type?: "error" | "success";
   message?: string;
+  formData?: Record<string, string>;
 };
 
 export const signUpAction = async (
@@ -21,10 +22,18 @@ export const signUpAction = async (
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
+  const formValues = {
+    email: email || "",
+    name: name || "",
+    companyName: companyName || "",
+    intendedUsage: intendedUsage || "",
+  };
+
   if (!email || !password || !name || !companyName) {
     return {
       type: "error",
       message: "Name, company name, email, and password are required",
+      formData: formValues,
     };
   }
 
@@ -43,7 +52,11 @@ export const signUpAction = async (
 
   if (error) {
     console.error(error.code + " " + error.message);
-    return { type: "error", message: error.message };
+    return {
+      type: "error",
+      message: error.message,
+      formData: formValues,
+    };
   } else {
     return {
       type: "success",

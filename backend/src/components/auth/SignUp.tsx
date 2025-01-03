@@ -41,6 +41,8 @@ export function SignUp({
     initialState,
   );
 
+  const previousFormData = state.formData as Record<string, string> | undefined;
+
   if (state.type === "success" && state.message) {
     return (
       <div className="w-full flex-1 flex items-center h-screen sm:max-w-xl justify-center gap-2 p-4">
@@ -77,6 +79,7 @@ export function SignUp({
                     type="text"
                     placeholder="John Doe"
                     required
+                    defaultValue={previousFormData?.name || ""}
                   />
                 </div>
                 <div className="grid gap-2">
@@ -86,6 +89,7 @@ export function SignUp({
                     type="text"
                     placeholder="Acme Inc"
                     required
+                    defaultValue={previousFormData?.companyName || ""}
                   />
                 </div>
                 <div className="grid gap-2">
@@ -96,6 +100,7 @@ export function SignUp({
                     name="intendedUsage"
                     type="text"
                     placeholder="How do you plan to use our product?"
+                    defaultValue={previousFormData?.intendedUsage || ""}
                   />
                 </div>
                 <div className="grid gap-2">
@@ -105,6 +110,7 @@ export function SignUp({
                     type="email"
                     placeholder="m@example.com"
                     required
+                    defaultValue={previousFormData?.email || ""}
                   />
                 </div>
                 <div className="grid gap-2">
