@@ -16,15 +16,12 @@ import { Label } from "@/components/ui/label";
 
 export function AuthForm({
   className,
-  enableSignup,
-  inviteCode,
+  signup,
   ...props
 }: React.ComponentPropsWithoutRef<"div"> & {
-  enableSignup?: string;
-  inviteCode?: string;
+  signup?: boolean;
 }) {
-  const allowSignup = enableSignup === "true" && !!inviteCode;
-  const [isSignUp, setIsSignUp] = useState(allowSignup);
+  const [isSignUp, setIsSignUp] = useState(signup ?? false);
   let initialState: AuthState = {};
 
   if (typeof window !== "undefined") {
@@ -81,7 +78,6 @@ export function AuthForm({
           <form
             action={(formdata) => {
               formdata.append("type", isSignUp ? "signUp" : "signIn");
-              if (inviteCode) formdata.append("invite_code", inviteCode);
               formAction(formdata);
             }}
           >
@@ -113,18 +109,16 @@ export function AuthForm({
                   {isPending ? "Loading..." : isSignUp ? "Sign Up" : "Sign In"}
                 </Button>
               </div>
-              {allowSignup && (
-                <div className="text-center text-sm">
-                  {isSignUp ? "Already have an account?" : "Need an account?"}
-                  <button
-                    type="button"
-                    onClick={() => setIsSignUp((prev) => !prev)}
-                    className="underline underline-offset-4 ml-1"
-                  >
-                    {isSignUp ? "Sign in" : "Sign up"}
-                  </button>
-                </div>
-              )}
+              <div className="text-center text-sm">
+                {isSignUp ? "Already have an account?" : "Need an account?"}
+                <button
+                  type="button"
+                  onClick={() => setIsSignUp((prev) => !prev)}
+                  className="underline underline-offset-4 ml-1"
+                >
+                  {isSignUp ? "Sign in" : "Sign up"}
+                </button>
+              </div>
             </div>
           </form>
         </CardContent>
