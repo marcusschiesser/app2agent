@@ -9,10 +9,6 @@ import { createDialingTone } from "@/lib/dialing-tone";
 import { playConnectedTone } from "@/lib/connected-tone";
 import { ToolCall } from "@/multimodal-live-types";
 import { toolManager } from "@/lib/tools/manager";
-import {
-  NavigationProgressBar,
-  useNavigationProgress,
-} from "./navigation-progress";
 
 export interface RecorderProps {
   onFinished?: () => void;
@@ -21,6 +17,7 @@ export interface RecorderProps {
 export function Recorder({ onFinished }: RecorderProps) {
   const [isEnabled, setIsEnabled] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [currentAction, setCurrentAction] = useState<string>("");
   const {
     stream,
     start: startCapture,
@@ -37,7 +34,6 @@ export function Recorder({ onFinished }: RecorderProps) {
   const [muted] = useState(false);
   const [inVolume, setInVolume] = useState(0);
   const dialingToneRef = useRef<{ stop: () => void } | null>(null);
-  const navigationProgress = useNavigationProgress();
 
   useEffect(() => {
     const onData = (base64: string) => {
@@ -147,9 +143,27 @@ export function Recorder({ onFinished }: RecorderProps) {
 
     const handleToolCall = async (toolCall: ToolCall) => {
       console.log("Tool Call Received:", JSON.stringify(toolCall, null, 2));
+      const executeActionCall = toolCall.functionCalls?.find(
+        (call) => call.name === "executeActionTool",
+      );
+      if (executeActionCall) {
+        try {
+          if (typeof executeActionCall.args === "string") {
+            const args = JSON.parse(executeActionCall.args);
+            setCurrentAction(args.userRequest || "");
+          } else {
+            const args = executeActionCall.args as { userRequest?: string };
+            setCurrentAction(args.userRequest || "");
+          }
+        } catch (e) {
+          console.error("Failed to parse tool call arguments:", e);
+        }
+      }
       const response = await toolManager.handleToolCall(toolCall);
       console.log("Tool response:", JSON.stringify(response, null, 2));
       client.sendToolResponse(response);
+      // Clear the action after tool call is complete
+      setCurrentAction("");
     };
 
     client.on("toolcall", handleToolCall);
@@ -219,9 +233,52 @@ export function Recorder({ onFinished }: RecorderProps) {
         onToggle={handleToggleEnabled}
         volume={inVolume}
       />
-      {navigationProgress && (
-        <NavigationProgressBar progress={navigationProgress} />
+      {currentAction && (
+        <div className="mt-2 p-2 bg-blue-50 rounded-md text-sm flex items-center gap-2 justify-between">
+          <div className="flex items-center gap-2">
+            <svg
+              className="w-4 h-4 animate-spin text-gray-500"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+            <span className="text-gray-600">Let me: {currentAction}</span>
+          </div>
+          <button
+            onClick={() => setCurrentAction("")}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
       )}
+
       {showFeedback && !isEnabled && (
         <Feedback
           onSubmit={(rating) => {

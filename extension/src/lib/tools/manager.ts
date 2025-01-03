@@ -4,7 +4,7 @@ import {
   ToolResponse,
   LiveFunctionResponse,
 } from "@/multimodal-live-types";
-import { navigationToolConfig, navigationTool } from "./navigation-tool";
+import { executeActionToolConfig, executeActionTool } from "./executeAction";
 import { siteConfig } from "../site-config";
 
 // Map of tool implementations
@@ -18,8 +18,7 @@ export class ToolManager {
   private currentToolName: string | null = null;
 
   constructor() {
-    // Register navigation tool
-    this.registerTool(navigationToolConfig, navigationTool);
+    this.registerTool(executeActionToolConfig, executeActionTool);
   }
 
   // Register a tool and its implementation

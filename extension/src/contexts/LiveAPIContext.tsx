@@ -74,14 +74,7 @@ function getConfig(manual: string): LiveConfig {
         text: `You can use the following tools to help you with your task:\n${toolsPrompt}\n`,
       },
       {
-        text: `When using navigation tool, you don't need to break down the user's request into multiple steps. Just do what the user asks.`,
-      },
-      {
-        text: `When you receive a user request, notify them once that you are working on it and ask for their approval.
-You only need to request approval once during the entire conversation.
-Only one tool can run at a time - do not run multiple tools simultaneously.
-Once the tool returns a result, you need to verify that with the current screenshot. If the result is not correct, you need to retry again (without asking for approval again).
-`,
+        text: `If you need to perform a tool call, just call it; Never say i'll do something - just do it.`,
       },
     ],
   };
