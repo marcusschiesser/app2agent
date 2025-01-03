@@ -7,35 +7,34 @@ import { redirect } from "next/navigation";
 export type AuthState = {
   type?: "error" | "success";
   message?: string;
+  formData?: Record<string, string>;
 };
 
-export const authAction = async (
+export const signUpAction = async (
   prevState: AuthState,
   formData: FormData,
 ): Promise<AuthState> => {
-  const type = formData.get("type") as string;
-  const action = type === "signUp" ? signUpAction : signInAction;
-  const result = await action(formData);
-  return result;
-};
-
-export const signUpAction = async (formData: FormData): Promise<AuthState> => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
-  const inviteCode = formData.get("invite_code")?.toString();
+  const name = formData.get("name")?.toString();
+  const companyName = formData.get("companyName")?.toString();
+  const intendedUsage = formData.get("intendedUsage")?.toString();
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
-  if (!inviteCode || inviteCode !== process.env.INVITE_CODE) {
+  const formValues = {
+    email: email || "",
+    name: name || "",
+    companyName: companyName || "",
+    intendedUsage: intendedUsage || "",
+  };
+
+  if (!email || !password || !name || !companyName) {
     return {
       type: "error",
-      message:
-        "We are in invite only for now, please join the waitlist on www.app2agent.com to be invited.",
+      message: "Name, company name, email, and password are required",
+      formData: formValues,
     };
-  }
-
-  if (!email || !password) {
-    return { type: "error", message: "Email and password are required" };
   }
 
   const { error } = await supabase.auth.signUp({
@@ -43,12 +42,21 @@ export const signUpAction = async (formData: FormData): Promise<AuthState> => {
     password,
     options: {
       emailRedirectTo: `${origin}/auth/callback`,
+      data: {
+        name,
+        company_name: companyName,
+        ...(intendedUsage ? { intended_usage: intendedUsage } : {}),
+      },
     },
   });
 
   if (error) {
     console.error(error.code + " " + error.message);
-    return { type: "error", message: error.message };
+    return {
+      type: "error",
+      message: error.message,
+      formData: formValues,
+    };
   } else {
     return {
       type: "success",
@@ -58,7 +66,10 @@ export const signUpAction = async (formData: FormData): Promise<AuthState> => {
   }
 };
 
-export const signInAction = async (formData: FormData): Promise<AuthState> => {
+export const signInAction = async (
+  prevState: AuthState,
+  formData: FormData,
+): Promise<AuthState> => {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const supabase = await createClient();

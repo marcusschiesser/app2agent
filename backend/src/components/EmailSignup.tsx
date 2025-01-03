@@ -1,74 +1,25 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { signUpAction } from "@/app/actions/auth";
+import { useActionState } from "react";
 
 export default function EmailSignup() {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [intendedUsage, setIntendedUsage] = useState("");
-  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [state, formAction, isPending] = useActionState(signUpAction, {});
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    try {
-      setStatus("idle");
-      setErrorMessage("");
+  const previousFormData = state.formData as Record<string, string> | undefined;
 
-      if (!name.trim()) {
-        setStatus("error");
-        setErrorMessage("Please enter your name");
-        return;
-      }
-
-      if (!companyName.trim()) {
-        setStatus("error");
-        setErrorMessage("Please enter your company name");
-        return;
-      }
-
-      // Check for gmail addresses
-      if (email.toLowerCase().endsWith("@gmail.com")) {
-        setStatus("error");
-        setErrorMessage(
-          "Please use your company email address instead of Gmail",
-        );
-        return;
-      }
-
-      const response = await fetch("/api/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          name: name || null,
-          companyName: companyName || null,
-          intendedUsage: intendedUsage || null,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setStatus("error");
-        setErrorMessage(data.error || "Failed to sign up");
-        return;
-      }
-
-      setStatus("success");
-      setEmail("");
-      setName("");
-      setCompanyName("");
-      setIntendedUsage("");
-    } catch (error) {
-      console.error("Error:", error);
-      setStatus("error");
-      setErrorMessage("Something went wrong. Please try again.");
-    }
-  };
+  if (state.type === "success" && state.message) {
+    return (
+      <section className="py-20 bg-blue-900 text-white">
+        <div className="container mx-auto px-4 max-w-6xl text-center">
+          <div className="flex flex-col gap-8 w-full text-center">
+            <div className="text-5xl font-bold text-blue-100">🎉 Success!</div>
+            <div className="text-xl text-blue-100">{state.message}</div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="email-signup" className="py-20 bg-blue-900 text-white">
@@ -77,55 +28,64 @@ export default function EmailSignup() {
           Ready to Transform Your Apps?
         </h2>
         <p className="text-xl mb-8 text-blue-100">
-          Join the waitlist for early access and special pricing
+          Join for early access and special pricing
         </p>
-        <form onSubmit={handleSubmit} className="max-w-md mx-auto">
+        {state.type === "error" && state.message && (
+          <div className="max-w-md mx-auto mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-sm text-red-600">{state.message}</p>
+          </div>
+        )}
+        <form action={formAction} className="max-w-md mx-auto">
           <div className="flex flex-col gap-4">
             <input
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              name="email"
               placeholder="Enter your email"
               className="px-4 py-3 rounded-lg text-gray-900"
               required
+              defaultValue={previousFormData?.email || ""}
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Choose a password"
+              className="px-4 py-3 rounded-lg text-gray-900"
+              required
+              minLength={6}
             />
             <input
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              name="name"
               placeholder="Your name"
               className="px-4 py-3 rounded-lg text-gray-900"
               required
+              defaultValue={previousFormData?.name || ""}
             />
             <input
               type="text"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
+              name="companyName"
               placeholder="Company name"
               className="px-4 py-3 rounded-lg text-gray-900"
               required
+              defaultValue={previousFormData?.companyName || ""}
             />
-            <textarea
-              value={intendedUsage}
-              onChange={(e) => setIntendedUsage(e.target.value)}
-              placeholder="How do you plan to use our solution? (optional)"
-              className="px-4 py-3 rounded-lg text-gray-900 min-h-[100px]"
+            <input
+              type="text"
+              name="intendedUsage"
+              placeholder="How do you plan to use our product? (Optional)"
+              className="px-4 py-3 rounded-lg text-gray-900"
+              defaultValue={previousFormData?.intendedUsage || ""}
             />
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-600 px-8 py-3 rounded-full font-bold transition-colors"
+              disabled={isPending}
+              className={`bg-white text-blue-900 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors ${
+                isPending ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
-              Join Waitlist
+              {isPending ? "Signing up..." : "Join"}
             </button>
           </div>
-          {status === "success" && (
-            <p className="mt-4 text-green-400">
-              Thanks for signing up! We&apos;ll be in touch soon.
-            </p>
-          )}
-          {status === "error" && (
-            <p className="mt-4 text-red-400">{errorMessage}</p>
-          )}
         </form>
       </div>
     </section>

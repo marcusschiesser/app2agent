@@ -1,7 +1,7 @@
 "use client";
 
-import { AuthState, authAction } from "@/app/actions/auth";
-import { useActionState, useState } from "react";
+import { AuthState, signUpAction } from "@/app/actions/auth";
+import { useActionState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,17 +14,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function AuthForm({
+export function SignUp({
   className,
-  enableSignup,
-  inviteCode,
   ...props
-}: React.ComponentPropsWithoutRef<"div"> & {
-  enableSignup?: string;
-  inviteCode?: string;
-}) {
-  const allowSignup = enableSignup === "true" && !!inviteCode;
-  const [isSignUp, setIsSignUp] = useState(allowSignup);
+}: React.ComponentPropsWithoutRef<"div">) {
   let initialState: AuthState = {};
 
   if (typeof window !== "undefined") {
@@ -44,9 +37,11 @@ export function AuthForm({
   }
 
   const [state, formAction, isPending] = useActionState(
-    authAction,
+    signUpAction,
     initialState,
   );
+
+  const previousFormData = state.formData as Record<string, string> | undefined;
 
   if (state.type === "success" && state.message) {
     return (
@@ -63,13 +58,9 @@ export function AuthForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">
-            {isSignUp ? "Create your account" : "Welcome back"}
-          </CardTitle>
+          <CardTitle className="text-xl">Create your account</CardTitle>
           <CardDescription>
-            {isSignUp
-              ? "Join us to transform your enterprise web apps"
-              : "Sign in to app2agent"}
+            Join us to transform your enterprise web apps
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -78,15 +69,40 @@ export function AuthForm({
               <p className="text-sm text-red-600">{state.message}</p>
             </div>
           )}
-          <form
-            action={(formdata) => {
-              formdata.append("type", isSignUp ? "signUp" : "signIn");
-              if (inviteCode) formdata.append("invite_code", inviteCode);
-              formAction(formdata);
-            }}
-          >
+          <form action={formAction}>
             <div className="grid gap-6">
               <div className="grid gap-6">
+                <div className="grid gap-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    name="name"
+                    type="text"
+                    placeholder="John Doe"
+                    required
+                    defaultValue={previousFormData?.name || ""}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="companyName">Company Name</Label>
+                  <Input
+                    name="companyName"
+                    type="text"
+                    placeholder="Acme Inc"
+                    required
+                    defaultValue={previousFormData?.companyName || ""}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="intendedUsage">
+                    Intended Usage (Optional)
+                  </Label>
+                  <Input
+                    name="intendedUsage"
+                    type="text"
+                    placeholder="How do you plan to use our product?"
+                    defaultValue={previousFormData?.intendedUsage || ""}
+                  />
+                </div>
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -94,6 +110,7 @@ export function AuthForm({
                     type="email"
                     placeholder="m@example.com"
                     required
+                    defaultValue={previousFormData?.email || ""}
                   />
                 </div>
                 <div className="grid gap-2">
@@ -102,29 +119,26 @@ export function AuthForm({
                   </div>
                   <Input name="password" type="password" required />
                 </div>
-                <Button
-                  type="submit"
-                  className={cn("w-full", {
-                    "bg-green-600 hover:bg-green-700 focus:ring-green-500":
-                      isSignUp,
-                  })}
-                  disabled={isPending}
-                >
-                  {isPending ? "Loading..." : isSignUp ? "Sign Up" : "Sign In"}
+                <Button disabled={isPending}>
+                  {isPending && (
+                    <div
+                      className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+                      role="status"
+                      aria-label="Loading"
+                    />
+                  )}
+                  Sign up
                 </Button>
               </div>
-              {allowSignup && (
-                <div className="text-center text-sm">
-                  {isSignUp ? "Already have an account?" : "Need an account?"}
-                  <button
-                    type="button"
-                    onClick={() => setIsSignUp((prev) => !prev)}
-                    className="underline underline-offset-4 ml-1"
-                  >
-                    {isSignUp ? "Sign in" : "Sign up"}
-                  </button>
-                </div>
-              )}
+              <div className="text-center text-sm">
+                Already have an account?{" "}
+                <a
+                  href="/auth"
+                  className="font-medium text-indigo-600 hover:text-indigo-500"
+                >
+                  Sign in
+                </a>
+              </div>
             </div>
           </form>
         </CardContent>
