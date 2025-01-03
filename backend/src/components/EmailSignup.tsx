@@ -28,7 +28,7 @@ export default function EmailSignup() {
           Ready to Transform Your Apps?
         </h2>
         <p className="text-xl mb-8 text-blue-100">
-          Join the waitlist for early access and special pricing
+          Join for early access and special pricing
         </p>
         {state.type === "error" && state.message && (
           <div className="max-w-md mx-auto mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
@@ -83,7 +83,7 @@ export default function EmailSignup() {
                 isPending ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              {isPending ? "Signing up..." : "Join Waitlist"}
+              {isPending ? "Signing up..." : "Join"}
             </button>
           </div>
         </form>
