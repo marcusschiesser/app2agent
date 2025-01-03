@@ -233,7 +233,6 @@ export function Recorder({ onFinished }: RecorderProps) {
   const [showFeedback, setShowFeedback] = useState(false);
   const {
     stream,
-    isStreaming,
     start: startCapture,
     stop: stopCapture,
   } = useChromeTabCapture();
@@ -245,7 +244,7 @@ export function Recorder({ onFinished }: RecorderProps) {
   const renderCanvasRef = useRef<HTMLCanvasElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [audioRecorder] = useState(() => new AudioRecorder());
-  const [muted, setMuted] = useState(false);
+  const [muted] = useState(false);
   const [inVolume, setInVolume] = useState(0);
   const dialingToneRef = useRef<{ stop: () => void } | null>(null);
   const [navigationProgress, setNavigationProgress] =
@@ -353,6 +352,10 @@ export function Recorder({ onFinished }: RecorderProps) {
   }, [connected, stream, client]);
 
   useEffect(() => {
+    if (!client) {
+      return;
+    }
+
     const handleToolCall = async (toolCall: ToolCall) => {
       console.log("Tool Call Received:", JSON.stringify(toolCall, null, 2));
       const response = await toolManager.handleToolCall(toolCall);

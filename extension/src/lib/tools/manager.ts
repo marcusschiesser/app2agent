@@ -88,6 +88,17 @@ export class ToolManager {
       this.currentToolName = null;
     }
   }
+
+  public getPrompt(): string {
+    return this.tools
+      .map(
+        (tool) =>
+          tool.functionDeclarations?.[0]?.name +
+          ": " +
+          tool.functionDeclarations?.[0]?.description,
+      )
+      .join("\n");
+  }
 }
 
 // Export singleton instance

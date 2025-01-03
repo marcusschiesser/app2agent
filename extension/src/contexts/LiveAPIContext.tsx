@@ -18,6 +18,7 @@ import { createContext, FC, ReactNode, useContext, useState } from "react";
 import { UserConfig } from "../hooks/use-config";
 import { useLiveAPI, UseLiveAPIResults } from "../hooks/use-live-api";
 import { LiveConfig } from "@/multimodal-live-types";
+import { toolManager } from "@/lib/tools/manager";
 
 type LiveAPIContextValue = {
   liveAPI: UseLiveAPIResults | null;
@@ -53,6 +54,8 @@ export const useLiveAPIContext = () => {
 };
 
 function getConfig(manual: string): LiveConfig {
+  const tools = toolManager.getTools();
+  const toolsPrompt = toolManager.getPrompt();
   const systemInstruction = {
     parts: [
       {
@@ -61,10 +64,21 @@ function getConfig(manual: string): LiveConfig {
       {
         text: `Use the following context if helpful:\n###\n${manual}\n###\n`,
       },
+      {
+        text: `You can use the following tools to help you with your task:\n${toolsPrompt}\n`,
+      },
+      {
+        text: `When you receive a user request, notify them once that you are working on it and ask for their approval.
+You only need to request approval once during the entire conversation.
+Only one tool can run at a time - do not run multiple tools simultaneously.
+Once the tool returns a result, you need to verify that with the current screenshot. If the result is not correct, you need to retry again (without asking for approval again).
+`,
+      },
     ],
   };
   return {
     model: "models/gemini-2.0-flash-exp",
     systemInstruction,
+    tools,
   };
 }

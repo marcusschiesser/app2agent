@@ -22,7 +22,6 @@ import {
 import { LiveConfig } from "../multimodal-live-types";
 import { AudioStreamer } from "../lib/audio-streamer";
 import { audioContext } from "../lib/audio-context";
-import { toolManager } from "../lib/tools/manager";
 
 export type UseLiveAPIResults = {
   client: MultimodalLiveClient;
@@ -47,34 +46,6 @@ export function useLiveAPI({
   );
   const audioStreamerRef = useRef<AudioStreamer | null>(null);
   const [connected, setConnected] = useState(false);
-  const [config, setConfig] = useState<LiveConfig>({
-    model: "models/gemini-2.0-flash-exp",
-    systemInstruction: {
-      parts: [
-        {
-          text: "You're IT support. If the user connects, welcome him/her with a suitable greeting.",
-        },
-        {
-          text: `You can use the following tools to help you with your task:
-${toolManager
-  .getTools()
-  .map(
-    (tool) =>
-      `- ${tool.functionDeclarations?.[0]?.name}: ${tool.functionDeclarations?.[0]?.description}`,
-  )
-  .join("\n")}`,
-        },
-        {
-          text: `When you receive a user request, notify them once that you are working on it and ask for their approval.
-You only need to request approval once during the entire conversation.
-Only one tool can run at a time - do not run multiple tools simultaneously.
-Once the tool returns a result, you need to verify that with the current screenshot. If the result is not correct, you need to retry again (without asking for approval again).
-`,
-        },
-      ],
-    },
-    tools: toolManager.getTools(),
-  });
   const [volume, setVolume] = useState(0);
 
   // register audio for streaming server -> speakers

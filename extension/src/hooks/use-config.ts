@@ -3,7 +3,7 @@ import { secureFetch } from "@/lib/secure-fetch";
 
 const backend =
   process.env.NODE_ENV === "development"
-    ? "http://localhost:3000/api"
+    ? "https://www.app2agent.com/api"
     : "https://www.app2agent.com/api";
 
 export type UserConfig = {
