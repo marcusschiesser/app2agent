@@ -5,6 +5,7 @@ import {
   LiveFunctionResponse,
 } from "@/multimodal-live-types";
 import { navigationToolConfig, navigationTool } from "./navigation-tool";
+import { siteConfig } from "../site-config";
 
 // Map of tool implementations
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,6 +41,18 @@ export class ToolManager {
 
   // Handle tool calls from LLM
   public async handleToolCall(toolCall: ToolCall): Promise<ToolResponse> {
+    if (!siteConfig.isConfigured()) {
+      return {
+        functionResponses: toolCall.functionCalls.map((call) => ({
+          response: {
+            success: false,
+            error: "Site configuration not complete",
+          },
+          id: call.id,
+        })),
+      };
+    }
+
     if (this.isToolRunning) {
       return {
         functionResponses: toolCall.functionCalls.map((call) => ({
@@ -62,6 +75,7 @@ export class ToolManager {
               throw new Error(`No implementation found for tool: ${call.name}`);
             }
             this.currentToolName = call.name;
+            // Tools now get config values directly from SiteConfig
             const result = await implementation(call.args);
             return {
               response: result,

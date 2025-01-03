@@ -19,11 +19,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     // Event for generating a navigation plan for a user's request
     case "A2A_CREATE_NAVIGATION_PLAN":
+      if (!message.apiKey) {
+        sendResponse({ success: false, result: "API key is required" });
+        return true;
+      }
+      if (!message.manual) {
+        sendResponse({ success: false, result: "Site context is required" });
+        return true;
+      }
       createNavigationPlan(
         message.userRequest,
         message.currentUrl,
         message.screenshot,
         message.previousExecution,
+        message.apiKey,
+        message.manual,
       )
         .then((plan) => sendResponse({ success: true, result: plan }))
         .catch((error) =>
@@ -33,7 +43,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     // Event for getting a dom selector for a specific action
     case "A2A_GET_DOM_SELECTOR":
-      createActionPlan(message.dom, message.actionDescription)
+      if (!message.apiKey) {
+        sendResponse({ success: false, result: "API key is required" });
+        return true;
+      }
+      createActionPlan(message.dom, message.actionDescription, message.apiKey)
         .then((plan) => sendResponse({ success: true, result: plan }))
         .catch((error) =>
           sendResponse({ success: false, result: error.message }),

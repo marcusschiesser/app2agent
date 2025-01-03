@@ -1,28 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-declare const __GEMINI_API_KEY__: string;
-
-const genAI = new GoogleGenerativeAI(__GEMINI_API_KEY__);
-
-const getContext = async (request: string, currentUrl: string) => {
-  return `
-To create a Service Page:
-
-Click on "Me" button on the top bar.
-
-Click My Profile to go to your profile page.
-
-Click the Add profile section button below your profile picture.
-
-Click "Add services".
-
-If this is your first time creating a Service Page, review the How it works information and click the Continue button.
-
-Complete the Service Page set up information.
-Click the Save button to make your Service Page viewable by members.
-`;
-};
-
 /**
  * A function to create an navigation plan for a user's request based on the current page and the knowledge base.
  */
@@ -31,12 +8,13 @@ export async function createNavigationPlan(
   currentUrl: string,
   screenshot: string,
   executionHistory: string,
+  apiKey: string,
+  siteContext: string,
 ): Promise<string[]> {
+  const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
     model: "models/gemini-2.0-flash-exp",
   });
-
-  const context = await getContext(request, currentUrl);
 
   const prompt = `You are an tester who using a browser to perform actions on a website.
   You are given a user request, current page screenshot, url and execution history.
@@ -69,13 +47,14 @@ export async function createNavigationPlan(
   Important:
   - Always use the provided information like screenshot, url and execution history to create or refine the action plan.
   - Never make up new information.
+  - The plan should be in sequence of actions, each action is a single line and should reach the goal of the user's request.
   
   Now, create an action plan for the following request:
   ###
   Current page: ${currentUrl}
   User request: ${request}
   Execution history: ${executionHistory}
-  Context: ${context}
+  Context: ${siteContext}
   ###
 
   Your response in sequence of actions, each action is a single line:

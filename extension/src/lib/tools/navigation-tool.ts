@@ -1,4 +1,5 @@
 import { SchemaType, Tool } from "@google/generative-ai";
+import { siteConfig } from "../site-config";
 
 export const navigationToolConfig: Tool = {
   functionDeclarations: [
@@ -281,6 +282,7 @@ async function executeAction(
       type: "A2A_GET_DOM_SELECTOR",
       dom,
       actionDescription,
+      apiKey: siteConfig.getApiKey(),
     });
 
     if (!success) {
@@ -356,6 +358,8 @@ async function createPlan(userRequest: string, executionHistory: string = "") {
     currentUrl,
     executionHistory,
     screenshot,
+    apiKey: siteConfig.getApiKey(),
+    manual: siteConfig.getSiteContext(),
   });
 
   return result;

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import { createContext, FC, ReactNode, useContext, useState } from "react";
+import { createContext, FC, ReactNode, useContext } from "react";
 import { UserConfig } from "../hooks/use-config";
 import { useLiveAPI, UseLiveAPIResults } from "../hooks/use-live-api";
 import { LiveConfig } from "@/multimodal-live-types";
 import { toolManager } from "@/lib/tools/manager";
+import { siteConfig } from "@/lib/site-config";
 
 type LiveAPIContextValue = {
   liveAPI: UseLiveAPIResults | null;
@@ -37,6 +38,11 @@ export const LiveAPIProvider: FC<
   LiveAPIProviderProps & { config: UserConfig }
 > = ({ url, children, config }) => {
   const { manual, apiKey } = config;
+
+  // Set site configuration
+  siteConfig.setApiKey(apiKey);
+  siteConfig.setSiteContext(manual);
+
   const api = useLiveAPI({ url, apiKey, config: getConfig(manual) });
   return (
     <LiveAPIContext.Provider value={{ liveAPI: api }}>
@@ -66,6 +72,9 @@ function getConfig(manual: string): LiveConfig {
       },
       {
         text: `You can use the following tools to help you with your task:\n${toolsPrompt}\n`,
+      },
+      {
+        text: `When using navigation tool, you don't need to break down the user's request into multiple steps. Just do what the user asks.`,
       },
       {
         text: `When you receive a user request, notify them once that you are working on it and ask for their approval.

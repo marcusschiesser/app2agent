@@ -1,10 +1,6 @@
 import { NavigationAction } from "@/lib/page-navigation";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-declare const __GEMINI_API_KEY__: string;
-
-const genAI = new GoogleGenerativeAI(__GEMINI_API_KEY__);
-
 function cleanJsonResponse(text: string): string {
   // Remove markdown code block if present
   const jsonMatch = text.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
@@ -19,7 +15,9 @@ function cleanJsonResponse(text: string): string {
 export async function createActionPlan(
   dom: string,
   actionDescription: string,
+  apiKey: string,
 ): Promise<NavigationAction> {
+  const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
     model: "models/gemini-2.0-flash-exp",
   });
