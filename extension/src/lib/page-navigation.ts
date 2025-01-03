@@ -69,21 +69,6 @@ class ContentNavigationHelper extends EventEmitter {
         case "click":
           (element as HTMLElement).click();
           break;
-
-        // case "input":
-        //   if (action.value && element instanceof HTMLInputElement) {
-        //     element.value = action.value;
-        //     element.dispatchEvent(new Event("input", { bubbles: true }));
-        //   }
-        //   break;
-
-        // case "scroll":
-        //   element.scrollIntoView({ behavior: "smooth", block: "center" });
-        //   break;
-
-        // case "url":
-        //   window.location.href = action.value || "";
-        //   break;
         default:
           console.error("Unsupported action type:", action.type);
           break;
