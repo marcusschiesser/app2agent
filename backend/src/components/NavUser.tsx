@@ -77,7 +77,7 @@ export function NavUser() {
                 onClick={() => router.push("/admin/reset-password")}
               >
                 <Lock />
-                Update password
+                Change password
               </DropdownMenuItem>
               <DropdownMenuItem onClick={signOutAction}>
                 <LogOut />
