@@ -4,7 +4,11 @@ import {
   ToolResponse,
   LiveFunctionResponse,
 } from "@/multimodal-live-types";
-import { executeActionToolConfig, executeActionTool } from "./execute-action";
+// import { executeActionToolConfig, executeActionTool } from "./execute-action";
+import {
+  navigationWorkflowConfig,
+  navigationWorkflow,
+} from "./navigation-workflow";
 import { SiteConfig } from "@/hooks/use-config";
 
 // Map of tool implementations
@@ -18,7 +22,8 @@ export class ToolManager {
   private currentToolName: string | null = null;
 
   constructor() {
-    this.registerTool(executeActionToolConfig, executeActionTool);
+    // this.registerTool(executeActionToolConfig, executeActionTool);
+    this.registerTool(navigationWorkflowConfig, navigationWorkflow);
   }
 
   // Register a tool and its implementation
@@ -31,6 +36,10 @@ export class ToolManager {
       this.toolMap.set(functionName, implementation);
       this.tools.push(tool);
     }
+  }
+
+  public isRunning(): boolean {
+    return this.isRunningTool;
   }
 
   // Get all tool configs for LLM

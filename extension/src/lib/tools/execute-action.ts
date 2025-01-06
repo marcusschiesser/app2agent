@@ -10,7 +10,8 @@ export const executeActionToolConfig: Tool = {
   functionDeclarations: [
     {
       name: "executeActionTool",
-      description: "Execute an action on the current page",
+      description:
+        "Click on specific element on the current page. If the element is not found, return an error message.",
       parameters: {
         type: SchemaType.OBJECT,
         properties: {
@@ -58,6 +59,22 @@ const formatVisibleElementXpaths = (
     .join("\n");
 };
 
+const updateActionStatus = (
+  action: string,
+  status: "running" | "completed" | "failed",
+  data?: Map<string, string>,
+) => {
+  window.postMessage(
+    {
+      type: "A2A_ACTION_STATUS",
+      action,
+      status,
+      data: JSON.stringify(data ?? {}),
+    },
+    window.location.origin,
+  );
+};
+
 /**
  * Execute an action on the current page. Required siteConfig to get the API key.
  * @param userRequest - The user's request to be performed (e.g., 'Change password', 'Go to settings')
@@ -75,12 +92,13 @@ export async function executeActionTool({
   siteConfig: SiteConfig;
 }): Promise<{ success: boolean; result: VisibleElementXpath | string }> {
   // Construct a prompt of all visible elements with their xpath.
+  updateActionStatus(`Executing: ${userRequest}`, "running");
   const visibleElementXpaths = getVisibleElementXpaths();
 
   const elementsPrompt = formatVisibleElementXpaths(visibleElementXpaths);
 
   const prompt = `You are a browser agent who is using a browser to perform actions on a website.
-  You are given a page screenshot and a list of visible elements on the current page. Each element is described by its xpath and text content.
+  You are given a list of visible elements on the current page. Each element is described by its xpath and text content.
   Based on the provided context, find an element that matches the user request.
   Respond with only the index of the element that matches the user request, without any other text. If no element matches the user request, respond with -1.
   The elements follow this pattern: [index]: description
@@ -124,9 +142,10 @@ export async function executeActionTool({
       try {
         simulateClick(elementElement);
       } catch (error) {
+        updateActionStatus(`Error: ${JSON.stringify(error)}`, "failed");
         return {
           success: false,
-          result: `Found element but failed to click: ${error}`,
+          result: `Found element but failed to click: ${JSON.stringify(error)}`,
         };
       }
     }
@@ -134,6 +153,6 @@ export async function executeActionTool({
 
   return {
     success: true,
-    result: element,
+    result: `Clicked on ${element.xpath} successfully`,
   };
 }

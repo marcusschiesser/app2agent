@@ -1,5 +1,6 @@
 import {
   handleTabCapture,
+  handleTabScreenshot,
   requestAudioPermissions,
 } from "./recorder-controller";
 
@@ -14,7 +15,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     case "GET_TAB_STREAM":
       handleTabCapture(sender, sendResponse);
       return true;
+
+    case "TAKE_SCREENSHOT":
+      handleTabScreenshot(sender, sendResponse);
+      return true;
   }
+
+  return false;
 });
 
 // Send the toggle message when extension icon is clicked

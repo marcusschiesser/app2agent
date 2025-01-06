@@ -18,7 +18,11 @@ export interface RecorderProps {
 export function Recorder({ onFinished }: RecorderProps) {
   const [isEnabled, setIsEnabled] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
-  const [currentAction, setCurrentAction] = useState<string>("");
+  const [actionStatus, setActionStatus] = useState<{
+    action: string;
+    status?: "running" | "completed" | "failed";
+    error?: string;
+  } | null>(null);
   const {
     stream,
     start: startCapture,
@@ -145,27 +149,19 @@ export function Recorder({ onFinished }: RecorderProps) {
 
     const handleToolCall = async (toolCall: ToolCall) => {
       console.log("Tool Call Received:", JSON.stringify(toolCall, null, 2));
-      const executeActionCall = toolCall.functionCalls?.find(
-        (call) => call.name === "executeActionTool",
-      );
-      if (executeActionCall) {
-        try {
-          if (typeof executeActionCall.args === "string") {
-            const args = JSON.parse(executeActionCall.args);
-            setCurrentAction(args.userRequest || "");
-          } else {
-            const args = executeActionCall.args as { userRequest?: string };
-            setCurrentAction(args.userRequest || "");
-          }
-        } catch (e) {
-          console.error("Failed to parse tool call arguments:", e);
-        }
-      }
       const response = await tools.handleToolCall(toolCall, siteConfig);
       console.log("Tool response:", JSON.stringify(response, null, 2));
       client.sendToolResponse(response);
-      // Clear the action after tool call is complete
-      setCurrentAction("");
+      // Avoid telling the user for a tool call that is still running
+      if (!tools.isRunning()) {
+        // Send a message to LLM for the tool call result
+        client.send({
+          text: "A tool call has been completed. Check the status and tell me the result.",
+        });
+      }
+      // Clear action status after tool call is complete
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      setActionStatus(null);
     };
 
     client.on("toolcall", handleToolCall);
@@ -175,6 +171,26 @@ export function Recorder({ onFinished }: RecorderProps) {
     };
   }, [client]);
 
+  useEffect(() => {
+    const handleNavigationProgress = (event: MessageEvent) => {
+      if (
+        event.origin === window.location.origin &&
+        event.data?.type === "A2A_ACTION_STATUS"
+      ) {
+        setActionStatus({
+          action: event.data.action,
+          status: event.data.status,
+          error: event.data.error,
+        });
+      }
+    };
+
+    window.addEventListener("message", handleNavigationProgress);
+    return () => {
+      window.removeEventListener("message", handleNavigationProgress);
+    };
+  }, []);
+
   return (
     <div className="p-4 min-w-[200px]">
       <CallForm
@@ -182,11 +198,29 @@ export function Recorder({ onFinished }: RecorderProps) {
         onToggle={handleToggleEnabled}
         volume={inVolume}
       />
-      {currentAction && (
-        <div className="mt-2 p-2 bg-blue-50 rounded-md text-sm flex items-center gap-2 justify-between">
+      {actionStatus && (
+        <div
+          className={`mt-2 p-2 rounded-md text-sm flex items-center gap-2 justify-between ${
+            actionStatus.status === "failed"
+              ? "bg-red-50"
+              : actionStatus.status === "completed"
+                ? "bg-green-50"
+                : "bg-blue-50"
+          }`}
+        >
           <div className="flex items-center gap-2">
-            <Spinner />
-            <span className="text-gray-600">Let me: {currentAction}</span>
+            {actionStatus.status === "running" && <Spinner />}
+            <span
+              className={`${
+                actionStatus.status === "failed"
+                  ? "text-red-600"
+                  : actionStatus.status === "completed"
+                    ? "text-green-600"
+                    : "text-gray-600"
+              }`}
+            >
+              {actionStatus.action || actionStatus.error}
+            </span>
           </div>
         </div>
       )}
