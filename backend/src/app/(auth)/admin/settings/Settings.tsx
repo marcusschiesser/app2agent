@@ -109,10 +109,30 @@ export default function Settings({ userId }: { userId: string }) {
               name="content"
               id="content"
               rows={20}
+              maxLength={4000}
               defaultValue={manual?.content || ""}
-              placeholder="Specify here the documentation of your web application. You can just
-              paste the documentation in Markdown format."
+              placeholder="The documentation of your web application. You can directly paste the documentation here."
             />
+            <p className="text-sm text-muted-foreground">
+              Limited to one page. For larger documentation needs requiring{" "}
+              <a
+                href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation"
+                className="text-primary hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                RAG (Retrieval Augmented Generation)
+              </a>
+              , please directly contact{" "}
+              <a
+                href="https://www.linkedin.com/in/marcusschiesser/"
+                className="text-primary hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Marcus Schiesser
+              </a>
+            </p>
           </div>
 
           <Button type="submit" disabled={isPending}>
