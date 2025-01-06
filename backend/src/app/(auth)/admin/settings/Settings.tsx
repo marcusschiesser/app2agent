@@ -53,7 +53,8 @@ export default function Settings({ userId }: { userId: string }) {
       <CardHeader>
         <CardTitle>Application Settings</CardTitle>
         <CardDescription>
-          Configure your application settings here.
+          Configure your web application to enhance it with AI agents using
+          app2agent.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -79,11 +80,12 @@ export default function Settings({ userId }: { userId: string }) {
               >
                 https://aistudio.google.com/apikey
               </a>
+              . Adding this key will be removed in the near future.
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="url">Root Domain</Label>
+            <Label htmlFor="url">Domain</Label>
             <Input
               type="text"
               name="url"
@@ -95,6 +97,10 @@ export default function Settings({ userId }: { userId: string }) {
               }}
               placeholder="e.g., myapp.com"
             />
+            <p className="text-sm text-muted-foreground">
+              Specify the domain of your web application. You can just paste an
+              URL which will be converted to a domain.
+            </p>
           </div>
 
           <div className="space-y-2">
@@ -104,7 +110,8 @@ export default function Settings({ userId }: { userId: string }) {
               id="content"
               rows={20}
               defaultValue={manual?.content || ""}
-              placeholder="Enter your documentation in Markdown format"
+              placeholder="Specify here the documentation of your web application. You can just
+              paste the documentation in Markdown format."
             />
           </div>
 
