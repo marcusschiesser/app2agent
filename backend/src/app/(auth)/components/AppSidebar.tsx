@@ -20,16 +20,26 @@ import { usePathname } from "next/navigation";
 import * as React from "react";
 import Logo from "../../../components/Logo";
 
-const sidebarItems = [
+const sidebarGroups = [
   {
-    name: "Settings",
-    url: "/admin/settings",
-    icon: Settings2,
+    label: "Apps",
+    items: [
+      {
+        name: "Settings",
+        url: "/admin/settings",
+        icon: Settings2,
+      },
+    ],
   },
   {
-    name: "Download",
-    url: "/admin/download",
-    icon: Download,
+    label: "Integration",
+    items: [
+      {
+        name: "Browser Extension",
+        url: "/admin/download",
+        icon: Download,
+      },
+    ],
   },
 ];
 
@@ -39,21 +49,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar collapsible="icon" {...props}>
       <AppSidebarHeader />
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Platform</SidebarGroupLabel>
-          <SidebarMenu>
-            {sidebarItems.map((item) => (
-              <SidebarMenuItem key={item.name}>
-                <SidebarMenuButton asChild isActive={pathname === item.url}>
-                  <Link href={item.url}>
-                    <item.icon />
-                    <span>{item.name}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
+        {sidebarGroups.map((group) => (
+          <SidebarGroup key={group.label}>
+            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+            <SidebarMenu>
+              {group.items.map((item) => (
+                <SidebarMenuItem key={item.name}>
+                  <SidebarMenuButton asChild isActive={pathname === item.url}>
+                    <Link href={item.url}>
+                      <item.icon />
+                      <span>{item.name}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

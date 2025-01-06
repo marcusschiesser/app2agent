@@ -18,8 +18,8 @@ export default function Page() {
           <CardHeader>
             <CardTitle>Browser Extension</CardTitle>
             <CardDescription>
-              Download and install the app2agent browser extension to add IT
-              support to your web app.
+              Download and install the app2agent browser extension to add AI
+              agents to your web apps.
             </CardDescription>
           </CardHeader>
           <CardContent>
