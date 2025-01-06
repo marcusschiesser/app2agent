@@ -76,13 +76,12 @@ export async function executeActionTool({
   const visibleElementXpaths = getVisibleElementXpaths();
 
   const elementsPrompt = formatVisibleElementXpaths(visibleElementXpaths);
-  console.log("elementsPrompt", elementsPrompt);
 
-  const prompt = `You are an tester who using a browser to perform actions on a website.
-  You are given an page screenshot and a list of visible elements on the current page, each element is described by its xpath and text content.
+  const prompt = `You are a browser agent who is using a browser to perform actions on a website.
+  You are given a page screenshot and a list of visible elements on the current page. Each element is described by its xpath and text content.
   Based on the provided context, find an element that matches the user request.
-  Response only an index of the element that matches the user request without any other text. If no element matches the user request, response -1.
-  The element is following by these pattern: [index]: description
+  Respond with only the index of the element that matches the user request, without any other text. If no element matches the user request, respond with -1.
+  The elements follow this pattern: [index]: description
 
   E.g:
   ###elements
