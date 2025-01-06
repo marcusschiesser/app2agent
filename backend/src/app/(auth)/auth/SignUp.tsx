@@ -21,11 +21,12 @@ export function SignUp({
   let initialState: AuthState = {};
 
   if (typeof window !== "undefined") {
+    // Handle hash parameters for error states
     const hash = window.location.hash.substring(1);
     if (hash) {
-      const params = new URLSearchParams(hash);
-      const error = params.get("error");
-      const error_description = params.get("error_description");
+      const hashParams = new URLSearchParams(hash);
+      const error = hashParams.get("error");
+      const error_description = hashParams.get("error_description");
 
       if (error && error_description) {
         initialState = {
@@ -33,6 +34,33 @@ export function SignUp({
           message: decodeURIComponent(error_description),
         };
       }
+    }
+
+    // Handle search parameters for form prefilling
+    const searchParams = new URLSearchParams(window.location.search);
+    const formData: Record<string, string> = {};
+
+    // List of valid form fields
+    const validFields = [
+      "email",
+      "name",
+      "companyName",
+      "intendedUsage",
+      "linkedInProfile",
+    ];
+
+    validFields.forEach((field) => {
+      const value = searchParams.get(field);
+      if (value) {
+        formData[field] = value;
+      }
+    });
+
+    if (Object.keys(formData).length > 0) {
+      initialState = {
+        ...initialState,
+        formData,
+      };
     }
   }
 
