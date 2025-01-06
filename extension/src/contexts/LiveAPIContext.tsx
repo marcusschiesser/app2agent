@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { createContext, FC, ReactNode, useContext } from "react";
+import { ReactNode, createContext, useContext } from "react";
 import { UserConfig } from "../hooks/use-config";
 import { useLiveAPI, UseLiveAPIResults } from "../hooks/use-live-api";
 import { LiveConfig } from "@/multimodal-live-types";
-import { toolManager } from "@/lib/tools/manager";
 import { siteConfig } from "@/lib/site-config";
+import { useTools } from "./ToolsContext";
 
 type LiveAPIContextValue = {
   liveAPI: UseLiveAPIResults | null;
@@ -32,24 +32,55 @@ const LiveAPIContext = createContext<LiveAPIContextValue | undefined>(
 export type LiveAPIProviderProps = {
   children: ReactNode;
   url?: string;
+  config: UserConfig;
 };
 
-export const LiveAPIProvider: FC<
-  LiveAPIProviderProps & { config: UserConfig }
-> = ({ url, children, config }) => {
+export function LiveAPIProvider({
+  url,
+  children,
+  config,
+}: LiveAPIProviderProps) {
   const { manual, apiKey } = config;
+  const tools = useTools();
 
   // Set site configuration
   siteConfig.setApiKey(apiKey);
   siteConfig.setSiteContext(manual);
 
-  const api = useLiveAPI({ url, apiKey, config: getConfig(manual) });
+  // Get tool configurations
+  const toolConfigs = tools.getTools();
+  const toolsPrompt = tools.getPrompt();
+
+  // Create config with tools and prompts
+  const liveConfig: LiveConfig = {
+    model: "models/gemini-2.0-flash-exp",
+    systemInstruction: {
+      parts: [
+        {
+          text: "You're IT support. If the user connects, welcome him/her with a suitable greeting.",
+        },
+        {
+          text: `Use the following context if helpful:\n###\n${manual}\n###\n`,
+        },
+        {
+          text: `You can use the following tools to help you with your task:\n${toolsPrompt}\n`,
+        },
+        {
+          text: `If you need to perform a tool call, just call it; Never say i'll do something - just do it.`,
+        },
+      ],
+    },
+    tools: toolConfigs,
+  };
+
+  const api = useLiveAPI({ url, apiKey, config: liveConfig });
+
   return (
     <LiveAPIContext.Provider value={{ liveAPI: api }}>
       {children}
     </LiveAPIContext.Provider>
   );
-};
+}
 
 export const useLiveAPIContext = () => {
   const context = useContext(LiveAPIContext);
@@ -58,29 +89,3 @@ export const useLiveAPIContext = () => {
   }
   return context;
 };
-
-function getConfig(manual: string): LiveConfig {
-  const tools = toolManager.getTools();
-  const toolsPrompt = toolManager.getPrompt();
-  const systemInstruction = {
-    parts: [
-      {
-        text: "You're IT support. If the user connects, welcome him/her with a suitable greeting.",
-      },
-      {
-        text: `Use the following context if helpful:\n###\n${manual}\n###\n`,
-      },
-      {
-        text: `You can use the following tools to help you with your task:\n${toolsPrompt}\n`,
-      },
-      {
-        text: `If you need to perform a tool call, just call it; Never say i'll do something - just do it.`,
-      },
-    ],
-  };
-  return {
-    model: "models/gemini-2.0-flash-exp",
-    systemInstruction,
-    tools,
-  };
-}

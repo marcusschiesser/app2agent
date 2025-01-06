@@ -8,8 +8,8 @@ import { audioContext } from "@/lib/audio-context";
 import { createDialingTone } from "@/lib/dialing-tone";
 import { playConnectedTone } from "@/lib/connected-tone";
 import { ToolCall } from "@/multimodal-live-types";
-import { toolManager } from "@/lib/tools/manager";
 import { Spinner } from "./ui/icons";
+import { useTools } from "@/contexts/ToolsContext";
 
 export interface RecorderProps {
   onFinished?: () => void;
@@ -35,6 +35,7 @@ export function Recorder({ onFinished }: RecorderProps) {
   const [muted] = useState(false);
   const [inVolume, setInVolume] = useState(0);
   const dialingToneRef = useRef<{ stop: () => void } | null>(null);
+  const tools = useTools();
 
   useEffect(() => {
     const onData = (base64: string) => {
@@ -160,7 +161,7 @@ export function Recorder({ onFinished }: RecorderProps) {
           console.error("Failed to parse tool call arguments:", e);
         }
       }
-      const response = await toolManager.handleToolCall(toolCall);
+      const response = await tools.handleToolCall(toolCall);
       console.log("Tool response:", JSON.stringify(response, null, 2));
       client.sendToolResponse(response);
       // Clear the action after tool call is complete

@@ -113,6 +113,3 @@ export class ToolManager {
       .join("\n");
   }
 }
-
-// Export singleton instance
-export const toolManager = new ToolManager();

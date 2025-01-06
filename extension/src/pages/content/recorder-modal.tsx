@@ -6,13 +6,18 @@ import { LiveAPIProvider } from "@/contexts/LiveAPIContext";
 import { useConfig } from "@/hooks/use-config";
 import { Loading } from "@/components/loading";
 import { Header } from "@/components/header";
+import { ToolsProvider } from "@/contexts/ToolsContext";
+
+interface ChromeMessage {
+  type: "TOGGLE_RECORDER";
+}
 
 function RecorderModalApp() {
   const config = useConfig();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const handleMessage = (message: any) => {
+    const handleMessage = (message: ChromeMessage) => {
       if (message.type === "TOGGLE_RECORDER") {
         setIsVisible((prev) => !prev);
       }
@@ -38,9 +43,11 @@ function RecorderModalApp() {
       {isLoading ? (
         <LoadingConfig />
       ) : hasSetup ? (
-        <LiveAPIProvider config={config} url={uri}>
-          <Recorder onFinished={handleClose} />
-        </LiveAPIProvider>
+        <ToolsProvider>
+          <LiveAPIProvider config={config} url={uri}>
+            <Recorder onFinished={handleClose} />
+          </LiveAPIProvider>
+        </ToolsProvider>
       ) : (
         <NoConfig />
       )}
