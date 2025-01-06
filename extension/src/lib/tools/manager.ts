@@ -4,7 +4,7 @@ import {
   ToolResponse,
   LiveFunctionResponse,
 } from "@/multimodal-live-types";
-import { executeActionToolConfig, executeActionTool } from "./executeAction";
+import { executeActionToolConfig, executeActionTool } from "./execute-action";
 import { SiteConfig } from "@/hooks/use-config";
 
 // Map of tool implementations
