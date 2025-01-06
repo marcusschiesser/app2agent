@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import Link from "next/link";
 
 type WebApp = {
   id: string;
@@ -54,7 +55,11 @@ export default function Settings({ userId }: { userId: string }) {
         <CardTitle>Application Settings</CardTitle>
         <CardDescription>
           Configure your web application to enhance it with AI agents using
-          app2agent.
+          app2agent. After configuration, continue with the{" "}
+          <Link href="/admin/download" className="underline">
+            integration
+          </Link>
+          .
         </CardDescription>
       </CardHeader>
       <CardContent>
