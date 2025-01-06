@@ -119,7 +119,7 @@ export default function Settings({ userId }: { userId: string }) {
               placeholder="The documentation of your web application. You can directly paste the documentation here."
             />
             <p className="text-sm text-muted-foreground">
-              Limited to one page. For larger documentation needs requiring{" "}
+              Limited to one page. Larger documentations need{" "}
               <a
                 href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation"
                 className="text-primary hover:underline"
@@ -127,8 +127,8 @@ export default function Settings({ userId }: { userId: string }) {
                 rel="noopener noreferrer"
               >
                 RAG (Retrieval Augmented Generation)
-              </a>
-              , please directly contact{" "}
+              </a>{" "}
+              configured, please directly contact{" "}
               <a
                 href="https://www.linkedin.com/in/marcusschiesser/"
                 className="text-primary hover:underline"
@@ -137,6 +137,7 @@ export default function Settings({ userId }: { userId: string }) {
               >
                 Marcus Schiesser
               </a>
+              .
             </p>
           </div>
 

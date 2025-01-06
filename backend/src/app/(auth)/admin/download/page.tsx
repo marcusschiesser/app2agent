@@ -32,6 +32,30 @@ export default function Page() {
             </Link>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Need Help?</CardTitle>
+            <CardDescription>
+              If you need assistance with the extension installation or
+              configuration, please don&apos;t hesitate to reach out.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              Contact{" "}
+              <a
+                href="https://www.linkedin.com/in/marcusschiesser/"
+                className="text-primary hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Marcus Schiesser
+              </a>{" "}
+              for support.
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </>
   );
