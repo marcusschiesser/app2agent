@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import { createContext, FC, ReactNode, useContext, useState } from "react";
-import { UserConfig } from "../hooks/use-config";
+import { createContext, FC, ReactNode, useContext } from "react";
+import { SiteConfig } from "../hooks/use-config";
 import { useLiveAPI, UseLiveAPIResults } from "../hooks/use-live-api";
 import { LiveConfig } from "@/multimodal-live-types";
 
 type LiveAPIContextValue = {
   liveAPI: UseLiveAPIResults | null;
+  config: SiteConfig;
 };
 
 const LiveAPIContext = createContext<LiveAPIContextValue | undefined>(
@@ -33,12 +34,12 @@ export type LiveAPIProviderProps = {
 };
 
 export const LiveAPIProvider: FC<
-  LiveAPIProviderProps & { config: UserConfig }
+  LiveAPIProviderProps & { config: SiteConfig }
 > = ({ url, children, config }) => {
   const { manual, apiKey } = config;
   const api = useLiveAPI({ url, apiKey, config: getConfig(manual) });
   return (
-    <LiveAPIContext.Provider value={{ liveAPI: api }}>
+    <LiveAPIContext.Provider value={{ liveAPI: api, config }}>
       {children}
     </LiveAPIContext.Provider>
   );

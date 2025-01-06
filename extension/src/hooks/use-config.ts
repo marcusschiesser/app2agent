@@ -6,7 +6,7 @@ const backend =
     ? "http://localhost:3000/api"
     : "https://www.app2agent.com/api";
 
-export type UserConfig = {
+export type SiteConfig = {
   manual: string;
   apiKey: string;
   isLoading: boolean;
