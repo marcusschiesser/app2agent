@@ -1,11 +1,8 @@
 import { SchemaType, Tool } from "@google/generative-ai";
-import {
-  getVisibleElementXpaths,
-  highlightElement,
-  VisibleElementXpath,
-  getElementByXpath,
-  simulateClick,
-} from "../dom-utils";
+import { getVisibleElementXpaths, VisibleElementXpath } from "../dom/xpath";
+import { highlightElement } from "../dom/highlight";
+import { getElementByXpath } from "../dom/xpath";
+import { simulateClick } from "../dom/click";
 import { getLLMResponse } from "../llm";
 
 export const executeActionToolConfig: Tool = {
