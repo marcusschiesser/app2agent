@@ -1,6 +1,7 @@
 "use client";
 
 import Logo from "../../../components/Logo";
+import Link from "next/link";
 
 export default function Header() {
   return (
@@ -11,7 +12,13 @@ export default function Header() {
             <Logo />
           </div>
 
-          <nav>
+          <nav className="flex items-center gap-4">
+            <Link
+              href="/auth"
+              className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors"
+            >
+              Sign in
+            </Link>
             <button
               onClick={() =>
                 document
