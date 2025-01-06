@@ -55,7 +55,7 @@ export async function GET() {
           linkedInProfile: signup.linkedin_profile || "",
         });
 
-        const signupUrl = `${process.env.NEXT_PUBLIC_VERCEL_URL}/auth?${signupParams.toString()}`;
+        const signupUrl = `https://www.app2agent.com/auth?${signupParams.toString()}`;
 
         // Send invite email using Resend
         await resend.emails.send(
