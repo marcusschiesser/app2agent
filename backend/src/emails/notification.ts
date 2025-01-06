@@ -3,6 +3,7 @@ export function generateNotificationEmail(formValues: {
   name: string;
   companyName: string;
   intendedUsage: string;
+  linkedInProfile: string;
 }) {
   return {
     subject: "New app2agent Signup!",
@@ -17,6 +18,7 @@ export function generateNotificationEmail(formValues: {
           <li><strong>Name:</strong> ${formValues.name}</li>
           <li><strong>Company:</strong> ${formValues.companyName}</li>
           <li><strong>Intended Usage:</strong> ${formValues.intendedUsage}</li>
+          <li><strong>LinkedIn Profile:</strong> ${formValues.linkedInProfile || "Not provided"}</li>
         </ul>
       </div>
     `,

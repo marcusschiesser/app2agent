@@ -22,6 +22,7 @@ export const signUpAction = async (
   const name = formData.get("name")?.toString();
   const companyName = formData.get("companyName")?.toString();
   const intendedUsage = formData.get("intendedUsage")?.toString();
+  const linkedInProfile = formData.get("linkedInProfile")?.toString();
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
@@ -30,6 +31,7 @@ export const signUpAction = async (
     name: name || "",
     companyName: companyName || "",
     intendedUsage: intendedUsage || "",
+    linkedInProfile: linkedInProfile || "",
   };
 
   if (!email || !password || !name || !companyName) {
@@ -49,6 +51,7 @@ export const signUpAction = async (
         name,
         company_name: companyName,
         ...(intendedUsage ? { intended_usage: intendedUsage } : {}),
+        ...(linkedInProfile ? { linkedin_profile: linkedInProfile } : {}),
       },
     },
   });

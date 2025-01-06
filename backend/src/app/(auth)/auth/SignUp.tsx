@@ -73,6 +73,22 @@ export function SignUp({
             <div className="grid gap-6">
               <div className="grid gap-6">
                 <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    name="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    required
+                    defaultValue={previousFormData?.email || ""}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <div className="flex items-center">
+                    <Label htmlFor="password">Password</Label>
+                  </div>
+                  <Input name="password" type="password" required />
+                </div>
+                <div className="grid gap-2">
                   <Label htmlFor="name">Name</Label>
                   <Input
                     name="name"
@@ -104,21 +120,17 @@ export function SignUp({
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="linkedInProfile">
+                    LinkedIn Profile (Optional)
+                  </Label>
                   <Input
-                    name="email"
-                    type="email"
-                    placeholder="m@example.com"
-                    required
-                    defaultValue={previousFormData?.email || ""}
+                    name="linkedInProfile"
+                    type="url"
+                    placeholder="https://www.linkedin.com/in/your-profile"
+                    defaultValue={previousFormData?.linkedInProfile || ""}
                   />
                 </div>
-                <div className="grid gap-2">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
-                  </div>
-                  <Input name="password" type="password" required />
-                </div>
+
                 <Button disabled={isPending}>
                   {isPending && (
                     <div

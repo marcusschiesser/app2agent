@@ -76,6 +76,13 @@ export default function EmailSignup() {
               className="px-4 py-3 rounded-lg text-gray-900"
               defaultValue={previousFormData?.intendedUsage || ""}
             />
+            <input
+              type="url"
+              name="linkedInProfile"
+              placeholder="Your LinkedIn profile URL (Optional)"
+              className="px-4 py-3 rounded-lg text-gray-900"
+              defaultValue={previousFormData?.linkedInProfile || ""}
+            />
             <button
               type="submit"
               disabled={isPending}

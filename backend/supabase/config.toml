@@ -139,7 +139,7 @@ otp_expiry = 3600
 # Email templates for authentication emails.
 [auth.email.template.confirmation]
 subject = "Confirm Your App2Agent Account"
-content_path = "supabase/templates/confirmation.html"
+content_path = "./src/emails/supabase/confirmation.html"
 
 # Use a production-ready SMTP server
 # [auth.email.smtp]
@@ -154,7 +154,7 @@ content_path = "supabase/templates/confirmation.html"
 # Uncomment to customize email template
 [auth.email.template.invite]
 subject = "You're Invited to Join App2Agent"
-content_path = "./supabase/templates/invite.html"
+content_path = "./src/emails/supabase/invite.html"
 
 [auth.sms]
 # Allow/disallow new user signups via SMS to your project.
