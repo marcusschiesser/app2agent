@@ -3,6 +3,9 @@
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { ADMIN_EMAIL } from "@/constants/admin";
+import { Resend } from "resend";
+import { generateNotificationEmail } from "@/emails/notification";
 
 export type AuthState = {
   type?: "error" | "success";
@@ -48,6 +51,16 @@ export const signUpAction = async (
         ...(intendedUsage ? { intended_usage: intendedUsage } : {}),
       },
     },
+  });
+
+  // Send notification email to admin
+  const notificationEmail = generateNotificationEmail(formValues);
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  await resend.emails.send({
+    from: "app2agent<noreply@app2agent.com>",
+    to: ADMIN_EMAIL,
+    subject: notificationEmail.subject,
+    html: notificationEmail.html,
   });
 
   if (error) {
