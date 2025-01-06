@@ -174,59 +174,6 @@ export function Recorder({ onFinished }: RecorderProps) {
     };
   }, [client]);
 
-  useEffect(() => {
-    const handleScreenshotRequest = (event: MessageEvent) => {
-      if (
-        event.origin === window.location.origin &&
-        event.data?.type === "A2A_GET_SCREENSHOT"
-      ) {
-        const video = videoRef.current;
-        const canvas = renderCanvasRef.current;
-
-        if (!video || !canvas) {
-          window.postMessage(
-            {
-              type: "A2A_SCREENSHOT_RESULT",
-              screenshot: "",
-            },
-            window.location.origin,
-          );
-          return;
-        }
-
-        const ctx = canvas.getContext("2d")!;
-        canvas.width = video.videoWidth * 0.25;
-        canvas.height = video.videoHeight * 0.25;
-
-        if (canvas.width + canvas.height > 0) {
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          const base64 = canvas.toDataURL("image/jpeg", 1.0);
-          const screenshot = base64.slice(base64.indexOf(",") + 1, Infinity);
-          window.postMessage(
-            {
-              type: "A2A_SCREENSHOT_RESULT",
-              screenshot,
-            },
-            window.location.origin,
-          );
-        } else {
-          window.postMessage(
-            {
-              type: "A2A_SCREENSHOT_RESULT",
-              screenshot: "",
-            },
-            window.location.origin,
-          );
-        }
-      }
-    };
-
-    window.addEventListener("message", handleScreenshotRequest);
-    return () => {
-      window.removeEventListener("message", handleScreenshotRequest);
-    };
-  }, []);
-
   return (
     <div className="p-4 min-w-[200px]">
       <CallForm
