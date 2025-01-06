@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
-type UserManual = {
+type WebApp = {
   id: string;
   gemini_key: string;
   url: string;
@@ -24,13 +24,13 @@ type UserManual = {
 };
 
 export default function Settings({ userId }: { userId: string }) {
-  const [manual, setManual] = useState<UserManual>();
+  const [app, setApp] = useState<WebApp>();
   const [state, formAction, isPending] = useActionState(
     updateSettingsAction,
     {},
   );
 
-  const fetchManual = useCallback(async () => {
+  const fetchApp = useCallback(async () => {
     const supabase = createClient();
     const { data } = await supabase
       .from("user_manuals")
@@ -38,15 +38,15 @@ export default function Settings({ userId }: { userId: string }) {
       .order("created_at", { ascending: false })
       .eq("user_id", userId);
     if (data?.[0]) {
-      setManual(data[0]); // TODO: A user can have multiple manuals, but we only want to show the first one for now
+      setApp(data[0]); // TODO: A user can have multiple manuals, but we only want to show the first one for now
     }
   }, [userId]);
 
   useEffect(() => {
     if (!state.isError) {
-      fetchManual();
+      fetchApp();
     }
-  }, [fetchManual, state]);
+  }, [fetchApp, state]);
 
   return (
     <Card>
@@ -59,7 +59,7 @@ export default function Settings({ userId }: { userId: string }) {
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-6">
-          <input type="hidden" name="id" value={manual?.id || ""} />
+          <input type="hidden" name="id" value={app?.id || ""} />
 
           <div className="space-y-2">
             <Label htmlFor="gemini_key">Gemini API Key</Label>
@@ -67,7 +67,7 @@ export default function Settings({ userId }: { userId: string }) {
               type="password"
               name="gemini_key"
               id="gemini_key"
-              defaultValue={manual?.gemini_key || ""}
+              defaultValue={app?.gemini_key || ""}
               placeholder="Enter your Gemini API Key"
             />
             <p className="text-sm text-muted-foreground">
@@ -90,7 +90,7 @@ export default function Settings({ userId }: { userId: string }) {
               type="text"
               name="url"
               id="url"
-              defaultValue={manual?.url || ""}
+              defaultValue={app?.url || ""}
               onBlur={(e) => {
                 const domain = extractDomain(e.target.value);
                 e.target.value = domain;
@@ -110,7 +110,7 @@ export default function Settings({ userId }: { userId: string }) {
               id="content"
               rows={20}
               maxLength={4000}
-              defaultValue={manual?.content || ""}
+              defaultValue={app?.content || ""}
               placeholder="The documentation of your web application. You can directly paste the documentation here."
             />
             <p className="text-sm text-muted-foreground">
