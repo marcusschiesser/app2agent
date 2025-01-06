@@ -8,8 +8,9 @@ import { audioContext } from "@/lib/audio-context";
 import { createDialingTone } from "@/lib/dialing-tone";
 import { playConnectedTone } from "@/lib/connected-tone";
 import { ToolCall } from "@/multimodal-live-types";
-import { Spinner } from "./ui/icons";
 import { useTools } from "@/contexts/ToolsContext";
+import { stopNavigation } from "@/lib/events";
+import { ActionStatus } from "./action-status";
 
 export interface RecorderProps {
   onFinished?: () => void;
@@ -18,11 +19,7 @@ export interface RecorderProps {
 export function Recorder({ onFinished }: RecorderProps) {
   const [isEnabled, setIsEnabled] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
-  const [actionStatus, setActionStatus] = useState<{
-    action: string;
-    status?: "running" | "completed" | "failed";
-    error?: string;
-  } | null>(null);
+  const [isStoppingNavigation, setIsStoppingNavigation] = useState(false);
   const {
     stream,
     start: startCapture,
@@ -102,6 +99,11 @@ export function Recorder({ onFinished }: RecorderProps) {
     }
   };
 
+  const handleStopNavigation = () => {
+    setIsStoppingNavigation(true);
+    stopNavigation();
+  };
+
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.srcObject = stream;
@@ -148,6 +150,7 @@ export function Recorder({ onFinished }: RecorderProps) {
     }
 
     const handleToolCall = async (toolCall: ToolCall) => {
+      setIsStoppingNavigation(false);
       console.log("Tool Call Received:", JSON.stringify(toolCall, null, 2));
       const response = await tools.handleToolCall(toolCall, siteConfig);
       console.log("Tool response:", JSON.stringify(response, null, 2));
@@ -159,9 +162,6 @@ export function Recorder({ onFinished }: RecorderProps) {
           text: "A tool call has been completed. Check the status and tell me the result.",
         });
       }
-      // Clear action status after tool call is complete
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      setActionStatus(null);
     };
 
     client.on("toolcall", handleToolCall);
@@ -171,26 +171,6 @@ export function Recorder({ onFinished }: RecorderProps) {
     };
   }, [client]);
 
-  useEffect(() => {
-    const handleNavigationProgress = (event: MessageEvent) => {
-      if (
-        event.origin === window.location.origin &&
-        event.data?.type === "A2A_ACTION_STATUS"
-      ) {
-        setActionStatus({
-          action: event.data.action,
-          status: event.data.status,
-          error: event.data.error,
-        });
-      }
-    };
-
-    window.addEventListener("message", handleNavigationProgress);
-    return () => {
-      window.removeEventListener("message", handleNavigationProgress);
-    };
-  }, []);
-
   return (
     <div className="p-4 min-w-[200px]">
       <CallForm
@@ -198,30 +178,17 @@ export function Recorder({ onFinished }: RecorderProps) {
         onToggle={handleToggleEnabled}
         volume={inVolume}
       />
-      {actionStatus && (
-        <div
-          className={`mt-2 p-2 rounded-md text-sm flex items-center gap-2 justify-between ${
-            actionStatus.status === "failed"
-              ? "bg-red-50"
-              : actionStatus.status === "completed"
-                ? "bg-green-50"
-                : "bg-blue-50"
-          }`}
-        >
-          <div className="flex items-center gap-2">
-            {actionStatus.status === "running" && <Spinner />}
-            <span
-              className={`${
-                actionStatus.status === "failed"
-                  ? "text-red-600"
-                  : actionStatus.status === "completed"
-                    ? "text-green-600"
-                    : "text-gray-600"
-              }`}
-            >
-              {actionStatus.action || actionStatus.error}
-            </span>
-          </div>
+      <ActionStatus />
+
+      {tools.isRunning() && (
+        <div className="mt-2 flex justify-center">
+          <button
+            onClick={handleStopNavigation}
+            className="px-3 py-1 text-sm bg-red-100 hover:bg-red-200 text-red-700 rounded-md transition-colors"
+            disabled={isStoppingNavigation}
+          >
+            {isStoppingNavigation ? "Stopping..." : "Stop navigation"}
+          </button>
         </div>
       )}
 

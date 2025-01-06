@@ -4,6 +4,7 @@ import { getElementByXpath } from "../dom/xpath";
 import { simulateClick } from "../dom/click";
 import { getLLMResponse } from "../llm";
 import { SiteConfig } from "@/hooks/use-config";
+import { updateActionStatus } from "../events";
 
 /**
  * Clean up text content by removing extra whitespace and newlines
@@ -15,6 +16,15 @@ function cleanTextContent(text: string | null | undefined): string {
   return text.replace(/\s+/g, " ").trim();
 }
 
+/**
+ * Format the visible element xpaths for the LLM
+ * E.g:
+ * [0]: //*[@id="login"]/div/button - Login
+ * [1]: //*[@id="settings"]/div/li/a - Settings
+ * [2]: //*[@id="logout"]/div/button - Logout
+ * @param visibleElementXpaths - The visible element xpaths to format
+ * @returns The formatted visible element xpaths
+ */
 const formatVisibleElementXpaths = (
   visibleElementXpaths: VisibleElementXpath[],
 ) => {
@@ -32,40 +42,30 @@ const formatVisibleElementXpaths = (
     .join("\n");
 };
 
-const updateActionStatus = (
-  action: string,
-  status: "running" | "completed" | "failed",
-  data?: Map<string, string>,
-) => {
-  window.postMessage(
-    {
-      type: "A2A_ACTION_STATUS",
-      action,
-      status,
-      data: JSON.stringify(data ?? {}),
-    },
-    window.location.origin,
-  );
-};
-
 /**
  * Execute an action on the current page. Required siteConfig to get the API key.
  * @param userRequest - The user's request to be performed (e.g., 'Change password', 'Go to settings')
- * @param click - Whether to click the element after finding it. Default is true.
- * @param siteConfig (pass through manager) - The site configuration to get the API key.
+ * @param click (optional) - Whether to click the element after finding it. Default is true.
+ * @param siteConfig - The site configuration to get the API key.
+ * @param model (optional) - The model to use for the LLM. Default is gemini-1.5-flash which is enough for this task and to avoid rate limit issues.
  * @returns The element that matches the user request
  */
 export async function executeActionTool({
   userRequest,
   click = true,
   siteConfig,
+  model = "models/gemini-1.5-flash",
 }: {
   userRequest: string;
   click?: boolean;
   siteConfig: SiteConfig;
+  model?: string;
 }): Promise<{ success: boolean; result: VisibleElementXpath | string }> {
   // Construct a prompt of all visible elements with their xpath.
-  updateActionStatus(`Executing: ${userRequest}`, "running");
+  updateActionStatus({
+    message: `Executing: ${userRequest}`,
+    status: "running",
+  });
   const visibleElementXpaths = getVisibleElementXpaths();
 
   const elementsPrompt = formatVisibleElementXpaths(visibleElementXpaths);
@@ -97,7 +97,12 @@ export async function executeActionTool({
   Now, your answer is:
   `;
 
-  const response = await getLLMResponse(siteConfig.apiKey, prompt);
+  const response = await getLLMResponse(
+    siteConfig.apiKey,
+    prompt,
+    false, // includeScreenshot
+    model,
+  );
   const index = parseInt(response.text().trim());
   const element = visibleElementXpaths[index];
   if (index === -1) {
@@ -114,8 +119,15 @@ export async function executeActionTool({
     if (click) {
       try {
         simulateClick(elementElement);
+        updateActionStatus({
+          message: `Executed: ${userRequest}`,
+          status: "completed",
+        });
       } catch (error) {
-        updateActionStatus(`Error: ${JSON.stringify(error)}`, "failed");
+        updateActionStatus({
+          message: `Error: ${JSON.stringify(error)}`,
+          status: "failed",
+        });
         return {
           success: false,
           result: `Found element but failed to click: ${JSON.stringify(error)}`,

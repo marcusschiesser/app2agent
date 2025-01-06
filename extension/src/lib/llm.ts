@@ -22,9 +22,14 @@ export async function getLLMResponse(
     });
   }
   const genAI = new GoogleGenerativeAI(apiKey);
-  const client = genAI.getGenerativeModel({
-    model: model,
-  });
+  const client = genAI.getGenerativeModel(
+    {
+      model: model,
+    },
+    {
+      apiVersion: "v1beta",
+    },
+  );
   const result = await client.generateContent(requestContents);
   return result.response;
 }

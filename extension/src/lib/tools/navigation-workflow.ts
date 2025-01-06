@@ -2,12 +2,15 @@ import { SchemaType, Tool } from "@google/generative-ai";
 import { executeActionTool } from "./execute-action";
 import { cleanLLMResponse, getLLMResponse } from "../llm";
 import { SiteConfig } from "@/hooks/use-config";
+import { EVENT_TYPE, updateActionStatus } from "../events";
+
+const MODEL = "models/gemini-2.0-flash-exp"; // For reasoning the next action
 
 type ExecutionState = "pending" | "in_progress" | "completed" | "failed";
 
 interface Action {
-  action: string;
-  explanation?: string;
+  action: string; // The action to be performed
+  explanation?: string; // The explanation for the action, provide more context to the LLM for reasoning the next action
   status: ExecutionState;
   result?: string;
   error?: string;
@@ -29,7 +32,7 @@ class NavigationWorkflow {
     const handleStop = (event: MessageEvent) => {
       if (
         event.origin === window.location.origin &&
-        event.data?.type === "A2A_STOP_ACTION"
+        event.data?.type === EVENT_TYPE.STOP_NAVIGATION
       ) {
         console.log("Received stop signal");
         this.shouldStop = true;
@@ -45,6 +48,10 @@ class NavigationWorkflow {
 
   // Get next action from LLM
   private async predictNextStep(): Promise<Action> {
+    updateActionStatus({
+      message: "Thinking...",
+      status: "running",
+    });
     const executionHistory = this.executionHistory
       .map((a) => this.formatAction(a, this.executionHistory.indexOf(a)))
       .join("\n");
@@ -58,7 +65,6 @@ Response in JSON format with the following schema:
   "action": "The action to be performed",
   "explanation": "The explanation for the action"
 }
-
 If you can't determine what to do next, respond with null action:
 {
   "action": null,
@@ -67,7 +73,7 @@ If you can't determine what to do next, respond with null action:
 If the user's goal is already achieved, respond with null action:
 {
   "action": null,
-  "explanation": "The user's goal is already achieved"
+  "explanation": "The goal is already achieved"
 }
 
 IMPORTANT:
@@ -75,6 +81,7 @@ IMPORTANT:
 - Based on the execution history, avoid repeating the same action that has already been done.
 - If the action related to element has state like checkbox, select, dropdown, etc. then always use the current state of the element to determine the next action.
 - Always respond in JSON format.
+- Always refer to the user as "you" instead of "the user".
 
 Example:
 User request: "I want to buy a new laptop"
@@ -83,7 +90,7 @@ Previous actions: "Empty"
 Your answer: 
 {
   "action": "Click on the 'Shop' link",
-  "explanation": "The user is on the home page and the goal is to buy a new laptop. The 'Shop' link is on the top right corner of the page."
+  "explanation": "You are on the home page and the goal is to buy a new laptop. The 'Shop' link is on the top right corner of the page."
 }
 
 User request: "I want to buy a new laptop"
@@ -92,7 +99,7 @@ Previous actions: "Click on the 'Shop' link"
 Your answer: 
 {
   "action": null,
-  "explanation": "The user's goal is already achieved"
+  "explanation": "The goal is already achieved"
 }
 
 Check if these information is useful to determine the next action:
@@ -110,9 +117,8 @@ What should be the next action?
       this.siteConfig.apiKey,
       prompt,
       true, // includeScreenshot
-      "models/gemini-2.0-flash-exp",
+      MODEL,
     );
-
     const nextAction = JSON.parse(cleanLLMResponse(result.text()));
     return {
       action: nextAction.action,
@@ -122,6 +128,7 @@ What should be the next action?
   }
 
   private async executeStep(step: Action): Promise<void> {
+    step.status = "in_progress";
     const result = await executeActionTool({
       userRequest: step.action,
       click: true,
@@ -133,21 +140,17 @@ What should be the next action?
     }
 
     step.result = result.result.toString();
+    step.status = "completed";
   }
 
+  // Execute the navigation workflow
+  // We set the retries on navigation workflow to help the LLM to reason the failed action
+  // then retry it, perform other actions or stop the workflow.
+  // @param maxRetries (optional) - The maximum number of retries to execute the action. Default is 3.
   async execute(
     maxRetries: number = 3,
   ): Promise<{ success: boolean; details: string }> {
     try {
-      // Initialize workflow
-      this.reportProgress({
-        total: 1,
-        current: 0,
-        action: "Thinking...",
-        steps: [],
-        status: "running",
-      });
-
       let retries = 0;
       while (!this.shouldStop && retries < maxRetries) {
         // 1. Predict next step
@@ -155,64 +158,38 @@ What should be the next action?
 
         // 2. Return if prediction error or no more actions
         if (!step.action) {
-          this.reportProgress({
-            total: this.executionHistory.length,
-            current: this.executionHistory.length,
-            action: "Completed: No more actions to perform",
-            steps: this.executionHistory.map((a) => a.action),
+          updateActionStatus({
+            message: "Completed",
             status: "completed",
           });
           return {
             success: true,
-            details:
-              step.explanation || "Completed: No more actions to perform",
+            details: "Completed: No more actions to perform",
           };
         }
 
         // 3. Execute the step
-        this.reportProgress({
-          total: this.executionHistory.length + 1,
-          current: this.executionHistory.length,
-          action: `Executing: ${step.action}`,
-          steps: [...this.executionHistory.map((a) => a.action), step.action],
-          status: "running",
-        });
-
         try {
-          step.status = "in_progress";
           await this.executeStep(step);
-          step.status = "completed";
           this.executionHistory.push(step);
         } catch (error) {
           // 4. Update step error and status
           step.status = "failed";
           step.error = error instanceof Error ? error.message : "Unknown error";
           this.executionHistory.push(step);
-
-          this.reportProgress({
-            total: this.executionHistory.length,
-            current: this.executionHistory.length - 1,
-            action: `Failed: ${step.action}\nReason: ${step.error}`,
-            steps: this.executionHistory.map((a) => a.action),
-            error: step.error,
-            status: "failed",
-          });
           retries++;
           continue;
         }
-
-        // Wait before next iteration
+        // Wait before next iteration to:
+        // 1. Avoid rate limit issues
+        // 2. Wait for the page to load
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
 
       // 5. Handle workflow stop
       if (this.shouldStop) {
-        this.reportProgress({
-          total: this.executionHistory.length,
-          current: this.executionHistory.length - 1,
-          action: "Workflow stopped by user",
-          steps: this.executionHistory.map((a) => a.action),
-          error: "Workflow stopped by user",
+        updateActionStatus({
+          message: "Workflow stopped by user",
           status: "failed",
         });
         return {
@@ -222,12 +199,8 @@ What should be the next action?
       }
 
       // Handle max retries exceeded
-      this.reportProgress({
-        total: this.executionHistory.length,
-        current: this.executionHistory.length - 1,
-        action: "Maximum retries exceeded",
-        steps: this.executionHistory.map((a) => a.action),
-        error: "Maximum retries exceeded",
+      updateActionStatus({
+        message: "Maximum retries exceeded",
         status: "failed",
       });
       return {
@@ -236,12 +209,8 @@ What should be the next action?
       };
     } catch (error) {
       console.error("Navigation workflow failed:", JSON.stringify(error));
-      this.reportProgress({
-        total: this.executionHistory.length || 1,
-        current: 0,
-        action: "Workflow failed",
-        steps: this.executionHistory.map((a) => a.action),
-        error: error instanceof Error ? error.message : "Unknown error",
+      updateActionStatus({
+        message: "Workflow failed",
         status: "failed",
       });
       return {
@@ -251,6 +220,8 @@ What should be the next action?
     }
   }
 
+  // To give the caller LLM a report of how the workflow is executed
+  // Could be helpful for notifying to the user
   generateReport(isSuccess: boolean, message: string): string {
     if (this.executionHistory.length === 0) {
       return "No actions executed. It's already done.";
@@ -265,30 +236,12 @@ What should be the next action?
     });
 
     if (isSuccess) {
-      report += `\n\nStatus: Completed. ${message}`;
+      report += `\nStatus: Completed.\n${message}`;
     } else {
-      report += `\n\nStatus: Failed. ${message}`;
+      report += `\nStatus: Failed.\n${message}`;
     }
 
     return report;
-  }
-
-  private reportProgress(progress: {
-    total: number;
-    current: number;
-    action: string;
-    steps?: string[];
-    error?: string;
-    status?: "running" | "completed" | "failed";
-  }) {
-    console.log("Reporting progress:", JSON.stringify(progress, null, 2));
-    window.postMessage(
-      {
-        type: "A2A_ACTION_STATUS",
-        ...progress,
-      },
-      window.location.origin,
-    );
   }
 }
 
@@ -308,9 +261,19 @@ export const navigationWorkflow = async ({
       details: workflow.generateReport(result.success, result.details),
     };
   } catch (error) {
+    updateActionStatus({
+      message:
+        error instanceof Error
+          ? error.message
+          : "Sorry, something went wrong. Please try again or report the issue to us.",
+      status: "failed",
+    });
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error occurred",
+      error:
+        error instanceof Error
+          ? error.message
+          : "Something went wrong when executing the navigation workflow",
       details: "Execution failed due to error",
     };
   }
