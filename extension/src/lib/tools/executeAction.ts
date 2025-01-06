@@ -4,6 +4,7 @@ import { highlightElement } from "../dom/highlight";
 import { getElementByXpath } from "../dom/xpath";
 import { simulateClick } from "../dom/click";
 import { getLLMResponse } from "../llm";
+import { SiteConfig } from "@/hooks/use-config";
 
 export const executeActionToolConfig: Tool = {
   functionDeclarations: [
@@ -58,16 +59,20 @@ const formatVisibleElementXpaths = (
 };
 
 /**
- * Execute an action on the current page
+ * Execute an action on the current page. Required siteConfig to get the API key.
  * @param userRequest - The user's request to be performed (e.g., 'Change password', 'Go to settings')
+ * @param click - Whether to click the element after finding it. Default is true.
+ * @param siteConfig (pass through manager) - The site configuration to get the API key.
  * @returns The element that matches the user request
  */
 export async function executeActionTool({
   userRequest,
   click = true,
+  siteConfig,
 }: {
   userRequest: string;
   click?: boolean;
+  siteConfig: SiteConfig;
 }): Promise<{ success: boolean; result: VisibleElementXpath | string }> {
   // Construct a prompt of all visible elements with their xpath.
   const visibleElementXpaths = getVisibleElementXpaths();
@@ -101,7 +106,7 @@ export async function executeActionTool({
   Now, your answer is:
   `;
 
-  const response = await getLLMResponse(prompt);
+  const response = await getLLMResponse(siteConfig.apiKey, prompt);
   const index = parseInt(response.text().trim());
   const element = visibleElementXpaths[index];
   if (index === -1) {

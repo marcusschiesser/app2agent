@@ -15,37 +15,27 @@
  */
 
 import { ReactNode, createContext, useContext } from "react";
-import { UserConfig } from "../hooks/use-config";
+import { SiteConfig } from "../hooks/use-config";
 import { useLiveAPI, UseLiveAPIResults } from "../hooks/use-live-api";
 import { LiveConfig } from "@/multimodal-live-types";
-import { siteConfig } from "@/lib/site-config";
 import { useTools } from "./ToolsContext";
 
-type LiveAPIContextValue = {
+type AppContextValue = {
   liveAPI: UseLiveAPIResults | null;
+  siteConfig: SiteConfig;
 };
 
-const LiveAPIContext = createContext<LiveAPIContextValue | undefined>(
-  undefined,
-);
+const AppContext = createContext<AppContextValue | undefined>(undefined);
 
-export type LiveAPIProviderProps = {
+export type AppProviderProps = {
   children: ReactNode;
   url?: string;
-  config: UserConfig;
+  config: SiteConfig;
 };
 
-export function LiveAPIProvider({
-  url,
-  children,
-  config,
-}: LiveAPIProviderProps) {
+export function AppProvider({ url, children, config }: AppProviderProps) {
   const { manual, apiKey } = config;
   const tools = useTools();
-
-  // Set site configuration
-  siteConfig.setApiKey(apiKey);
-  siteConfig.setSiteContext(manual);
 
   // Get tool configurations
   const toolConfigs = tools.getTools();
@@ -75,17 +65,24 @@ export function LiveAPIProvider({
 
   const api = useLiveAPI({ url, apiKey, config: liveConfig });
 
+  const contextValue: AppContextValue = {
+    liveAPI: api,
+    siteConfig: config,
+  };
+
   return (
-    <LiveAPIContext.Provider value={{ liveAPI: api }}>
-      {children}
-    </LiveAPIContext.Provider>
+    <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
   );
 }
 
-export const useLiveAPIContext = () => {
-  const context = useContext(LiveAPIContext);
+// Helper function to check if site is configured
+export const isSiteConfigured = (config: SiteConfig) =>
+  Boolean(config.apiKey && config.manual);
+
+export const useAppContext = () => {
+  const context = useContext(AppContext);
   if (!context) {
-    throw new Error("useLiveAPIContext must be used within a LiveAPIProvider");
+    throw new Error("useAppContext must be used within an AppProvider");
   }
   return context;
 };

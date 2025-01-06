@@ -2,7 +2,7 @@ import "@/index.css";
 import React, { useEffect, useState } from "react";
 import { getModalRoot, Modal } from "@/components/modal";
 import { Recorder } from "@/components/recorder";
-import { LiveAPIProvider } from "@/contexts/LiveAPIContext";
+import { AppProvider } from "@/contexts/LiveAPIContext";
 import { useConfig } from "@/hooks/use-config";
 import { Loading } from "@/components/loading";
 import { Header } from "@/components/header";
@@ -44,9 +44,9 @@ function RecorderModalApp() {
         <LoadingConfig />
       ) : hasSetup ? (
         <ToolsProvider>
-          <LiveAPIProvider config={config} url={uri}>
+          <AppProvider config={config} url={uri}>
             <Recorder onFinished={handleClose} />
-          </LiveAPIProvider>
+          </AppProvider>
         </ToolsProvider>
       ) : (
         <NoConfig />

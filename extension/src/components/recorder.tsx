@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useChromeTabCapture } from "@/hooks/use-chrome-tab-capture";
-import { useLiveAPIContext } from "@/contexts/LiveAPIContext";
+import { useAppContext } from "@/contexts/LiveAPIContext";
 import { AudioRecorder } from "@/lib/audio-recorder";
 import { CallForm } from "./call-form";
 import { Feedback } from "./feedback";
@@ -24,7 +24,7 @@ export function Recorder({ onFinished }: RecorderProps) {
     start: startCapture,
     stop: stopCapture,
   } = useChromeTabCapture();
-  const { liveAPI } = useLiveAPIContext();
+  const { liveAPI, siteConfig } = useAppContext();
   const connected = liveAPI?.connected ?? false;
   const client = liveAPI?.client;
 
@@ -161,7 +161,7 @@ export function Recorder({ onFinished }: RecorderProps) {
           console.error("Failed to parse tool call arguments:", e);
         }
       }
-      const response = await tools.handleToolCall(toolCall);
+      const response = await tools.handleToolCall(toolCall, siteConfig);
       console.log("Tool response:", JSON.stringify(response, null, 2));
       client.sendToolResponse(response);
       // Clear the action after tool call is complete

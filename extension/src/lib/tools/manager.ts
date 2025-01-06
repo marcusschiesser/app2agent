@@ -5,7 +5,7 @@ import {
   LiveFunctionResponse,
 } from "@/multimodal-live-types";
 import { executeActionToolConfig, executeActionTool } from "./executeAction";
-import { siteConfig } from "../site-config";
+import { SiteConfig } from "@/hooks/use-config";
 
 // Map of tool implementations
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -14,7 +14,7 @@ type ToolImplementation = (args: any) => Promise<any>;
 export class ToolManager {
   private toolMap: Map<string, ToolImplementation> = new Map();
   private tools: FunctionDeclarationsTool[] = [];
-  private isToolRunning = false;
+  private isRunningTool: boolean = false;
   private currentToolName: string | null = null;
 
   constructor() {
@@ -39,20 +39,11 @@ export class ToolManager {
   }
 
   // Handle tool calls from LLM
-  public async handleToolCall(toolCall: ToolCall): Promise<ToolResponse> {
-    if (!siteConfig.isConfigured()) {
-      return {
-        functionResponses: toolCall.functionCalls.map((call) => ({
-          response: {
-            success: false,
-            error: "Site configuration not complete",
-          },
-          id: call.id,
-        })),
-      };
-    }
-
-    if (this.isToolRunning) {
+  public async handleToolCall(
+    toolCall: ToolCall,
+    siteConfig: SiteConfig,
+  ): Promise<ToolResponse> {
+    if (this.isRunningTool) {
       return {
         functionResponses: toolCall.functionCalls.map((call) => ({
           response: {
@@ -65,7 +56,7 @@ export class ToolManager {
     }
 
     try {
-      this.isToolRunning = true;
+      this.isRunningTool = true;
       const functionResponses: LiveFunctionResponse[] = await Promise.all(
         toolCall.functionCalls.map(async (call) => {
           try {
@@ -75,7 +66,10 @@ export class ToolManager {
             }
             this.currentToolName = call.name;
             // Tools now get config values directly from SiteConfig
-            const result = await implementation(call.args);
+            const result = await implementation({
+              ...call.args,
+              siteConfig,
+            });
             return {
               response: result,
               id: call.id,
@@ -97,7 +91,7 @@ export class ToolManager {
         functionResponses,
       };
     } finally {
-      this.isToolRunning = false;
+      this.isRunningTool = false;
       this.currentToolName = null;
     }
   }
