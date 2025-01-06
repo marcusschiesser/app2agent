@@ -1,6 +1,6 @@
 "use client";
 
-import { AuthState, signUpAction } from "@/app/actions/auth";
+import { AuthState, signUpAction } from "@/app/(auth)/actions/auth";
 import { useActionState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";

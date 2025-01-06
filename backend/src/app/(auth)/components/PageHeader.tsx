@@ -6,8 +6,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "./ui/breadcrumb";
-import { SidebarTrigger } from "./ui/sidebar";
+} from "../../../components/ui/breadcrumb";
+import { SidebarTrigger } from "../../../components/ui/sidebar";
 import { Fragment } from "react";
 
 interface PageHeaderProps {

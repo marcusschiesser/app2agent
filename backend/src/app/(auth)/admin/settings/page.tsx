@@ -1,7 +1,7 @@
 "use client";
 
-import { PageHeader } from "@/components/PageHeader";
-import Settings from "@/components/Settings";
+import { PageHeader } from "@/app/(auth)/components/PageHeader";
+import Settings from "@/app/(auth)/admin/settings/Settings";
 import { useAuth } from "@/providers/AuthProvider";
 
 export default function Page() {

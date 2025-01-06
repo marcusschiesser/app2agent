@@ -1,4 +1,4 @@
-import ResetPassword from "@/components/ResetPassword";
+import ResetPassword from "./ResetPassword";
 
 export default async function ResetPasswordPage(props: {
   searchParams: Promise<{

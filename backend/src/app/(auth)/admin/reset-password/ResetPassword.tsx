@@ -1,7 +1,7 @@
-import { resetPasswordAction } from "@/app/actions/auth";
+import { resetPasswordAction } from "@/app/(auth)/actions/auth";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "./ui/button";
+import { Button } from "../../../../components/ui/button";
 import { cn } from "@/lib/utils";
 
 export default function ResetPassword({

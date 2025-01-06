@@ -1,5 +1,5 @@
-import { SignIn } from "@/components/auth/SignIn";
-import { SignUp } from "@/components/auth/SignUp";
+import { SignIn } from "@/app/(auth)/auth/SignIn";
+import { SignUp } from "@/app/(auth)/auth/SignUp";
 
 export default async function AuthPage(props: {
   searchParams: Promise<{

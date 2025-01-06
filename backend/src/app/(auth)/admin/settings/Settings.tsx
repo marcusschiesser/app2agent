@@ -1,6 +1,6 @@
 "use client";
 
-import { updateSettingsAction } from "@/app/actions/settings";
+import { updateSettingsAction } from "@/app/(auth)/actions/settings";
 import { useActionState, useCallback, useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
