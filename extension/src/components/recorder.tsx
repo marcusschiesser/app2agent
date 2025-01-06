@@ -7,10 +7,9 @@ import { Feedback } from "./feedback";
 import { audioContext } from "@/lib/audio-context";
 import { createDialingTone } from "@/lib/dialing-tone";
 import { playConnectedTone } from "@/lib/connected-tone";
-import { ToolCall } from "@/multimodal-live-types";
 import { useTools } from "@/contexts/ToolsContext";
-import { stopNavigation } from "@/lib/events";
 import { ActionStatus } from "./action-status";
+import { useToolCallHandler } from "@/hooks/use-tool-call-handler";
 
 export interface RecorderProps {
   onFinished?: () => void;
@@ -19,7 +18,6 @@ export interface RecorderProps {
 export function Recorder({ onFinished }: RecorderProps) {
   const [isEnabled, setIsEnabled] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
-  const [isStoppingNavigation, setIsStoppingNavigation] = useState(false);
   const {
     stream,
     start: startCapture,
@@ -37,6 +35,9 @@ export function Recorder({ onFinished }: RecorderProps) {
   const [inVolume, setInVolume] = useState(0);
   const dialingToneRef = useRef<{ stop: () => void } | null>(null);
   const tools = useTools();
+
+  // Handle tool calls
+  useToolCallHandler({ client, siteConfig, tools });
 
   useEffect(() => {
     const onData = (base64: string) => {
@@ -99,11 +100,6 @@ export function Recorder({ onFinished }: RecorderProps) {
     }
   };
 
-  const handleStopNavigation = () => {
-    setIsStoppingNavigation(true);
-    stopNavigation();
-  };
-
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.srcObject = stream;
@@ -144,33 +140,6 @@ export function Recorder({ onFinished }: RecorderProps) {
     };
   }, [connected, stream, client]);
 
-  useEffect(() => {
-    if (!client) {
-      return;
-    }
-
-    const handleToolCall = async (toolCall: ToolCall) => {
-      setIsStoppingNavigation(false);
-      console.log("Tool Call Received:", JSON.stringify(toolCall, null, 2));
-      const response = await tools.handleToolCall(toolCall, siteConfig);
-      console.log("Tool response:", JSON.stringify(response, null, 2));
-      client.sendToolResponse(response);
-      // Avoid telling the user for a tool call that is still running
-      if (!tools.isRunning()) {
-        // Send a message to LLM for the tool call result
-        client.send({
-          text: "A tool call has been completed. Check the status and tell me the result.",
-        });
-      }
-    };
-
-    client.on("toolcall", handleToolCall);
-
-    return () => {
-      client.off("toolcall", handleToolCall);
-    };
-  }, [client]);
-
   return (
     <div className="p-4 min-w-[200px]">
       <CallForm
@@ -179,18 +148,6 @@ export function Recorder({ onFinished }: RecorderProps) {
         volume={inVolume}
       />
       <ActionStatus />
-
-      {tools.isRunning() && (
-        <div className="mt-2 flex justify-center">
-          <button
-            onClick={handleStopNavigation}
-            className="px-3 py-1 text-sm bg-red-100 hover:bg-red-200 text-red-700 rounded-md transition-colors"
-            disabled={isStoppingNavigation}
-          >
-            {isStoppingNavigation ? "Stopping..." : "Stop navigation"}
-          </button>
-        </div>
-      )}
 
       {showFeedback && !isEnabled && (
         <Feedback
