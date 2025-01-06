@@ -12,6 +12,11 @@ export default function Home() {
         <Features />
         <EmailSignup />
       </main>
+      <footer className="container mx-auto px-4 max-w-6xl py-8">
+        <p className="text-center text-gray-600 text-sm">
+          © 2025 Schiesser IT LLC. All rights reserved.
+        </p>
+      </footer>
     </>
   );
 }
