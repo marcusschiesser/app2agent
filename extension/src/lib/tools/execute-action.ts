@@ -1,36 +1,9 @@
-import { SchemaType, Tool } from "@google/generative-ai";
 import { getVisibleElementXpaths, VisibleElementXpath } from "../dom/xpath";
 import { highlightElement } from "../dom/highlight";
 import { getElementByXpath } from "../dom/xpath";
 import { simulateClick } from "../dom/click";
 import { getLLMResponse } from "../llm";
 import { SiteConfig } from "@/hooks/use-config";
-
-export const executeActionToolConfig: Tool = {
-  functionDeclarations: [
-    {
-      name: "executeActionTool",
-      description:
-        "Click on specific element on the current page. If the element is not found, return an error message.",
-      parameters: {
-        type: SchemaType.OBJECT,
-        properties: {
-          userRequest: {
-            type: SchemaType.STRING,
-            description:
-              "The user's action request, e.g., 'Click on the login button', 'Go to Home page',...",
-          },
-          click: {
-            type: SchemaType.BOOLEAN,
-            description:
-              "Whether to click the element after finding it. Default is true.",
-          },
-        },
-        required: ["userRequest"],
-      },
-    },
-  ],
-};
 
 /**
  * Clean up text content by removing extra whitespace and newlines

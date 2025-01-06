@@ -4,7 +4,6 @@ import {
   ToolResponse,
   LiveFunctionResponse,
 } from "@/multimodal-live-types";
-// import { executeActionToolConfig, executeActionTool } from "./execute-action";
 import {
   navigationWorkflowConfig,
   navigationWorkflow,
@@ -22,7 +21,6 @@ export class ToolManager {
   private currentToolName: string | null = null;
 
   constructor() {
-    // this.registerTool(executeActionToolConfig, executeActionTool);
     this.registerTool(navigationWorkflowConfig, navigationWorkflow);
   }
 
