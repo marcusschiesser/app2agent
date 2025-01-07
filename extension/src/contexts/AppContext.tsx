@@ -80,10 +80,6 @@ export function AppProvider({ url, children, config }: AppProviderProps) {
   );
 }
 
-// Helper function to check if site is configured
-export const isSiteConfigured = (config: SiteConfig) =>
-  Boolean(config.apiKey && config.manual);
-
 export const useAppContext = () => {
   const context = useContext(AppContext);
   if (!context) {

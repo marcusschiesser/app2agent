@@ -2,17 +2,25 @@ import { useTools } from "@/contexts/ToolsContext";
 import { Spinner } from "./ui/icons";
 import { useToolCallHandler } from "@/hooks/use-tool-call-handler";
 import { useAppContext } from "@/contexts/AppContext";
+import { useEffect } from "react";
 
 export function ToolCall() {
   const tools = useTools();
   const { liveAPI, siteConfig } = useAppContext();
+  const connected = liveAPI?.connected ?? false;
 
   const { event, isStoppingExecution, handleStopExecution } =
     useToolCallHandler({ client: liveAPI?.client, siteConfig, tools });
 
+  useEffect(() => {
+    if (!connected) {
+      tools.stop();
+    }
+  }, [connected]);
+
   return (
     <>
-      {tools.isRunning() && event && (
+      {tools.isRunning() && event && connected && (
         <div
           className={`mt-2 p-2 rounded-md text-sm flex items-center gap-2 justify-between ${
             event.status === "failed"
