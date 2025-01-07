@@ -35,6 +35,30 @@ export default function Page() {
 
         <Card>
           <CardHeader>
+            <CardTitle>Installation Instructions</CardTitle>
+            <CardDescription>
+              Follow these steps to install the browser extension in Chrome:
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
+              <li>Extract the downloaded zip archive</li>
+              <li>
+                Open your Chrome browser, click on the &quot;Window&quot; menu
+                and go to the &quot;Extensions&quot; page
+              </li>
+              <li>
+                Ensure that the Developer mode is enabled (toggle in the top
+                right corner)
+              </li>
+              <li>Click &quot;Load unpacked&quot; button in the top left</li>
+              <li>Select and upload the extracted folder</li>
+            </ol>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
             <CardTitle>Need Help?</CardTitle>
             <CardDescription>
               If you need assistance with the extension installation or

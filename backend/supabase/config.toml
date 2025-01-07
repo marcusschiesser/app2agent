@@ -152,9 +152,6 @@ content_path = "./src/emails/supabase/confirmation.html"
 # sender_name = "Admin"
 
 # Uncomment to customize email template
-[auth.email.template.invite]
-subject = "You're Invited to Join App2Agent"
-content_path = "./src/emails/supabase/invite.html"
 
 [auth.sms]
 # Allow/disallow new user signups via SMS to your project.
