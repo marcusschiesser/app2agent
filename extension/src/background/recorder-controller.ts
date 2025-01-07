@@ -1,17 +1,3 @@
-// Request audio permissions
-export async function requestAudioPermissions(): Promise<boolean> {
-  try {
-    const audio = new Audio();
-    audio.src =
-      "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
-    await audio.play();
-    return true;
-  } catch (error) {
-    console.error("Failed to get audio permissions:", error);
-    return false;
-  }
-}
-
 // Handle tab capture
 export function handleTabCapture(
   sender: chrome.runtime.MessageSender,

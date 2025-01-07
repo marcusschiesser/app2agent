@@ -1,17 +1,7 @@
-import {
-  handleTabCapture,
-  handleTabScreenshot,
-  requestAudioPermissions,
-} from "./recorder-controller";
+import { handleTabCapture, handleTabScreenshot } from "./recorder-controller";
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.type) {
-    case "REQUEST_AUDIO_PERMISSIONS":
-      requestAudioPermissions().then((success) => {
-        sendResponse({ success });
-      });
-      return true;
-
     case "GET_TAB_STREAM":
       handleTabCapture(sender, sendResponse);
       return true;
