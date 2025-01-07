@@ -283,15 +283,15 @@ export const navigationWorkflowConfig: Tool = {
   functionDeclarations: [
     {
       name: "navigationWorkflow",
-      description:
-        "Helps resolve a user request for performing actions on the website. Simply provide the user's general request and receive the status in response. The result indicates what actions were completed.",
+      description: `Helps resolve a user request by analyzing user request and performing click actions on the website for navigation.
+Simply provide the user's general request and receive the status in response. The result indicates what actions were completed.`,
       parameters: {
         type: SchemaType.OBJECT,
         properties: {
           userRequest: {
             type: SchemaType.STRING,
             description:
-              "The general request of the user. It should be a single sentence.",
+              "The general request of the user. It should be a single sentence. Don't need to specify what actions to perform.",
           },
         },
         required: ["userRequest"],

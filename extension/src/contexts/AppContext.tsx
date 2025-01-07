@@ -50,18 +50,18 @@ export function AppProvider({ url, children, config }: AppProviderProps) {
           text: "You're IT support. If the user connects, welcome him/her with a suitable greeting.",
         },
         {
-          text: `Use the following context if helpful:\n###\n${manual}\n###\n`,
-        },
-        {
-          text: `Your task is to help the user by navigating to the correct page. Don't be verbose or ask for information for other actions which are not in your capabilities.`,
+          text: `Your task is to help the user with his requests. Analyze the request first and use your tools if they are helpful to reach the user's goal. Don't be verbose or ask for information for other actions which are not in your capabilities.`,
         },
         {
           text: `You can use the following tools to help you with your task:\n${toolsPrompt}\n`,
         },
         {
           text: `Tool use policies:
-1. To resolve user request, perform only a single call to navigation tool with the user request.
-2. Once the navigation tool is completed, check the response in the result and do not try to make the same request again and update the status to the user.`,
+1. To resolve user request, perform only a single call to a tool with the user's request.
+2. Once the tool call is completed, check the response in the result and do not try to make the same request again and update the status to the user.`,
+        },
+        {
+          text: `Use the following context if helpful:\n###\n${manual}\n###\n`,
         },
       ],
     },
