@@ -1,5 +1,5 @@
 import { Header } from "./header";
-import { Call, CallOff } from "./ui/icons";
+import { Call, CallOff } from "./icons/call";
 
 interface CallFormProps {
   isEnabled: boolean;
