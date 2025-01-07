@@ -2,9 +2,10 @@ import { MultimodalLiveClient } from "@/lib/multimodal-live-client";
 import { ToolCall } from "@/multimodal-live-types";
 import { SiteConfig } from "./use-config";
 import { ToolManager } from "@/lib/tools/manager";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { ActionEvent, EVENT_TYPE } from "@/lib/events";
 
-interface UseToolCallHandlerProps {
+export interface UseToolCallHandlerProps {
   client: MultimodalLiveClient | undefined;
   siteConfig: SiteConfig;
   tools: ToolManager;
@@ -15,6 +16,9 @@ export function useToolCallHandler({
   siteConfig,
   tools,
 }: UseToolCallHandlerProps) {
+  const [isStoppingExecution, setIsStoppingExecution] = useState(false);
+  const [event, setEvent] = useState<ActionEvent | null>(null);
+
   useEffect(() => {
     if (!client) {
       return;
@@ -42,7 +46,31 @@ export function useToolCallHandler({
     };
   }, [client, siteConfig, tools]);
 
+  useEffect(() => {
+    const handleUpdate = (event: MessageEvent) => {
+      if (
+        event.origin === window.location.origin &&
+        event.data?.type === EVENT_TYPE.ACTION_STATUS
+      ) {
+        const newEvent = event.data as ActionEvent;
+        setEvent(newEvent);
+      }
+    };
+
+    window.addEventListener("message", handleUpdate);
+    return () => {
+      window.removeEventListener("message", handleUpdate);
+    };
+  }, []);
+
+  const handleStopExecution = () => {
+    setIsStoppingExecution(true);
+    tools.stop();
+  };
+
   return {
-    isRunning: tools.isRunning,
+    event,
+    isStoppingExecution,
+    handleStopExecution,
   };
 }

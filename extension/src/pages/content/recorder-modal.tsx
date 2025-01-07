@@ -2,11 +2,12 @@ import "@/index.css";
 import React, { useEffect, useState } from "react";
 import { getModalRoot, Modal } from "@/components/modal";
 import { Recorder } from "@/components/recorder";
-import { AppProvider } from "@/contexts/LiveAPIContext";
 import { useConfig } from "@/hooks/use-config";
 import { Loading } from "@/components/loading";
 import { Header } from "@/components/header";
 import { ToolsProvider } from "@/contexts/ToolsContext";
+import { AppProvider } from "@/contexts/AppContext";
+import { ToolCall } from "@/components/tool-call";
 
 interface ChromeMessage {
   type: "TOGGLE_RECORDER";
@@ -46,6 +47,7 @@ function RecorderModalApp() {
         <ToolsProvider>
           <AppProvider config={config} url={uri}>
             <Recorder onFinished={handleClose} />
+            <ToolCall />
           </AppProvider>
         </ToolsProvider>
       ) : (

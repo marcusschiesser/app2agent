@@ -1,16 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import { useChromeTabCapture } from "@/hooks/use-chrome-tab-capture";
-import { useAppContext } from "@/contexts/LiveAPIContext";
 import { AudioRecorder } from "@/lib/audio-recorder";
 import { CallForm } from "./call-form";
 import { Feedback } from "./feedback";
 import { audioContext } from "@/lib/audio-context";
 import { createDialingTone } from "@/lib/dialing-tone";
 import { playConnectedTone } from "@/lib/connected-tone";
-import { useTools } from "@/contexts/ToolsContext";
-import { ActionStatus } from "./action-status";
-import { useToolCallHandler } from "@/hooks/use-tool-call-handler";
-
+import { useAppContext } from "@/contexts/AppContext";
 export interface RecorderProps {
   onFinished?: () => void;
 }
@@ -23,7 +19,7 @@ export function Recorder({ onFinished }: RecorderProps) {
     start: startCapture,
     stop: stopCapture,
   } = useChromeTabCapture();
-  const { liveAPI, siteConfig } = useAppContext();
+  const { liveAPI } = useAppContext();
   const connected = liveAPI?.connected ?? false;
   const client = liveAPI?.client;
 
@@ -34,10 +30,6 @@ export function Recorder({ onFinished }: RecorderProps) {
   const [muted] = useState(false);
   const [inVolume, setInVolume] = useState(0);
   const dialingToneRef = useRef<{ stop: () => void } | null>(null);
-  const tools = useTools();
-
-  // Handle tool calls
-  useToolCallHandler({ client, siteConfig, tools });
 
   useEffect(() => {
     const onData = (base64: string) => {
@@ -147,7 +139,6 @@ export function Recorder({ onFinished }: RecorderProps) {
         onToggle={handleToggleEnabled}
         volume={inVolume}
       />
-      <ActionStatus />
 
       {showFeedback && !isEnabled && (
         <Feedback

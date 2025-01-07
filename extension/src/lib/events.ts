@@ -1,6 +1,6 @@
 export enum EVENT_TYPE {
-  ACTION_STATUS = "A2A_ACTION_STATUS",
-  STOP_NAVIGATION = "A2A_STOP_NAVIGATION",
+  ACTION_STATUS = "A2A_ACTION_STATUS", // For updating status messages
+  STOP_NAVIGATION = "A2A_STOP_NAVIGATION", // For stopping the navigation tool
 }
 
 export type ActionEvent = {

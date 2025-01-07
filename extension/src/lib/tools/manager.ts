@@ -9,6 +9,7 @@ import {
   navigationWorkflow,
 } from "./navigation-workflow";
 import { SiteConfig } from "@/hooks/use-config";
+import { stopNavigation } from "../events";
 
 // Map of tool implementations
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,6 +39,13 @@ export class ToolManager {
 
   public isRunning(): boolean {
     return this.isRunningTool;
+  }
+
+  public async stop() {
+    if (this.isRunningTool) {
+      // Send a message for stopping the tool
+      stopNavigation();
+    }
   }
 
   // Get all tool configs for LLM

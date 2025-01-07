@@ -53,14 +53,15 @@ export function AppProvider({ url, children, config }: AppProviderProps) {
           text: `Use the following context if helpful:\n###\n${manual}\n###\n`,
         },
         {
+          text: `Your task is to help the user by navigating to the correct page. Don't be verbose or ask for information for other actions which are not in your capabilities.`,
+        },
+        {
           text: `You can use the following tools to help you with your task:\n${toolsPrompt}\n`,
         },
         {
           text: `Tool use policies:
-1. If you need to perform a tool call, don't need to say: i'll do something - just do it.
-2. It's important to evaluate the current state of the website through the screenshot and the tool call result to know what is the current status of the request.
-3. Don't make a tool call if the previous result is successful or the tool call was not doing anything.
-4. Once a tool is completed, tell the user the status of the request. Don't try to call a tool again with the same request or the result showed that the tool call was stopped by the user.`,
+1. To resolve user request, perform only a single call to navigation tool with the user request.
+2. Once the navigation tool is completed, check the response in the result and do not try to make the same request again and update the status to the user.`,
         },
       ],
     },
