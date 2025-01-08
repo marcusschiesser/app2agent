@@ -141,14 +141,18 @@ Now, answer what is the form tree:
       // const formTree = formatFormTree(nodes);
 
       // Use LLM to detect the form tree
+      updateActionStatus({
+        message: "Analyzing the website...",
+        status: "running",
+      });
       const formTree = await this.detectFormTree();
       console.log("formTree", formTree);
 
-      const prefillValues = await this.predictFieldValue(formTree);
       updateActionStatus({
-        message: "Filling form",
+        message: "Filling the form values...",
         status: "running",
       });
+      const prefillValues = await this.predictFieldValue(formTree);
       // 2. Process each field
       for (const prefillValue of prefillValues) {
         if (this.shouldStop) {
@@ -159,13 +163,8 @@ Now, answer what is the form tree:
         }
         inputFormValue(prefillValue.xpath, prefillValue.value);
       }
-      updateActionStatus({
-        message: "Submitting form",
-        status: "running",
-      });
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       // submitForm(prefillValues[0].xpath);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       return {
         success: true,
         details: "Form prefill completed",
