@@ -1,6 +1,6 @@
 "use client";
 
-import { signOutAction } from "@/app/actions/auth";
+import { signOutAction } from "@/app/(auth)/actions/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -18,7 +18,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/providers/AuthProvider";
-import { ChevronsUpDown, LogOut } from "lucide-react";
+import { ChevronsUpDown, Lock, LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -26,6 +27,7 @@ export function NavUser() {
   const { name, email, avatar } = user.user_metadata;
   const username = name ?? email?.split("@")[0] ?? "User";
   const avatarLetter = username.charAt(0).toUpperCase();
+  const router = useRouter();
 
   return (
     <SidebarMenu>
@@ -70,8 +72,13 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuSeparator />
             <DropdownMenuGroup>
+              <DropdownMenuItem
+                onClick={() => router.push("/admin/reset-password")}
+              >
+                <Lock />
+                Change password
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={signOutAction}>
                 <LogOut />
                 Log out

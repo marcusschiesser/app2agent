@@ -1,7 +1,7 @@
 "use client";
 
-import { AuthState, authAction } from "@/app/actions/auth";
-import { useActionState, useState } from "react";
+import { AuthState, signInAction } from "@/app/(auth)/actions/auth";
+import { useActionState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,13 +14,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const ALLOW_SIGN_UP = false;
-
-export function AuthForm({
+export function SignIn({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [isSignUp, setIsSignUp] = useState(false);
   let initialState: AuthState = {};
 
   if (typeof window !== "undefined") {
@@ -40,7 +37,7 @@ export function AuthForm({
   }
 
   const [state, formAction, isPending] = useActionState(
-    authAction,
+    signInAction,
     initialState,
   );
 
@@ -59,14 +56,8 @@ export function AuthForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">
-            {isSignUp ? "Create your account" : "Welcome back"}
-          </CardTitle>
-          <CardDescription>
-            {isSignUp
-              ? "Join us to transform your enterprise web apps"
-              : "Sign in to app2agent"}
-          </CardDescription>
+          <CardTitle className="text-xl">Welcome back</CardTitle>
+          <CardDescription>Sign in to app2agent</CardDescription>
         </CardHeader>
         <CardContent>
           {state.type === "error" && state.message && (
@@ -74,12 +65,7 @@ export function AuthForm({
               <p className="text-sm text-red-600">{state.message}</p>
             </div>
           )}
-          <form
-            action={(formdata) => {
-              formdata.append("type", isSignUp ? "signUp" : "signIn");
-              formAction(formdata);
-            }}
-          >
+          <form action={formAction}>
             <div className="grid gap-6">
               <div className="grid gap-6">
                 <div className="grid gap-2">
@@ -97,29 +83,26 @@ export function AuthForm({
                   </div>
                   <Input name="password" type="password" required />
                 </div>
-                <Button
-                  type="submit"
-                  className={cn("w-full", {
-                    "bg-green-600 hover:bg-green-700 focus:ring-green-500":
-                      isSignUp,
-                  })}
-                  disabled={isPending}
-                >
-                  {isPending ? "Loading..." : isSignUp ? "Sign Up" : "Sign In"}
+                <Button disabled={isPending}>
+                  {isPending && (
+                    <div
+                      className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+                      role="status"
+                      aria-label="Loading"
+                    />
+                  )}
+                  Sign in
                 </Button>
               </div>
-              {ALLOW_SIGN_UP && (
-                <div className="text-center text-sm">
-                  {isSignUp ? "Already have an account?" : "Need an account?"}
-                  <button
-                    type="button"
-                    onClick={() => setIsSignUp((prev) => !prev)}
-                    className="underline underline-offset-4 ml-1"
-                  >
-                    {isSignUp ? "Sign in" : "Sign up"}
-                  </button>
-                </div>
-              )}
+              <div className="text-center text-sm">
+                Don&apos;t have an account?{" "}
+                <a
+                  href="/auth?signup=true"
+                  className="font-medium text-indigo-600 hover:text-indigo-500"
+                >
+                  Sign up
+                </a>
+              </div>
             </div>
           </form>
         </CardContent>
