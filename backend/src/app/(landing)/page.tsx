@@ -2,7 +2,6 @@ import Header from "./components/Header";
 import Hero from "./components/Hero";
 import Features from "./components/Features";
 import EmailSignup from "./components/EmailSignup";
-import VideoDemo from "./components/VideoDemo";
 
 export default function Home() {
   return (
@@ -10,7 +9,6 @@ export default function Home() {
       <Header />
       <main className="pt-16">
         <Hero />
-        <VideoDemo />
         <Features />
         <EmailSignup />
       </main>

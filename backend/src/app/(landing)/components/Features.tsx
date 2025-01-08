@@ -1,11 +1,16 @@
-import { FaRobot, FaCode, FaClock, FaChartLine } from "react-icons/fa";
+import { FaRobot, FaCode, FaMicrophone, FaChartLine } from "react-icons/fa";
 
 const features = [
   {
     icon: FaRobot,
-    title: "AI-Powered Support",
+    title: "24/7 App Support",
     description:
-      "Intelligent agent that learns from your documentation to provide accurate app support",
+      "Intelligent agent that learns from your documentation to provide accurate app support 24/7",
+  },
+  {
+    icon: FaMicrophone,
+    title: "Voice Navigation",
+    description: "Navigate the app based on user goals using voice commands",
   },
   {
     icon: FaCode,
@@ -13,11 +18,7 @@ const features = [
     description:
       "Add to your existing web app without writing a single line of code using a browser extension",
   },
-  {
-    icon: FaClock,
-    title: "24/7 Availability",
-    description: "Provide instant support to your users around the clock",
-  },
+
   {
     icon: FaChartLine,
     title: "Feedback",
