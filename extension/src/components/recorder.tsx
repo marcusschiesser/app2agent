@@ -133,7 +133,7 @@ export function Recorder({ onFinished }: RecorderProps) {
   }, [connected, stream, client]);
 
   return (
-    <div className="p-4 min-w-[200px]">
+    <div>
       <CallForm
         isEnabled={isEnabled}
         onToggle={handleToggleEnabled}

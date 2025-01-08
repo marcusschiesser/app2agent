@@ -26,15 +26,15 @@ export function ToolCall() {
     <>
       {tools.isRunning() && event && connected && (
         <div
-          className={`mt-3 relative w-full max-w-[300px] rounded-lg overflow-hidden group`}
+          className={`mt-3 relative w-full rounded-lg overflow-hidden group`}
         >
           <div
-            className={`w-full flex items-center gap-3 px-3 py-2 transition-opacity duration-200 group-hover:opacity-0 ${
+            className={`w-full flex items-center gap-3 px-3 py-2 ${
               event.status === "failed"
                 ? "bg-red-50"
                 : event.status === "completed"
                   ? "bg-green-50"
-                  : "bg-blue-50"
+                  : "bg-blue-50 transition-opacity duration-200 group-hover:opacity-0" // fade to button while running
             }`}
           >
             {event.status === "running" && (
@@ -58,14 +58,16 @@ export function ToolCall() {
               {event.message}
             </span>
           </div>
-          <button
-            onClick={handleStopExecution}
-            className="absolute inset-0 flex items-center justify-center gap-3 px-3 py-2 text-sm text-red-700 bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-red-100"
-            disabled={isStoppingExecution}
-          >
-            <FaExclamationCircle className="w-4 h-4 shrink-0" />
-            <span>{isStoppingExecution ? "Stopping..." : "Stop"}</span>
-          </button>
+          {event.status === "running" && (
+            <button
+              onClick={handleStopExecution}
+              className="absolute inset-0 flex items-center justify-center gap-3 px-3 py-2 text-sm text-red-700 bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-red-100"
+              disabled={isStoppingExecution}
+            >
+              <FaExclamationCircle className="w-4 h-4 shrink-0" />
+              <span>{isStoppingExecution ? "Stopping..." : "Stop"}</span>
+            </button>
+          )}
         </div>
       )}
     </>

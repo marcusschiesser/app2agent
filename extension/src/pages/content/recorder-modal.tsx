@@ -46,8 +46,10 @@ function RecorderModalApp() {
       ) : hasSetup ? (
         <ToolsProvider>
           <AppProvider config={config} url={uri}>
-            <Recorder onFinished={handleClose} />
-            <ToolCall />
+            <div className="w-[200px]">
+              <Recorder onFinished={handleClose} />
+              <ToolCall />
+            </div>
           </AppProvider>
         </ToolsProvider>
       ) : (
