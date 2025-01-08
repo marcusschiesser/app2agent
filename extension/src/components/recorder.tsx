@@ -1,13 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import { useChromeTabCapture } from "@/hooks/use-chrome-tab-capture";
-import { useLiveAPIContext } from "@/contexts/LiveAPIContext";
 import { AudioRecorder } from "@/lib/audio-recorder";
 import { CallForm } from "./call-form";
 import { Feedback } from "./feedback";
 import { audioContext } from "@/lib/audio-context";
 import { createDialingTone } from "@/lib/dialing-tone";
 import { playConnectedTone } from "@/lib/connected-tone";
-
+import { useAppContext } from "@/contexts/AppContext";
 export interface RecorderProps {
   onFinished?: () => void;
 }
@@ -17,11 +16,10 @@ export function Recorder({ onFinished }: RecorderProps) {
   const [showFeedback, setShowFeedback] = useState(false);
   const {
     stream,
-    isStreaming,
     start: startCapture,
     stop: stopCapture,
   } = useChromeTabCapture();
-  const { liveAPI } = useLiveAPIContext();
+  const { liveAPI } = useAppContext();
   const connected = liveAPI?.connected ?? false;
   const client = liveAPI?.client;
 
@@ -29,7 +27,7 @@ export function Recorder({ onFinished }: RecorderProps) {
   const renderCanvasRef = useRef<HTMLCanvasElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [audioRecorder] = useState(() => new AudioRecorder());
-  const [muted, setMuted] = useState(false);
+  const [muted] = useState(false);
   const [inVolume, setInVolume] = useState(0);
   const dialingToneRef = useRef<{ stop: () => void } | null>(null);
 
@@ -135,19 +133,18 @@ export function Recorder({ onFinished }: RecorderProps) {
   }, [connected, stream, client]);
 
   return (
-    <div className="p-4 min-w-[200px]">
+    <div>
       <CallForm
         isEnabled={isEnabled}
         onToggle={handleToggleEnabled}
         volume={inVolume}
       />
+
       {showFeedback && !isEnabled && (
         <Feedback
           onSubmit={(rating) => {
-            // Here you can handle the feedback submission
             console.log("Call feedback:", rating);
             setShowFeedback(false);
-            // Call onFinished after feedback is submitted
             if (onFinished) {
               onFinished();
             }

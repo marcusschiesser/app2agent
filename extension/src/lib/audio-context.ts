@@ -14,13 +14,17 @@ export const audioContext: (
 
   return async (options?: GetAudioContextOptions) => {
     try {
-      // Request audio permissions from background script
-      const response = await chrome.runtime.sendMessage({
-        type: "REQUEST_AUDIO_PERMISSIONS",
-      });
-      if (!response.success) {
-        throw new Error("Failed to get audio permissions");
+      // Request microphone permissions directly
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+        // Stop the stream immediately since we only want to check permissions
+        stream.getTracks().forEach((track) => track.stop());
+      } else {
+        throw new Error("MediaDevices API not available");
       }
+
       if (options?.id && map.has(options.id)) {
         const ctx = map.get(options.id);
         if (ctx) {
@@ -33,6 +37,11 @@ export const audioContext: (
       }
       return ctx;
     } catch (e) {
+      if (e instanceof DOMException && e.name === "NotAllowedError") {
+        throw new Error(
+          "Microphone access denied. Please allow microphone access in your browser settings and try again.",
+        );
+      }
       await didInteract;
       if (options?.id && map.has(options.id)) {
         const ctx = map.get(options.id);

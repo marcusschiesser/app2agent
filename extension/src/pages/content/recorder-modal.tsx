@@ -2,17 +2,23 @@ import "@/index.css";
 import React, { useEffect, useState } from "react";
 import { getModalRoot, Modal } from "@/components/modal";
 import { Recorder } from "@/components/recorder";
-import { LiveAPIProvider } from "@/contexts/LiveAPIContext";
 import { useConfig } from "@/hooks/use-config";
 import { Loading } from "@/components/loading";
 import { Header } from "@/components/header";
+import { ToolsProvider } from "@/contexts/ToolsContext";
+import { AppProvider } from "@/contexts/AppContext";
+import { ToolCall } from "@/components/tool-call";
+
+interface ChromeMessage {
+  type: "TOGGLE_RECORDER";
+}
 
 function RecorderModalApp() {
   const config = useConfig();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const handleMessage = (message: any) => {
+    const handleMessage = (message: ChromeMessage) => {
       if (message.type === "TOGGLE_RECORDER") {
         setIsVisible((prev) => !prev);
       }
@@ -38,9 +44,14 @@ function RecorderModalApp() {
       {isLoading ? (
         <LoadingConfig />
       ) : hasSetup ? (
-        <LiveAPIProvider config={config} url={uri}>
-          <Recorder onFinished={handleClose} />
-        </LiveAPIProvider>
+        <ToolsProvider>
+          <AppProvider config={config} url={uri}>
+            <div className="w-[200px]">
+              <Recorder onFinished={handleClose} />
+              <ToolCall />
+            </div>
+          </AppProvider>
+        </ToolsProvider>
       ) : (
         <NoConfig />
       )}

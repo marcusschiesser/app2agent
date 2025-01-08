@@ -12,7 +12,7 @@
     }
   ],
   "background": {
-    "service_worker": "src/background/recorder-controller.ts"
+    "service_worker": "src/background/service-worker.ts"
   },
   "web_accessible_resources": [
     {
