@@ -3,7 +3,7 @@ import { highlightElement } from "../dom/highlight";
 import { getElementByXpath } from "../dom/xpath";
 import { simulateClick } from "../dom/click";
 import { getLLMResponse } from "../llm";
-import { SiteConfig } from "@/hooks/use-config";
+import { SiteConfig } from "@/lib/config";
 import { updateActionStatus } from "../events";
 
 /**

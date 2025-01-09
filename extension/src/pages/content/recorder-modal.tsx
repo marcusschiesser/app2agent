@@ -15,7 +15,7 @@ interface ChromeMessage {
 }
 
 function RecorderModalApp() {
-  const config = useConfig();
+  const { config, isLoading } = useConfig();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -50,8 +50,7 @@ function RecorderModalApp() {
 
   if (!isVisible) return null;
 
-  const isLoading = config.isLoading;
-  const hasSetup = config.manual && config.apiKey;
+  const hasSetup = config?.manual && config?.apiKey;
 
   return (
     <Modal onClose={handleClose}>

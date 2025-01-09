@@ -1,52 +1,48 @@
 import { useEffect, useState } from "react";
-import { secureFetch } from "@/lib/secure-fetch";
+import { fetchConfig, SiteConfig } from "@/lib/config";
 
-const backend =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:3000/api"
-    : "https://www.app2agent.com/api";
-
-export type SiteConfig = {
-  manual: string;
-  apiKey: string;
-  isLoading: boolean;
-};
-
-export function useConfig(): SiteConfig {
-  const [isLoading, setIsLoading] = useState(false);
-  const [manual, setManual] = useState<string>("");
-  const [apiKey, setApiKey] = useState<string>("");
+/**
+ * Custom hook to manage config state with the service worker
+ * @returns Config state and loading state
+ */
+export function useConfig() {
+  const [config, setConfig] = useState<SiteConfig | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchConfig() {
+    async function loadConfig() {
+      setIsLoading(true);
       try {
-        setIsLoading(true);
-        const rootHostname = getCurrentDomain();
-        const response = await secureFetch(
-          `${backend}/config?url=${encodeURIComponent(rootHostname)}`,
-        );
-        const data = (await response.json()) as {
-          content: string;
-          apiKey: string;
-        };
-        setManual(data.content);
-        setApiKey(data.apiKey);
-      } catch (error) {
-        console.error("Error fetching config:", error);
-        setManual(""); // Reset to empty string on error
-        setApiKey(""); // Reset API key on error
+        // Get initial config from service worker
+        chrome.runtime.sendMessage({ type: "GET_CONFIG" }, async (response) => {
+          if (!response) {
+            // Fetch and store config if not available
+            const config = await fetchConfig(getCurrentDomain());
+            chrome.runtime.sendMessage(
+              { type: "SET_CONFIG", config },
+              (updatedConfig) => {
+                console.log("[app2agent] Received config:", updatedConfig);
+                setConfig(updatedConfig);
+              },
+            );
+          } else {
+            console.log("[app2agent] Using cached config:", response);
+            setConfig(response);
+          }
+        });
       } finally {
         setIsLoading(false);
       }
     }
 
-    fetchConfig();
+    loadConfig();
   }, []);
 
-  return { manual, apiKey, isLoading };
+  return { config, isLoading };
 }
 
 /**
+ * TODO: just use the url.hostname (the whole domain)
  * Extracts the root domain from the current URL.
  * Eg: current URL is https://www.linkedin.com/feed/ -> returns linkedin.com
  * @returns The root domain as a string.

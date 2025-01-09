@@ -8,7 +8,7 @@ import {
   navigationWorkflowConfig,
   navigationWorkflow,
 } from "./navigation-workflow";
-import { SiteConfig } from "@/hooks/use-config";
+import { SiteConfig } from "@/lib/config";
 import { stopNavigation } from "../events";
 
 // Map of tool implementations

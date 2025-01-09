@@ -1,4 +1,5 @@
 import { handleTabCapture, handleTabScreenshot } from "./recorder-controller";
+import { getConfig, setConfig } from "../lib/config";
 
 // Keep track of recorder visibility state
 let isRecorderVisible = false;
@@ -15,6 +16,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     case "GET_RECORDER_VISIBILITY":
       sendResponse({ isVisible: isRecorderVisible });
+      return true;
+
+    case "GET_CONFIG":
+      sendResponse(getConfig());
+      return true;
+
+    case "SET_CONFIG":
+      setConfig(message.config);
+      sendResponse(getConfig());
       return true;
   }
 
