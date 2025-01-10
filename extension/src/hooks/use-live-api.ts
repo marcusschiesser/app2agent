@@ -14,24 +14,31 @@
  * limitations under the License.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  MultimodalLiveAPIClientConnection,
-  MultimodalLiveClient,
-} from "../lib/multimodal-live-client";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { LiveConfig } from "../multimodal-live-types";
 import { AudioStreamer } from "../lib/audio-streamer";
 import { audioContext } from "../lib/audio-context";
 
+interface LiveAPIState {
+  connected: boolean;
+}
+
+interface LiveAPIMessage {
+  type: "LIVE_API_CONNECTION_UPDATE" | "LIVE_API_AUDIO_DATA";
+  connected?: boolean;
+  data?: ArrayBuffer;
+}
+
 export type UseLiveAPIResults = {
-  client: MultimodalLiveClient;
   connected: boolean;
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
   volume: number;
 };
 
-type UseLiveAPIProps = MultimodalLiveAPIClientConnection & {
+type UseLiveAPIProps = {
+  url: string;
+  apiKey: string;
   config: LiveConfig;
 };
 
@@ -40,13 +47,11 @@ export function useLiveAPI({
   apiKey,
   config,
 }: UseLiveAPIProps): UseLiveAPIResults {
-  const client = useMemo(
-    () => new MultimodalLiveClient({ url, apiKey }),
-    [url, apiKey],
-  );
-  const audioStreamerRef = useRef<AudioStreamer | null>(null);
-  const [connected, setConnected] = useState(false);
+  const [state, setState] = useState<LiveAPIState>({
+    connected: false,
+  });
   const [volume, setVolume] = useState(0);
+  const audioStreamerRef = useRef<AudioStreamer | null>(null);
 
   // register audio for streaming server -> speakers
   useEffect(() => {
@@ -65,46 +70,72 @@ export function useLiveAPI({
   }, [audioStreamerRef]);
 
   useEffect(() => {
-    const onClose = () => {
-      setConnected(false);
+    // Initialize the live API client in the service worker
+    chrome.runtime.sendMessage(
+      { type: "INITIALIZE_LIVE_API", url, apiKey },
+      (response) => {
+        setState(response);
+      },
+    );
+
+    // Listen for state updates from the service worker
+    const handleMessage = (message: LiveAPIMessage) => {
+      if (
+        message.type === "LIVE_API_CONNECTION_UPDATE" &&
+        message.connected !== undefined
+      ) {
+        setState((prev) => ({ ...prev, connected: message.connected! }));
+      } else if (message.type === "LIVE_API_AUDIO_DATA" && message.data) {
+        audioStreamerRef.current?.addPCM16(new Uint8Array(message.data));
+      }
     };
 
-    const stopAudioStreamer = () => audioStreamerRef.current?.stop();
+    chrome.runtime.onMessage.addListener(handleMessage);
 
-    const onAudio = (data: ArrayBuffer) =>
-      audioStreamerRef.current?.addPCM16(new Uint8Array(data));
-
-    client
-      .on("close", onClose)
-      .on("interrupted", stopAudioStreamer)
-      .on("audio", onAudio);
+    // Get initial state
+    chrome.runtime.sendMessage({ type: "GET_LIVE_API_STATE" }, (response) => {
+      setState(response);
+    });
 
     return () => {
-      client
-        .off("close", onClose)
-        .off("interrupted", stopAudioStreamer)
-        .off("audio", onAudio);
+      chrome.runtime.onMessage.removeListener(handleMessage);
     };
-  }, [client]);
+  }, [url, apiKey]);
 
   const connect = useCallback(async () => {
-    console.log(config);
-    if (!config) {
-      throw new Error("config has not been set");
-    }
-    client.disconnect();
-    await client.connect(config);
-    setConnected(true);
-  }, [client, setConnected, config]);
+    return new Promise<void>((resolve, reject) => {
+      chrome.runtime.sendMessage(
+        { type: "CONNECT_LIVE_API", config },
+        (response) => {
+          if (response.error) {
+            reject(new Error(response.error));
+          } else {
+            setState(response);
+            resolve();
+          }
+        },
+      );
+    });
+  }, [config]);
 
   const disconnect = useCallback(async () => {
-    client.disconnect();
-    setConnected(false);
-  }, [setConnected, client]);
+    return new Promise<void>((resolve, reject) => {
+      chrome.runtime.sendMessage(
+        { type: "DISCONNECT_LIVE_API" },
+        (response) => {
+          if (response.error) {
+            reject(new Error(response.error));
+          } else {
+            setState(response);
+            resolve();
+          }
+        },
+      );
+    });
+  }, []);
 
   return {
-    client,
-    connected,
+    connected: state.connected,
     connect,
     disconnect,
     volume,
