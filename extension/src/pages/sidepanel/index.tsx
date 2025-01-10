@@ -2,14 +2,20 @@ import "@/index.css";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { Recorder } from "@/components/recorder";
-import { LiveAPIProvider } from "@/contexts/LiveAPIContext";
-
-declare const __GEMINI_API_KEY__: any;
+import { AppProvider } from "@/contexts/AppContext";
+import { useConfig } from "@/hooks/use-config";
+import { ToolsProvider } from "@/contexts/ToolsContext";
 
 function SidePanelApp() {
+  const config = useConfig();
+
   return (
     <div className="p-4">
-      <Recorder />
+      <ToolsProvider>
+        <AppProvider config={config}>
+          <Recorder />
+        </AppProvider>
+      </ToolsProvider>
     </div>
   );
 }
@@ -22,8 +28,6 @@ const root = createRoot(container);
 
 root.render(
   <React.StrictMode>
-    <LiveAPIProvider url={uri} apiKey={__GEMINI_API_KEY__}>
-      <SidePanelApp />
-    </LiveAPIProvider>
+    <SidePanelApp />
   </React.StrictMode>,
 );

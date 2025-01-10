@@ -14,8 +14,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return false;
 });
 
-// Send the toggle message when extension icon is clicked
+chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+
 chrome.action.onClicked.addListener(async (tab) => {
-  if (!tab.id) return;
-  await chrome.tabs.sendMessage(tab.id, { type: "TOGGLE_RECORDER" });
+  // Empty listener to enable activeTab permission
 });
