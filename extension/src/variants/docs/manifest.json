@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "IT Support",
+  "description": "Your friendly IT support",
+  "{{chrome}}.action": {},
+  "{{firefox}}.browser_action": {},
+  "permissions": ["storage", "tabCapture", "activeTab", "sidePanel"],
+  "side_panel": {
+    "default_path": "src/pages/sidepanel/index.html"
+  },
+  "background": {
+    "service_worker": "src/background/service-worker.ts"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["worklets/*", "style.css"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
