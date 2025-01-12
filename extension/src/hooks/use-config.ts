@@ -21,7 +21,7 @@ export function useConfig(): SiteConfig {
     async function fetchConfig() {
       try {
         setIsLoading(true);
-        const rootHostname = getCurrentDomain();
+        const rootHostname = await getCurrentDomain();
         const response = await secureFetch(
           `${backend}/config?url=${encodeURIComponent(rootHostname)}`,
         );
@@ -48,11 +48,25 @@ export function useConfig(): SiteConfig {
 
 /**
  * Extracts the root domain from the current URL.
+ * When called from the sidepanel, gets the URL from the active tab.
  * Eg: current URL is https://www.linkedin.com/feed/ -> returns linkedin.com
  * @returns The root domain as a string.
  */
-function getCurrentDomain() {
-  const parsedUrl = new URL(window.location.href);
+async function getCurrentDomain(): Promise<string> {
+  let url: string;
+
+  // Check if we're in the sidepanel
+  if (chrome.sidePanel) {
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
+    url = tab.url || "";
+  } else {
+    url = window.location.href;
+  }
+
+  const parsedUrl = new URL(url);
   const hostname = parsedUrl.hostname;
   const parts = hostname.split(".");
   const rootHostname = parts.slice(-2).join(".");
