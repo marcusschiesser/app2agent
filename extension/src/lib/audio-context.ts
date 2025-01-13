@@ -14,17 +14,6 @@ export const audioContext: (
 
   return async (options?: GetAudioContextOptions) => {
     try {
-      // Request microphone permissions directly
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-        });
-        // Stop the stream immediately since we only want to check permissions
-        stream.getTracks().forEach((track) => track.stop());
-      } else {
-        throw new Error("MediaDevices API not available");
-      }
-
       if (options?.id && map.has(options.id)) {
         const ctx = map.get(options.id);
         if (ctx) {
@@ -36,12 +25,7 @@ export const audioContext: (
         map.set(options.id, ctx);
       }
       return ctx;
-    } catch (e) {
-      if (e instanceof DOMException && e.name === "NotAllowedError") {
-        throw new Error(
-          "Microphone access denied. Please allow microphone access in your browser settings and try again.",
-        );
-      }
+    } catch {
       await didInteract;
       if (options?.id && map.has(options.id)) {
         const ctx = map.get(options.id);

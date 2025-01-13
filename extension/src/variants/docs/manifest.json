@@ -5,6 +5,13 @@
   "{{chrome}}.action": {},
   "{{firefox}}.browser_action": {},
   "permissions": ["storage", "tabCapture", "activeTab", "sidePanel", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/pages/content/microphone-permissions.tsx"]
+    }
+  ],
   "side_panel": {
     "default_path": "src/pages/sidepanel/index.html"
   },
@@ -13,7 +20,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["worklets/*", "style.css"],
+      "resources": ["worklets/*", "style.css", "permission/*"],
       "matches": ["<all_urls>"]
     }
   ]
