@@ -5,9 +5,9 @@ import {
   LiveFunctionResponse,
 } from "@/multimodal-live-types";
 import {
-  navigationWorkflowConfig,
-  navigationWorkflow,
-} from "./navigation-workflow";
+  formPrefillWorkflowConfig,
+  formPrefillWorkflow,
+} from "./form-prefill-workflow";
 import { SiteConfig } from "@/hooks/use-config";
 import { stopNavigation } from "../events";
 
@@ -22,7 +22,7 @@ export class ToolManager {
   private currentToolName: string | null = null;
 
   constructor() {
-    this.registerTool(navigationWorkflowConfig, navigationWorkflow);
+    this.registerTool(formPrefillWorkflowConfig, formPrefillWorkflow);
   }
 
   // Register a tool and its implementation

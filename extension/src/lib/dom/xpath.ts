@@ -11,7 +11,7 @@ export type VisibleElementXpath = {
  * @param element - The element to generate XPath for
  * @returns The XPath expression for the element
  */
-function generateXPath(element: Element): string {
+export function generateXPath(element: Element): string {
   if (!element.parentElement) {
     return "//" + element.tagName.toLowerCase();
   }
