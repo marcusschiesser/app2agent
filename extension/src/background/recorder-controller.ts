@@ -64,9 +64,9 @@ export function handleTabScreenshot(
     dataUrl?: string;
   }) => void,
 ): void {
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
     const tab = tabs[0];
-    if (!tab.id) {
+    if (!tab || !tab.id) {
       sendResponse({ success: false, error: "No active tab found" });
       return;
     }

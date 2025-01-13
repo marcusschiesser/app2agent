@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from "react";
-import { useChromeTabCapture } from "@/hooks/use-chrome-tab-capture";
 import { AudioRecorder } from "@/lib/audio-recorder";
 import { CallForm } from "./call-form";
 import { Feedback } from "./feedback";
@@ -7,6 +6,7 @@ import { audioContext } from "@/lib/audio-context";
 import { createDialingTone } from "@/lib/dialing-tone";
 import { playConnectedTone } from "@/lib/connected-tone";
 import { useAppContext } from "@/contexts/AppContext";
+import { takeScreenshot } from "@/lib/screenshot";
 export interface RecorderProps {
   onFinished?: () => void;
 }
@@ -14,17 +14,10 @@ export interface RecorderProps {
 export function Recorder({ onFinished }: RecorderProps) {
   const [isEnabled, setIsEnabled] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
-  const {
-    stream,
-    start: startCapture,
-    stop: stopCapture,
-  } = useChromeTabCapture();
   const { liveAPI } = useAppContext();
   const connected = liveAPI?.connected ?? false;
   const client = liveAPI?.client;
 
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const renderCanvasRef = useRef<HTMLCanvasElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [audioRecorder] = useState(() => new AudioRecorder());
   const [muted] = useState(false);
@@ -82,55 +75,38 @@ export function Recorder({ onFinished }: RecorderProps) {
 
     if (checked) {
       setIsEnabled(true);
-      await startCapture();
       liveAPI.connect();
     } else {
       setIsEnabled(false);
       setShowFeedback(true);
-      stopCapture();
       liveAPI.disconnect();
     }
   };
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.srcObject = stream;
-    }
-
     let timeoutId = -1;
 
-    function sendVideoFrame() {
-      const video = videoRef.current;
-      const canvas = renderCanvasRef.current;
-
-      if (!video || !canvas || !client) {
+    async function sendVideoFrame() {
+      if (!client) {
         return;
       }
 
-      const ctx = canvas.getContext("2d")!;
-      canvas.width = video.videoWidth * 0.25;
-      canvas.height = video.videoHeight * 0.25;
-
-      if (canvas.width + canvas.height > 0) {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const base64 = canvas.toDataURL("image/jpeg", 1.0);
-        const data = base64.slice(base64.indexOf(",") + 1, Infinity);
-        client.sendRealtimeInput([{ mimeType: "image/jpeg", data }]);
-      }
+      const data = await takeScreenshot();
+      client.sendRealtimeInput([{ mimeType: "image/jpeg", data }]);
 
       if (connected) {
         timeoutId = window.setTimeout(sendVideoFrame, 1000 / 0.5);
       }
     }
 
-    if (connected && stream !== null) {
+    if (connected) {
       requestAnimationFrame(sendVideoFrame);
     }
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [connected, stream, client]);
+  }, [connected, client]);
 
   return (
     <div>
@@ -151,8 +127,6 @@ export function Recorder({ onFinished }: RecorderProps) {
           }}
         />
       )}
-      <video ref={videoRef} style={{ display: "none" }} autoPlay />
-      <canvas ref={renderCanvasRef} style={{ display: "none" }} />
       <audio ref={audioRef} style={{ display: "none" }} />
     </div>
   );
