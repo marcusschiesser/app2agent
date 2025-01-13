@@ -1,7 +1,7 @@
 import { SchemaType, Tool } from "@google/generative-ai";
 import { executeActionTool } from "./execute-action";
 import { cleanLLMResponse, getLLMResponse } from "../llm";
-import { SiteConfig } from "@/hooks/use-config";
+import { SiteConfig } from "@/lib/config";
 import { EVENT_TYPE, updateActionStatus } from "../events";
 
 const MODEL = "models/gemini-2.0-flash-exp"; // For reasoning the next action

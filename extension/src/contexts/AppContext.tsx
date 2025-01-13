@@ -15,7 +15,7 @@
  */
 
 import { ReactNode, createContext, useContext } from "react";
-import { SiteConfig } from "../hooks/use-config";
+import { SiteConfig } from "@/lib/config";
 import { useLiveAPI, UseLiveAPIResults } from "../hooks/use-live-api";
 import { LiveConfig } from "@/multimodal-live-types";
 import { useTools } from "./ToolsContext";

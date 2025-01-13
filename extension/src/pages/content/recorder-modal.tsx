@@ -10,17 +10,27 @@ import { AppProvider } from "@/contexts/AppContext";
 import { ToolCall } from "@/components/tool-call";
 
 interface ChromeMessage {
-  type: "TOGGLE_RECORDER";
+  type: "RECORDER_VISIBILITY_CHANGED";
+  isVisible: boolean;
 }
 
 function RecorderModalApp() {
-  const config = useConfig();
+  const { config, isLoading } = useConfig();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    // Get initial visibility state
+    chrome.runtime.sendMessage(
+      { type: "GET_RECORDER_VISIBILITY" },
+      (response) => {
+        setIsVisible(response.isVisible);
+      },
+    );
+
+    // Listen for visibility changes
     const handleMessage = (message: ChromeMessage) => {
-      if (message.type === "TOGGLE_RECORDER") {
-        setIsVisible((prev) => !prev);
+      if (message.type === "RECORDER_VISIBILITY_CHANGED") {
+        setIsVisible(message.isVisible);
       }
     };
 
@@ -31,13 +41,16 @@ function RecorderModalApp() {
   }, []);
 
   const handleClose = () => {
-    setIsVisible(false);
+    // Send message to service worker to update state
+    chrome.runtime.sendMessage({
+      type: "RECORDER_VISIBILITY_CHANGED",
+      isVisible: false,
+    });
   };
 
   if (!isVisible) return null;
 
-  const isLoading = config.isLoading;
-  const hasSetup = config.manual && config.apiKey;
+  const hasSetup = config?.manual && config?.apiKey;
 
   return (
     <Modal onClose={handleClose}>

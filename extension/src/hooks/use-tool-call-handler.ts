@@ -1,6 +1,6 @@
 import { MultimodalLiveClient } from "@/lib/multimodal-live-client";
 import { ToolCall } from "@/multimodal-live-types";
-import { SiteConfig } from "./use-config";
+import { SiteConfig } from "@/lib/config";
 import { ToolManager } from "@/lib/tools/manager";
 import { useEffect, useState } from "react";
 import { ActionEvent, EVENT_TYPE } from "@/lib/events";
