@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "IT Support",
+  "description": "Your friendly IT support",
+  "{{chrome}}.action": {},
+  "{{firefox}}.browser_action": {},
+  "permissions": ["storage", "tabCapture", "activeTab", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "src/pages/content/content-app.tsx",
+        "src/pages/content/microphone-permissions.tsx"
+      ]
+    }
+  ],
+  "background": {
+    "service_worker": "src/background/service-worker.ts"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["worklets/*", "style.css", "permission/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

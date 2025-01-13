@@ -14,8 +14,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return false;
 });
 
-chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
-
-chrome.action.onClicked.addListener(async (tab) => {
-  // Empty listener to enable activeTab permission
-});
+if (chrome.sidePanel) {
+  chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+} else {
+  chrome.action.onClicked.addListener(async (tab) => {
+    // Empty listener to enable activeTab permission
+    if (!tab.id) return; // Empty listener to enable activeTab permission
+    await chrome.tabs.sendMessage(tab.id, { type: "TOGGLE_RECORDER" });
+  });
+}
