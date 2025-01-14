@@ -6,6 +6,7 @@ import { Header } from "@/components/header";
 import { ToolsProvider } from "@/contexts/ToolsContext";
 import { AppProvider } from "@/contexts/AppContext";
 import { ToolCall } from "@/components/tool-call";
+import { MicPermissionCheck } from "./microphone-permission-check";
 
 const host = "generativelanguage.googleapis.com";
 const uri = `wss://${host}/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent`;
@@ -31,6 +32,7 @@ export function AppContent({ onClose }: AppContentProps) {
     <ToolsProvider>
       <AppProvider config={config} url={uri}>
         <div className="w-[200px]">
+          <MicPermissionCheck />
           <Recorder onFinished={onClose} />
           <ToolCall />
         </div>
