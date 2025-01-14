@@ -11,3 +11,11 @@ route group (auth) is using shadcn UI components and Tailwind CSS.
 route group (landing) is just using Tailwind CSS.
 
 Supabase is used for authentication and data storage and its configuration is in the `supabase` folder.
+
+## extension
+
+/extension folder is a Chrome extension built using React and Vite. It has as service-worker and two variants: content and sidepanel. The content variant is based on a content script whereas the sidepanel variant uses a side panel for displaying the UI.
+
+## extension and backend
+
+Both, extension and backend, use 'lucide-react' for icons.

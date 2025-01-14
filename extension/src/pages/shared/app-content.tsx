@@ -6,6 +6,7 @@ import { Header } from "@/components/header";
 import { ToolsProvider } from "@/contexts/ToolsContext";
 import { AppProvider } from "@/contexts/AppContext";
 import { ToolCall } from "@/components/tool-call";
+import { MicPermissionCheck } from "./microphone-permission-check";
 
 const host = "generativelanguage.googleapis.com";
 const uri = `wss://${host}/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent`;
@@ -30,10 +31,9 @@ export function AppContent({ onClose }: AppContentProps) {
   return (
     <ToolsProvider>
       <AppProvider config={config} url={uri}>
-        <div className="w-[200px]">
-          <Recorder onFinished={onClose} />
-          <ToolCall />
-        </div>
+        <MicPermissionCheck />
+        <Recorder onFinished={onClose} />
+        <ToolCall />
       </AppProvider>
     </ToolsProvider>
   );
@@ -41,7 +41,7 @@ export function AppContent({ onClose }: AppContentProps) {
 
 function ConfigWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <div className="p-4 w-[200px] h-[180px] space-y-16">
+    <div className="p-4 h-[180px] space-y-16">
       <Header />
       {children}
     </div>

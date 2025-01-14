@@ -15,6 +15,8 @@ const handleClose = () => {
 
 root.render(
   <React.StrictMode>
-    <AppContent onClose={handleClose} />
+    <div className="w-full">
+      <AppContent onClose={handleClose} />
+    </div>
   </React.StrictMode>,
 );

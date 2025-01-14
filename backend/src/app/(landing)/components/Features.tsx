@@ -1,26 +1,26 @@
-import { FaRobot, FaCode, FaMicrophone, FaChartLine } from "react-icons/fa";
+import { Bot, Code2, Mic, LineChart } from "lucide-react";
 
 const features = [
   {
-    icon: FaRobot,
+    icon: Bot,
     title: "24/7 App Support",
     description:
       "Intelligent agent that learns from your documentation to provide accurate app support 24/7",
   },
   {
-    icon: FaMicrophone,
+    icon: Mic,
     title: "Voice Navigation",
     description: "Navigate the app based on user goals using voice commands",
   },
   {
-    icon: FaCode,
+    icon: Code2,
     title: "No-Code Integration",
     description:
       "Add to your existing web app without writing a single line of code using a browser extension",
   },
 
   {
-    icon: FaChartLine,
+    icon: LineChart,
     title: "Feedback",
     description: "Gather anonymous feedback from users to improve the agent",
   },

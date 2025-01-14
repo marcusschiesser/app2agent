@@ -27,5 +27,8 @@ export async function getUserPermission() {
   });
 }
 
-// Call the function to request microphone permission
-getUserPermission();
+window.addEventListener("message", async (event) => {
+  if (event.data.type === "REQUEST_MICROPHONE_PERMISSION") {
+    await getUserPermission();
+  }
+});
