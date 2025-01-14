@@ -5,17 +5,29 @@ const ALLOWED_EXTENSION_IDS =
   process.env.ALLOWED_EXTENSION_IDS?.split(",") || [];
 
 export const handleCORS = async (request: NextRequest) => {
-  // need an origin to handle cors
   const origin = request.headers.get("origin");
   console.log("[CORS] Check permission for origin:", origin);
 
+  // For requests without origin (like curl), check if they have an API key
   if (!origin) {
-    console.error("[CORS] No origin found in request");
-    return NextResponse.next({
-      request: {
-        headers: request.headers,
+    const apiKey = request.headers.get("x-api-key");
+
+    if (apiKey) {
+      console.log("[CORS] No origin but API key provided, allowing request");
+      return NextResponse.next({
+        request: {
+          headers: request.headers,
+        },
+      });
+    }
+
+    console.error("[CORS] No origin and no API key found in request");
+    return new NextResponse(
+      "Unauthorized request. Origin or API key required",
+      {
+        status: 401,
       },
-    });
+    );
   }
 
   if (request.method === "OPTIONS") {
@@ -53,7 +65,7 @@ const setCORSHeaders = (response: NextResponse, origin: string) => {
   response.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   response.headers.set(
     "Access-Control-Allow-Headers",
-    "X-Extension-Id, X-Requested-With, Content-Type",
+    "X-Extension-Id, X-Api-Key, X-Requested-With, Content-Type",
   );
   response.headers.set("Access-Control-Allow-Credentials", "true");
   response.headers.set("Vary", "Origin");

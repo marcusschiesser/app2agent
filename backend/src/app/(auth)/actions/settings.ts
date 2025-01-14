@@ -23,6 +23,7 @@ export async function updateSettingsAction(
   const gemini_key = formData.get("gemini_key")?.toString();
   const url = formData.get("url")?.toString();
   const content = formData.get("content")?.toString();
+  const api_key = formData.get("api_key")?.toString();
 
   const { error } = await supabase.from("user_manuals").upsert(
     {
@@ -30,6 +31,7 @@ export async function updateSettingsAction(
       user_id: user.id,
       gemini_key,
       content,
+      api_key,
     },
     {
       onConflict: "url", // TODO: should be unique by combination of user_id and url

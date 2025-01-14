@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
+import { Eye, EyeOff, RefreshCw } from "lucide-react";
 
 type WebApp = {
   id: string;
@@ -22,10 +23,12 @@ type WebApp = {
   url: string;
   content: string;
   user_id: string;
+  api_key: string;
 };
 
 export default function Settings({ userId }: { userId: string }) {
   const [app, setApp] = useState<WebApp>();
+  const [showApiKey, setShowApiKey] = useState(false);
   const [state, formAction, isPending] = useActionState(
     updateSettingsAction,
     {},
@@ -86,6 +89,57 @@ export default function Settings({ userId }: { userId: string }) {
                 https://aistudio.google.com/apikey
               </a>
               . Adding this key will be removed in the near future.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="api_key">Authentication API Key</Label>
+            <div className="group relative">
+              <Input
+                type={showApiKey ? "text" : "password"}
+                name="api_key"
+                id="api_key"
+                defaultValue={app?.api_key || ""}
+                placeholder="Your API key will be generated automatically"
+                readOnly
+                className="pr-24"
+              />
+              <div className="absolute right-0 top-0 hidden h-full items-center gap-1 px-3 group-hover:flex">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => setShowApiKey(!showApiKey)}
+                >
+                  {showApiKey ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => {
+                    const newApiKey = crypto.randomUUID();
+                    const input = document.getElementById(
+                      "api_key",
+                    ) as HTMLInputElement;
+                    if (input) {
+                      input.value = newApiKey;
+                    }
+                  }}
+                >
+                  <RefreshCw className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              This API key is required to authenticate requests from your
+              application. Keep it secure and never share it publicly.
             </p>
           </div>
 
