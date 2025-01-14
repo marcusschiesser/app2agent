@@ -31,11 +31,9 @@ export function AppContent({ onClose }: AppContentProps) {
   return (
     <ToolsProvider>
       <AppProvider config={config} url={uri}>
-        <div className="w-[200px]">
-          <MicPermissionCheck />
-          <Recorder onFinished={onClose} />
-          <ToolCall />
-        </div>
+        <MicPermissionCheck />
+        <Recorder onFinished={onClose} />
+        <ToolCall />
       </AppProvider>
     </ToolsProvider>
   );
@@ -43,7 +41,7 @@ export function AppContent({ onClose }: AppContentProps) {
 
 function ConfigWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <div className="p-4 w-[200px] h-[180px] space-y-16">
+    <div className="p-4 h-[180px] space-y-16">
       <Header />
       {children}
     </div>

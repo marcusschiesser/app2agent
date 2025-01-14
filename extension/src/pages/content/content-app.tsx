@@ -31,7 +31,9 @@ function ContentScriptApp() {
 
   return (
     <Modal onClose={handleClose}>
-      <AppContent onClose={handleClose} />
+      <div className="w-[200px]">
+        <AppContent onClose={handleClose} />
+      </div>
     </Modal>
   );
 }
