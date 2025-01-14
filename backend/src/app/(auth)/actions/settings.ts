@@ -5,6 +5,9 @@ import { createClient } from "@/utils/supabase/server";
 export type SettingState = {
   isError?: boolean;
   message?: string;
+  data?: {
+    api_key?: string;
+  };
 };
 
 export async function updateSettingsAction(
@@ -43,4 +46,41 @@ export async function updateSettingsAction(
   }
 
   return { isError: false, message: "Settings saved" };
+}
+
+export async function regenerateApiKeyAction(
+  prevState: SettingState,
+  formData: FormData,
+): Promise<SettingState> {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { isError: true, message: "Not authenticated" };
+  }
+
+  const id = formData.get("id")?.toString();
+  if (!id) {
+    return { isError: true, message: "Manual ID is required" };
+  }
+
+  const newApiKey = crypto.randomUUID();
+
+  const { error } = await supabase
+    .from("user_manuals")
+    .update({ api_key: newApiKey })
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) {
+    return { isError: true, message: error.message };
+  }
+
+  return {
+    isError: false,
+    message: "API key regenerated",
+    data: { api_key: newApiKey },
+  };
 }

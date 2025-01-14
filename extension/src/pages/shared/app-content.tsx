@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Recorder } from "@/components/recorder";
 import { useConfig } from "@/hooks/use-config";
 import { Loading } from "@/components/loading";
@@ -7,6 +7,7 @@ import { ToolsProvider } from "@/contexts/ToolsContext";
 import { AppProvider } from "@/contexts/AppContext";
 import { ToolCall } from "@/components/tool-call";
 import { MicPermissionCheck } from "./microphone-permission-check";
+import { Settings } from "@/components/settings";
 
 const host = "generativelanguage.googleapis.com";
 const uri = `wss://${host}/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent`;
@@ -16,64 +17,67 @@ interface AppContentProps {
 }
 
 export function AppContent({ onClose }: AppContentProps) {
+  const [showSettings, setShowSettings] = useState(false);
   const config = useConfig();
 
   if (config.isLoading) {
     return <LoadingConfig />;
   }
 
-  const hasSetup = config.manual && config.apiKey;
-
-  if (!hasSetup) {
-    return <NoConfig />;
+  // After config is loaded, check if we need to show settings
+  const needsSetup = !config.manual || !localStorage.getItem("apiKey");
+  if (needsSetup) {
+    return (
+      <div>
+        <Header />
+        <Settings
+          onSaved={() => {
+            config.reload();
+          }}
+        />
+      </div>
+    );
   }
 
+  // If we have valid setup or user saved settings, show the main content
   return (
     <ToolsProvider>
       <AppProvider config={config} url={uri}>
-        <MicPermissionCheck />
-        <Recorder onFinished={onClose} />
-        <ToolCall />
+        <div className="relative">
+          <Header
+            onSettingsClick={() => setShowSettings(true)}
+            onBackClick={() => setShowSettings(false)}
+            showBackButton={showSettings}
+          />
+          {showSettings && (
+            <Settings
+              onSaved={() => {
+                setShowSettings(false);
+                config.reload();
+              }}
+            />
+          )}
+          {!showSettings && (
+            <>
+              <MicPermissionCheck />
+              <Recorder onFinished={onClose} />
+              <ToolCall />
+            </>
+          )}
+        </div>
       </AppProvider>
     </ToolsProvider>
   );
 }
 
 function ConfigWrapper({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="p-4 h-[180px] space-y-16">
-      <Header />
-      {children}
-    </div>
-  );
+  return <div className="h-[180px] space-y-16">{children}</div>;
 }
 
 function LoadingConfig() {
   return (
     <ConfigWrapper>
       <Loading text="Loading configuration" />
-    </ConfigWrapper>
-  );
-}
-
-function NoConfig() {
-  return (
-    <ConfigWrapper>
-      <div className="flex flex-col items-center">
-        <p className="text-[14px] text-slate-500 text-center">
-          No configuration found.
-          <br /> Go to{" "}
-          <a
-            href="https://app2agent.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500 underline"
-          >
-            app2agent
-          </a>{" "}
-          to setup
-        </p>
-      </div>
     </ConfigWrapper>
   );
 }

@@ -1,4 +1,3 @@
-import { Header } from "./header";
 import { Call, CallOff } from "./icons/call";
 
 interface CallFormProps {
@@ -12,8 +11,6 @@ export function CallForm({ isEnabled, onToggle, volume }: CallFormProps) {
 
   return (
     <div className="p-6">
-      <Header />
-
       <div className="flex flex-col items-center">
         <div className="w-16 h-16 mb-4 rounded-full flex items-center justify-center relative">
           {isEnabled && (
