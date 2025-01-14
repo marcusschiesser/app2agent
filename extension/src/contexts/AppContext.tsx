@@ -35,11 +35,7 @@ export type AppProviderProps = {
 
 export function AppProvider({ url, children, config }: AppProviderProps) {
   const { manual, apiKey } = config;
-  const tools = useTools();
-
-  // Get tool configurations
-  const toolConfigs = tools.getTools();
-  const toolsPrompt = tools.getPrompt();
+  const toolManager = useTools();
 
   // Create config with tools and prompts
   const liveConfig: LiveConfig = {
@@ -47,25 +43,15 @@ export function AppProvider({ url, children, config }: AppProviderProps) {
     systemInstruction: {
       parts: [
         {
-          text: "You're IT support. If the user connects, welcome him/her with a suitable greeting.",
-        },
-        {
-          text: `Your task is to help the user with his requests. Analyze the request first and use your tools if they are helpful to reach the user's goal. Don't be verbose or ask for information for other actions which are not in your capabilities.`,
-        },
-        {
-          text: `You can use the following tools to help you with your task:\n${toolsPrompt}\n`,
-        },
-        {
-          text: `Tool use policies:
-1. To resolve user request, perform only a single call to a tool with the user's request.
-2. Once the tool call is completed, check the response in the result and do not try to make the same request again and update the status to the user.`,
+          text: "You're IT support. If the user connects, welcome him/her with a suitable greeting. Your task is to help the user with his requests. Analyze the request first and then decide what to do next. Don't be verbose or ask for information for other actions which are not in your capabilities.",
         },
         {
           text: `Use the following context if helpful:\n###\n${manual}\n###\n`,
         },
+        ...toolManager.getPrompt(),
       ],
     },
-    tools: toolConfigs,
+    tools: toolManager.getTools(),
   };
 
   const api = useLiveAPI({ url, apiKey, config: liveConfig });
