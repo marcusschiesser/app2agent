@@ -1,4 +1,4 @@
-import { FunctionDeclarationsTool, Tool } from "@google/generative-ai";
+import { FunctionDeclarationsTool, Part, Tool } from "@google/generative-ai";
 import {
   ToolCall,
   ToolResponse,
@@ -22,7 +22,7 @@ export class ToolManager {
   private currentToolName: string | null = null;
 
   constructor() {
-    this.registerTool(navigationWorkflowConfig, navigationWorkflow);
+    // this.registerTool(navigationWorkflowConfig, navigationWorkflow);
   }
 
   // Register a tool and its implementation
@@ -49,8 +49,8 @@ export class ToolManager {
   }
 
   // Get all tool configs for LLM
-  public getTools(): FunctionDeclarationsTool[] {
-    return this.tools;
+  public getTools(): FunctionDeclarationsTool[] | undefined {
+    return this.tools.length > 0 ? this.tools : undefined;
   }
 
   // Handle tool calls from LLM
@@ -111,8 +111,11 @@ export class ToolManager {
     }
   }
 
-  public getPrompt(): string {
-    return this.tools
+  public getPrompt(): Part[] {
+    if (this.tools.length === 0) {
+      return [];
+    }
+    const toolsPrompt = this.tools
       .map(
         (tool) =>
           tool.functionDeclarations?.[0]?.name +
@@ -120,5 +123,13 @@ export class ToolManager {
           tool.functionDeclarations?.[0]?.description,
       )
       .join("\n");
+    return [
+      {
+        text: `You can use the following tools to help you with your task to reach the user's goal:\n${toolsPrompt}\n
+      Tool use policies:
+1. To resolve user request, perform only a single call to a tool with the user's request.
+2. Once the tool call is completed, check the response in the result and do not try to make the same request again and update the status to the user.`,
+      },
+    ];
   }
 }
