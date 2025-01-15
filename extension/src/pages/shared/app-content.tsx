@@ -18,6 +18,7 @@ interface AppContentProps {
 
 export function AppContent({ onClose }: AppContentProps) {
   const [showSettings, setShowSettings] = useState(false);
+  const [isCallActive, setIsCallActive] = useState(false);
   const config = useConfig();
 
   if (config.isLoading) {
@@ -45,9 +46,10 @@ export function AppContent({ onClose }: AppContentProps) {
       <AppProvider config={config} url={uri}>
         <div className="relative">
           <Header
-            onSettingsClick={() => setShowSettings(true)}
+            onSettingsClick={() => !isCallActive && setShowSettings(true)}
             onBackClick={() => setShowSettings(false)}
             showBackButton={showSettings}
+            disableSettings={isCallActive}
           />
           {showSettings && (
             <Settings
@@ -60,7 +62,10 @@ export function AppContent({ onClose }: AppContentProps) {
           {!showSettings && (
             <>
               <MicPermissionCheck />
-              <Recorder onFinished={onClose} />
+              <Recorder
+                onFinished={onClose}
+                onCallActiveChange={setIsCallActive}
+              />
               <ToolCall />
             </>
           )}

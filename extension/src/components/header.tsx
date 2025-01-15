@@ -4,12 +4,14 @@ interface HeaderProps {
   onSettingsClick?: () => void;
   onBackClick?: () => void;
   showBackButton?: boolean;
+  disableSettings?: boolean;
 }
 
 export function Header({
   onSettingsClick,
   onBackClick,
   showBackButton,
+  disableSettings, // disable settings button if call is active to avoid losing the call when unmounting the component
 }: HeaderProps) {
   return (
     <div className="flex items-center mb-6 relative">
@@ -25,8 +27,11 @@ export function Header({
         ) : onSettingsClick ? (
           <button
             onClick={onSettingsClick}
-            className="rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={`rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              disableSettings ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             title="Settings"
+            disabled={disableSettings}
           >
             <Settings className="h-5 w-5 text-gray-600" />
           </button>
