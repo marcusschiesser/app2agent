@@ -21,23 +21,27 @@ export function AppContent({ onClose }: AppContentProps) {
   const [isCallActive, setIsCallActive] = useState(false);
   const config = useConfig();
 
-  if (config.isLoading) {
-    return <LoadingConfig />;
-  }
-
-  // After config is loaded, check if we need to show settings
-  const needsSetup = !config.manual || !localStorage.getItem("apiKey");
+  const needsSetup = !localStorage.getItem("apiKey");
   if (needsSetup) {
     return (
-      <div>
-        <Header />
+      <ConfigWrapper>
         <Settings
           onSaved={() => {
             config.reload();
           }}
         />
-      </div>
+      </ConfigWrapper>
     );
+  }
+
+  if (config.isLoading) {
+    return <LoadingConfig />;
+  }
+
+  const hasSetup = config.manual && config.apiKey;
+
+  if (!hasSetup) {
+    return <NoConfig />;
   }
 
   // If we have valid setup or user saved settings, show the main content
@@ -76,13 +80,40 @@ export function AppContent({ onClose }: AppContentProps) {
 }
 
 function ConfigWrapper({ children }: { children: React.ReactNode }) {
-  return <div className="h-[180px] space-y-16">{children}</div>;
+  return (
+    <div className="p-4 h-[180px] space-y-16">
+      <Header />
+      {children}
+    </div>
+  );
 }
 
 function LoadingConfig() {
   return (
     <ConfigWrapper>
       <Loading text="Loading configuration" />
+    </ConfigWrapper>
+  );
+}
+
+function NoConfig() {
+  return (
+    <ConfigWrapper>
+      <div className="flex flex-col items-center">
+        <p className="text-[14px] text-slate-500 text-center">
+          No configuration found.
+          <br /> Go to{" "}
+          <a
+            href="https://app2agent.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 underline"
+          >
+            app2agent
+          </a>{" "}
+          to setup
+        </p>
+      </div>
     </ConfigWrapper>
   );
 }
