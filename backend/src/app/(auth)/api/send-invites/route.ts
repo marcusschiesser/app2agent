@@ -3,7 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
 import { generateInviteEmail } from "@/emails/notification";
-import { createClient as createAdminClient } from "@supabase/supabase-js";
+import { supabaseAdmin } from "@/utils/supabase/admin";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -19,13 +19,8 @@ export async function GET() {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const adminSupabase = createAdminClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_KEY!,
-    );
-
     // Get all email signups that haven't been invited yet
-    const { data: signups, error } = await adminSupabase
+    const { data: signups, error } = await supabaseAdmin
       .from("email_signups")
       .select("*")
       .or("invite_sent.eq.false,invite_sent.is.null");
@@ -67,7 +62,7 @@ export async function GET() {
         );
 
         // Mark invite as sent
-        const { error: updateError } = await adminSupabase
+        const { error: updateError } = await supabaseAdmin
           .from("email_signups")
           .update({ invite_sent: true })
           .eq("id", signup.id);

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { getConfig } from "@/hooks/use-config";
 import {
   Card,
   CardContent,
@@ -11,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { secureFetch } from "@/lib/secure-fetch";
 
 interface SettingsProps {
   onSaved: () => void;
@@ -29,9 +29,14 @@ export function Settings({ onSaved }: SettingsProps) {
     const oldApiKey = localStorage.getItem("apiKey");
 
     try {
-      const response = await getConfig(apiKey);
+      const response = await secureFetch(`/api/validate`, {
+        headers: {
+          "x-api-key": apiKey,
+        },
+      });
 
-      if (response.ok) {
+      const data = await response.json();
+      if (data.valid) {
         localStorage.setItem("apiKey", apiKey);
         onSaved();
       } else {

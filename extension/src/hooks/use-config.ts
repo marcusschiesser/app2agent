@@ -1,11 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { secureFetch } from "@/lib/secure-fetch";
 
-const backend =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:3000/api"
-    : "https://www.app2agent.com/api";
-
 export type SiteConfig = {
   manual: string;
   apiKey: string;
@@ -13,15 +8,10 @@ export type SiteConfig = {
   reload: () => void;
 };
 
-export async function getConfig(apiKey: string): Promise<Response> {
+async function getConfig(): Promise<Response> {
   const rootHostname = await getCurrentDomain();
   const response = await secureFetch(
-    `${backend}/config?url=${encodeURIComponent(rootHostname)}`,
-    {
-      headers: {
-        "X-Api-Key": apiKey,
-      },
-    },
+    `/api/config?url=${encodeURIComponent(rootHostname)}`,
   );
   return response;
 }
@@ -40,14 +30,8 @@ export function useConfig(): SiteConfig {
     async function fetchConfig() {
       try {
         setIsLoading(true);
-        const storedApiKey = localStorage.getItem("apiKey");
-        if (!storedApiKey) {
-          setManual("");
-          setApiKey("");
-          return;
-        }
 
-        const response = await getConfig(storedApiKey);
+        const response = await getConfig();
         if (!response.ok) {
           throw new Error("Failed to fetch config");
         }
