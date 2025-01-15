@@ -15,6 +15,7 @@ export function Settings({ onSaved }: SettingsProps) {
   const handleValidation = async () => {
     setError("");
     setIsValidating(true);
+    const oldApiKey = localStorage.getItem("apiKey");
 
     try {
       const response = await getConfig(apiKey);
@@ -24,11 +25,15 @@ export function Settings({ onSaved }: SettingsProps) {
         onSaved();
       } else {
         setError("Invalid API key. Please try again.");
-        localStorage.removeItem("apiKey");
+        if (oldApiKey) {
+          localStorage.setItem("apiKey", oldApiKey);
+        }
       }
     } catch {
       setError("Failed to validate API key. Please try again.");
-      localStorage.removeItem("apiKey");
+      if (oldApiKey) {
+        localStorage.setItem("apiKey", oldApiKey);
+      }
     } finally {
       setIsValidating(false);
     }

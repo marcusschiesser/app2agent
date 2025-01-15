@@ -1,13 +1,7 @@
 "use client";
 
 import { updateSettingsAction } from "@/app/(auth)/actions/settings";
-import {
-  useActionState,
-  useCallback,
-  useEffect,
-  useState,
-  useTransition,
-} from "react";
+import { useActionState, useCallback, useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,8 +26,10 @@ type WebApp = {
 
 export default function Settings({ userId }: { userId: string }) {
   const [app, setApp] = useState<WebApp>();
-  const [isPending, startTransition] = useTransition();
-  const [state, formAction] = useActionState(updateSettingsAction, {});
+  const [state, formAction, isPending] = useActionState(
+    updateSettingsAction,
+    {},
+  );
 
   const fetchApp = useCallback(async () => {
     const supabase = createClient();
