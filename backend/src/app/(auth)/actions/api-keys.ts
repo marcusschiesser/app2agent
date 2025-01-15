@@ -28,10 +28,8 @@ export async function generateApiKeyAction(): Promise<ApiKeyState> {
     .eq("is_active", true);
 
   // Generate new active key
-  const newApiKey = crypto.randomUUID();
   const { error } = await supabase.from("api_keys").insert({
     user_id: user.id,
-    key: newApiKey,
     is_active: true,
   });
 
@@ -39,61 +37,58 @@ export async function generateApiKeyAction(): Promise<ApiKeyState> {
     return { isError: true, message: error.message };
   }
 
+  // Fetch the generated key
+  const { data: newKey } = await supabase
+    .from("api_keys")
+    .select("key")
+    .eq("user_id", user.id)
+    .eq("is_active", true)
+    .single();
+
   return {
     isError: false,
     message: "API key generated successfully",
-    data: { key: newApiKey },
+    data: { key: newKey?.key },
   };
 }
 
-export async function getApiKeyAction(): Promise<{
-  key: string | null;
-  keyId: string | null;
-}> {
+export async function getApiKeyAction(): Promise<{ key: string | null }> {
   const supabase = await createClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    return { key: null, keyId: null };
+    return { key: null };
   }
 
-  const { data: apiKeys } = await supabase
+  const { data: apiKey } = await supabase
     .from("api_keys")
-    .select("id, key")
+    .select("key")
     .eq("user_id", user.id)
     .eq("is_active", true)
     .single();
 
   // If no active API key exists, generate one
-  if (!apiKeys) {
-    const newApiKey = crypto.randomUUID();
+  if (!apiKey) {
     const { data: newKey, error } = await supabase
       .from("api_keys")
       .insert({
         user_id: user.id,
-        key: newApiKey,
         is_active: true,
       })
-      .select("id, key")
+      .select("key")
       .single();
 
     if (error) {
       console.error("Failed to generate API key:", error);
-      return { key: null, keyId: null };
+      return { key: null };
     }
 
-    return {
-      key: newKey.key,
-      keyId: newKey.id,
-    };
+    return { key: newKey.key };
   }
 
-  return {
-    key: apiKeys.key || null,
-    keyId: apiKeys.id || null,
-  };
+  return { key: apiKey.key };
 }
 
 export async function regenerateApiKeyAction(): Promise<ApiKeyState> {
@@ -114,10 +109,8 @@ export async function regenerateApiKeyAction(): Promise<ApiKeyState> {
     .eq("is_active", true);
 
   // Generate new active key
-  const newApiKey = crypto.randomUUID();
   const { error } = await supabase.from("api_keys").insert({
     user_id: user.id,
-    key: newApiKey,
     is_active: true,
   });
 
@@ -125,9 +118,17 @@ export async function regenerateApiKeyAction(): Promise<ApiKeyState> {
     return { isError: true, message: error.message };
   }
 
+  // Fetch the generated key
+  const { data: newKey } = await supabase
+    .from("api_keys")
+    .select("key")
+    .eq("user_id", user.id)
+    .eq("is_active", true)
+    .single();
+
   return {
     isError: false,
     message: "API key regenerated successfully",
-    data: { key: newApiKey },
+    data: { key: newKey?.key },
   };
 }

@@ -25,7 +25,6 @@ import {
 
 interface ApiKeyDisplayProps {
   apiKey: string | null;
-  keyId: string | null;
 }
 
 function maskApiKey(key: string) {
@@ -37,10 +36,7 @@ function maskApiKey(key: string) {
   return `${firstPart}${middlePart}${lastPart}`;
 }
 
-export function ApiKeyDisplay({
-  apiKey: initialApiKey,
-  keyId,
-}: ApiKeyDisplayProps) {
+export function ApiKeyDisplay({ apiKey: initialApiKey }: ApiKeyDisplayProps) {
   const [showApiKey, setShowApiKey] = useState(false);
   const [copied, setCopied] = useState(false);
   const [regenerateSuccess, setRegenerateSuccess] = useState(false);
@@ -61,11 +57,8 @@ export function ApiKeyDisplay({
   }, [regenerateState]);
 
   const handleRegenerateKey = () => {
-    if (!keyId) return;
-    const form = new FormData();
-    form.append("id", keyId);
     startTransition(() => {
-      regenerateAction(form);
+      regenerateAction();
     });
     setOpen(false);
   };
@@ -126,56 +119,49 @@ export function ApiKeyDisplay({
             <Eye className="h-4 w-4" />
           )}
         </Button>
-        {keyId && (
-          <>
-            <Dialog open={open} onOpenChange={setOpen}>
-              <TooltipProvider>
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <DialogTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                      >
-                        {regenerateSuccess ? (
-                          <Check className="h-4 w-4" />
-                        ) : (
-                          <RefreshCw
-                            className={cn(
-                              "h-4 w-4",
-                              isPending && "animate-spin",
-                            )}
-                          />
-                        )}
-                      </Button>
-                    </DialogTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Regenerate API Key</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Regenerate API Key?</DialogTitle>
-                  <DialogDescription>
-                    This will invalidate the current API key. All users and
-                    extensions using the current key will need to be updated
-                    with the new key. Are you sure you want to continue?
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter className="flex gap-2">
-                  <Button variant="outline" onClick={() => setOpen(false)}>
-                    Cancel
+        <Dialog open={open} onOpenChange={setOpen}>
+          <TooltipProvider>
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <DialogTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                  >
+                    {regenerateSuccess ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <RefreshCw
+                        className={cn("h-4 w-4", isPending && "animate-spin")}
+                      />
+                    )}
                   </Button>
-                  <Button onClick={handleRegenerateKey}>Continue</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </>
-        )}
+                </DialogTrigger>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Regenerate API Key</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Regenerate API Key?</DialogTitle>
+              <DialogDescription>
+                This will invalidate the current API key. All users and
+                extensions using the current key will need to be updated with
+                the new key. Are you sure you want to continue?
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="flex gap-2">
+              <Button variant="outline" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleRegenerateKey}>Continue</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

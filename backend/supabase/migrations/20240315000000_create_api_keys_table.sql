@@ -1,8 +1,7 @@
 -- Create new api_keys table
 create table public.api_keys (
-    id uuid default gen_random_uuid() primary key,
+    key uuid default gen_random_uuid() primary key,
     user_id uuid references auth.users(id) not null,
-    key text not null,
     is_active boolean default true,
     created_at timestamptz default now(),
     updated_at timestamptz default now()

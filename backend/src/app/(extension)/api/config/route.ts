@@ -23,7 +23,7 @@ export async function GET(request: Request) {
     if (apiKey) {
       const { data: validKey } = await supabase
         .from("api_keys")
-        .select("id")
+        .select("user_id")
         .eq("key", apiKey)
         .eq("is_active", true)
         .single();
