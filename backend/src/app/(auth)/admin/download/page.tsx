@@ -8,11 +8,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getApiKeyAction } from "@/app/(auth)/actions/settings";
 import { ApiKeyDisplay } from "./ApiKeyDisplay";
+import { getApiKeyAction } from "@/app/(auth)/actions/api-keys";
 
 export default async function Page() {
-  const { apiKey, manualId } = await getApiKeyAction();
+  const { key, keyId } = await getApiKeyAction();
 
   return (
     <>
@@ -60,7 +60,7 @@ export default async function Page() {
               <li>
                 After the extension is installed, you will need to enter your
                 API key in the extension for authentication.
-                <ApiKeyDisplay apiKey={apiKey} manualId={manualId} />
+                <ApiKeyDisplay apiKey={key} keyId={keyId} />
               </li>
             </ol>
           </CardContent>

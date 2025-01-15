@@ -9,17 +9,6 @@ export const handleCORS = async (request: NextRequest) => {
   console.log("[CORS] Check permission for origin:", origin);
 
   if (!origin) {
-    const apiKey = request.headers.get("x-api-key");
-
-    if (apiKey) {
-      console.log("[CORS] No origin but API key provided, allowing request");
-      return NextResponse.next({
-        request: {
-          headers: request.headers,
-        },
-      });
-    }
-
     console.error("[CORS] No origin and no API key found in request");
     return new NextResponse(
       "Unauthorized request. Origin or API key required",

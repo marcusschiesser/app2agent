@@ -22,10 +22,10 @@ export async function GET(request: Request) {
     // If API key is provided, validate it first
     if (apiKey) {
       const { data: validKey } = await supabase
-        .from("user_manuals")
+        .from("api_keys")
         .select("id")
-        .eq("url", url)
-        .eq("api_key", apiKey)
+        .eq("key", apiKey)
+        .eq("is_active", true)
         .single();
 
       if (!validKey) {

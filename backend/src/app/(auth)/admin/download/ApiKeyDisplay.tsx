@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Check, Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
-import { regenerateApiKeyAction } from "@/app/(auth)/actions/settings";
+import { regenerateApiKeyAction } from "@/app/(auth)/actions/api-keys";
 import { useActionState } from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -25,7 +25,7 @@ import {
 
 interface ApiKeyDisplayProps {
   apiKey: string | null;
-  manualId: string | null;
+  keyId: string | null;
 }
 
 function maskApiKey(key: string) {
@@ -39,7 +39,7 @@ function maskApiKey(key: string) {
 
 export function ApiKeyDisplay({
   apiKey: initialApiKey,
-  manualId,
+  keyId,
 }: ApiKeyDisplayProps) {
   const [showApiKey, setShowApiKey] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -53,17 +53,17 @@ export function ApiKeyDisplay({
   );
 
   useEffect(() => {
-    if (!regenerateState.isError && regenerateState.data?.api_key) {
-      setCurrentApiKey(regenerateState.data.api_key);
+    if (!regenerateState.isError && regenerateState.data?.key) {
+      setCurrentApiKey(regenerateState.data.key);
       setRegenerateSuccess(true);
       setTimeout(() => setRegenerateSuccess(false), 1000);
     }
   }, [regenerateState]);
 
   const handleRegenerateKey = () => {
-    if (!manualId) return;
+    if (!keyId) return;
     const form = new FormData();
-    form.append("id", manualId);
+    form.append("id", keyId);
     startTransition(() => {
       regenerateAction(form);
     });
@@ -126,7 +126,7 @@ export function ApiKeyDisplay({
             <Eye className="h-4 w-4" />
           )}
         </Button>
-        {manualId && (
+        {keyId && (
           <>
             <Dialog open={open} onOpenChange={setOpen}>
               <TooltipProvider>
