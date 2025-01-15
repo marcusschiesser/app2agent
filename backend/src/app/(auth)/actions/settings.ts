@@ -84,3 +84,29 @@ export async function regenerateApiKeyAction(
     data: { api_key: newApiKey },
   };
 }
+
+export async function getApiKeyAction(): Promise<{
+  apiKey: string | null;
+  manualId: string | null;
+}> {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { apiKey: null, manualId: null };
+  }
+
+  const { data: manuals } = await supabase
+    .from("user_manuals")
+    .select("id, api_key")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(1);
+
+  return {
+    apiKey: manuals?.[0]?.api_key || null,
+    manualId: manuals?.[0]?.id || null,
+  };
+}

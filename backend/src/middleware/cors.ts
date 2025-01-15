@@ -8,7 +8,6 @@ export const handleCORS = async (request: NextRequest) => {
   const origin = request.headers.get("origin");
   console.log("[CORS] Check permission for origin:", origin);
 
-  // For requests without origin (like curl), check if they have an API key
   if (!origin) {
     const apiKey = request.headers.get("x-api-key");
 

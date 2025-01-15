@@ -8,8 +8,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getApiKeyAction } from "@/app/(auth)/actions/settings";
+import { ApiKeyDisplay } from "./ApiKeyDisplay";
 
-export default function Page() {
+export default async function Page() {
+  const { apiKey, manualId } = await getApiKeyAction();
+
   return (
     <>
       <PageHeader title="Download" />
@@ -53,6 +57,11 @@ export default function Page() {
               </li>
               <li>Click &quot;Load unpacked&quot; button in the top left</li>
               <li>Select and upload the extracted folder</li>
+              <li>
+                After the extension is installed, you will need to enter your
+                API key in the extension for authentication.
+                <ApiKeyDisplay apiKey={apiKey} manualId={manualId} />
+              </li>
             </ol>
           </CardContent>
         </Card>

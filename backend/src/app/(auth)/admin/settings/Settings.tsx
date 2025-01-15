@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  updateSettingsAction,
-  regenerateApiKeyAction,
-} from "@/app/(auth)/actions/settings";
+import { updateSettingsAction } from "@/app/(auth)/actions/settings";
 import {
   useActionState,
   useCallback,
@@ -24,14 +21,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
-import { Check, Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
 
 type WebApp = {
   id: string;
@@ -39,20 +28,12 @@ type WebApp = {
   url: string;
   content: string;
   user_id: string;
-  api_key: string;
 };
 
 export default function Settings({ userId }: { userId: string }) {
   const [app, setApp] = useState<WebApp>();
-  const [showApiKey, setShowApiKey] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [regenerateSuccess, setRegenerateSuccess] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [state, formAction] = useActionState(updateSettingsAction, {});
-  const [regenerateState, regenerateAction] = useActionState(
-    regenerateApiKeyAction,
-    {},
-  );
 
   const fetchApp = useCallback(async () => {
     const supabase = createClient();
@@ -71,17 +52,6 @@ export default function Settings({ userId }: { userId: string }) {
       fetchApp();
     }
   }, [fetchApp, state]);
-
-  useEffect(() => {
-    if (!regenerateState.isError && regenerateState.data?.api_key) {
-      const input = document.getElementById("api_key") as HTMLInputElement;
-      if (input) {
-        input.value = regenerateState.data.api_key;
-        setRegenerateSuccess(true);
-        setTimeout(() => setRegenerateSuccess(false), 1000);
-      }
-    }
-  }, [regenerateState]);
 
   return (
     <Card>
@@ -120,104 +90,6 @@ export default function Settings({ userId }: { userId: string }) {
                 https://aistudio.google.com/apikey
               </a>
               . Adding this key will be removed in the near future.
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="api_key">Authentication API Key</Label>
-            <div className="group relative">
-              <Input
-                type={showApiKey ? "text" : "password"}
-                name="api_key"
-                id="api_key"
-                defaultValue={app?.api_key || ""}
-                placeholder="Your API key will be generated automatically"
-                readOnly
-                className="pr-32 bg-muted text-muted-foreground"
-              />
-              <div className="absolute right-0 top-0 hidden h-full items-center gap-1 px-3 group-hover:flex">
-                <TooltipProvider>
-                  <Tooltip delayDuration={0}>
-                    <TooltipTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => {
-                          const input = document.getElementById(
-                            "api_key",
-                          ) as HTMLInputElement;
-                          if (input?.value) {
-                            navigator.clipboard.writeText(input.value);
-                            setCopied(true);
-                            setTimeout(() => setCopied(false), 1000);
-                          }
-                        }}
-                      >
-                        {copied ? (
-                          <Check className="h-4 w-4" />
-                        ) : (
-                          <Copy className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Copy API Key</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => setShowApiKey(!showApiKey)}
-                >
-                  {showApiKey ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </Button>
-                <TooltipProvider>
-                  <Tooltip delayDuration={0}>
-                    <TooltipTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => {
-                          const form = new FormData();
-                          form.append("id", app?.id || "");
-                          startTransition(() => {
-                            regenerateAction(form);
-                          });
-                        }}
-                      >
-                        {regenerateSuccess ? (
-                          <Check className="h-4 w-4" />
-                        ) : (
-                          <RefreshCw
-                            className={cn(
-                              "h-4 w-4",
-                              isPending && "animate-spin",
-                            )}
-                          />
-                        )}
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Regenerate API Key</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              This API key is required to authenticate requests from the
-              extension. Keep it secure and never share it publicly.
             </p>
           </div>
 
