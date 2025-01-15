@@ -3,6 +3,7 @@ import { Recorder } from "@/components/recorder";
 import { useConfig } from "@/hooks/use-config";
 import { Loading } from "@/components/loading";
 import { Header } from "@/components/header";
+import { MenuButton } from "@/components/menu-button";
 import { ToolsProvider } from "@/contexts/ToolsContext";
 import { AppProvider } from "@/contexts/AppContext";
 import { ToolCall } from "@/components/tool-call";
@@ -46,15 +47,18 @@ export function AppContent({ onClose }: AppContentProps) {
 
   // If we have valid setup or user saved settings, show the main content
   return (
-    <ToolsProvider>
-      <AppProvider config={config} url={uri}>
-        <div className="relative">
-          <Header
-            onSettingsClick={() => !isCallActive && setShowSettings(true)}
-            onBackClick={() => setShowSettings(false)}
-            showBackButton={showSettings}
-            disableSettings={isCallActive}
-          />
+    <div className="p-4">
+      <ToolsProvider>
+        <AppProvider config={config} url={uri}>
+          <div className="relative">
+            <MenuButton
+              disableSettings={isCallActive}
+              onSettingsChange={setShowSettings}
+            />
+            <div className="flex justify-center">
+              <Header />
+            </div>
+          </div>
           {showSettings && (
             <Settings
               onSaved={() => {
@@ -73,9 +77,9 @@ export function AppContent({ onClose }: AppContentProps) {
               <ToolCall />
             </>
           )}
-        </div>
-      </AppProvider>
-    </ToolsProvider>
+        </AppProvider>
+      </ToolsProvider>
+    </div>
   );
 }
 
