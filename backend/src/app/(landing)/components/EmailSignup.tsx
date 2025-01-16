@@ -37,10 +37,28 @@ export default function EmailSignup() {
         )}
         <form action={formAction} className="max-w-md mx-auto">
           <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="text"
+                name="name"
+                placeholder="Your name"
+                className="px-4 py-3 rounded-lg text-gray-900"
+                required
+                defaultValue={previousFormData?.name || ""}
+              />
+              <input
+                type="text"
+                name="companyName"
+                placeholder="Company name"
+                className="px-4 py-3 rounded-lg text-gray-900"
+                required
+                defaultValue={previousFormData?.companyName || ""}
+              />
+            </div>
             <input
               type="email"
               name="email"
-              placeholder="Enter your email"
+              placeholder="Work email"
               className="px-4 py-3 rounded-lg text-gray-900"
               required
               defaultValue={previousFormData?.email || ""}
@@ -48,40 +66,10 @@ export default function EmailSignup() {
             <input
               type="password"
               name="password"
-              placeholder="Choose a password"
+              placeholder="Password (min. 8 characters)"
               className="px-4 py-3 rounded-lg text-gray-900"
               required
-              minLength={6}
-            />
-            <input
-              type="text"
-              name="name"
-              placeholder="Your name"
-              className="px-4 py-3 rounded-lg text-gray-900"
-              required
-              defaultValue={previousFormData?.name || ""}
-            />
-            <input
-              type="text"
-              name="companyName"
-              placeholder="Company name"
-              className="px-4 py-3 rounded-lg text-gray-900"
-              required
-              defaultValue={previousFormData?.companyName || ""}
-            />
-            <input
-              type="text"
-              name="intendedUsage"
-              placeholder="How do you plan to use our product? (Optional)"
-              className="px-4 py-3 rounded-lg text-gray-900"
-              defaultValue={previousFormData?.intendedUsage || ""}
-            />
-            <input
-              type="url"
-              name="linkedInProfile"
-              placeholder="Your LinkedIn profile URL (Optional)"
-              className="px-4 py-3 rounded-lg text-gray-900"
-              defaultValue={previousFormData?.linkedInProfile || ""}
+              minLength={8}
             />
             <button
               type="submit"
@@ -90,7 +78,7 @@ export default function EmailSignup() {
                 isPending ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              {isPending ? "Signing up..." : "Join"}
+              {isPending ? "Signing up..." : "Get Started"}
             </button>
           </div>
         </form>
