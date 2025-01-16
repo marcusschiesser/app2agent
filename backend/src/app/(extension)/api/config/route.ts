@@ -1,15 +1,11 @@
-import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY!;
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+import { supabaseAdmin } from "@/utils/supabase/admin";
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const url = searchParams.get("url"); // domain eg: linkedin.com
-    const requestOrigin = request.headers.get("origin"); // origin eg: https://www.linkedin.com
+    const userId = request.headers.get("x-user-id");
 
     if (!url) {
       return NextResponse.json(
@@ -18,29 +14,16 @@ export async function GET(request: Request) {
       );
     }
 
-    if (requestOrigin && !requestOrigin.includes(url)) {
-      // Don't allow to retrieve the configuration for another URL
-      return NextResponse.json({ error: "No permission" }, { status: 403 });
-    }
-
-    const { data, error } = await supabase
+    // Get the manual for this URL and user
+    const { data } = await supabaseAdmin
       .from("user_manuals")
       .select("content,gemini_key")
       .eq("url", url)
+      .eq("user_id", userId)
       .single();
 
-    if (error) {
-      return NextResponse.json(
-        { error: "Failed to fetch markdown file" },
-        { status: 500 },
-      );
-    }
-
     if (!data) {
-      return NextResponse.json(
-        { error: "Markdown file not found" },
-        { status: 404 },
-      );
+      return NextResponse.json({ error: "Manual not found" }, { status: 404 });
     }
 
     return NextResponse.json({
@@ -48,7 +31,7 @@ export async function GET(request: Request) {
       apiKey: data.gemini_key,
     });
   } catch (error) {
-    console.error("Error fetching markdown file:", error);
+    console.error("Error fetching manual:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

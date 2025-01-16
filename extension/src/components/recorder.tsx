@@ -9,9 +9,10 @@ import { useAppContext } from "@/contexts/AppContext";
 import { takeScreenshot } from "@/lib/screenshot";
 export interface RecorderProps {
   onFinished?: () => void;
+  onCallActiveChange?: (isActive: boolean) => void;
 }
 
-export function Recorder({ onFinished }: RecorderProps) {
+export function Recorder({ onFinished, onCallActiveChange }: RecorderProps) {
   const [isEnabled, setIsEnabled] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const { liveAPI } = useAppContext();
@@ -75,10 +76,12 @@ export function Recorder({ onFinished }: RecorderProps) {
 
     if (checked) {
       setIsEnabled(true);
+      onCallActiveChange?.(true);
       liveAPI.connect();
     } else {
       setIsEnabled(false);
       setShowFeedback(true);
+      onCallActiveChange?.(false);
       liveAPI.disconnect();
     }
   };

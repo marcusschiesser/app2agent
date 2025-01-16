@@ -1,30 +1,41 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { secureFetch } from "@/lib/secure-fetch";
-
-const backend =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:3000/api"
-    : "https://www.app2agent.com/api";
 
 export type SiteConfig = {
   manual: string;
   apiKey: string;
   isLoading: boolean;
+  reload: () => void;
 };
+
+async function getConfig(): Promise<Response> {
+  const rootHostname = await getCurrentDomain();
+  const response = await secureFetch(
+    `/api/config?url=${encodeURIComponent(rootHostname)}`,
+  );
+  return response;
+}
 
 export function useConfig(): SiteConfig {
   const [isLoading, setIsLoading] = useState(false);
   const [manual, setManual] = useState<string>("");
   const [apiKey, setApiKey] = useState<string>("");
+  const [reloadCounter, setReloadCounter] = useState(0);
+
+  const reload = useCallback(() => {
+    setReloadCounter((prev) => prev + 1);
+  }, []);
 
   useEffect(() => {
     async function fetchConfig() {
       try {
         setIsLoading(true);
-        const rootHostname = await getCurrentDomain();
-        const response = await secureFetch(
-          `${backend}/config?url=${encodeURIComponent(rootHostname)}`,
-        );
+
+        const response = await getConfig();
+        if (!response.ok) {
+          throw new Error("Failed to fetch config");
+        }
+
         const data = (await response.json()) as {
           content: string;
           apiKey: string;
@@ -41,9 +52,9 @@ export function useConfig(): SiteConfig {
     }
 
     fetchConfig();
-  }, []);
+  }, [reloadCounter]);
 
-  return { manual, apiKey, isLoading };
+  return { manual, apiKey, isLoading, reload };
 }
 
 /**
