@@ -1,11 +1,7 @@
-import { handleTabCapture, handleTabScreenshot } from "./recorder-controller";
+import { handleTabScreenshot } from "./recorder-controller";
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.type) {
-    case "GET_TAB_STREAM":
-      handleTabCapture(sender, sendResponse);
-      return true;
-
     case "TAKE_SCREENSHOT":
       handleTabScreenshot(sender, sendResponse);
       return true;
@@ -14,8 +10,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return false;
 });
 
-// Send the toggle message when extension icon is clicked
-chrome.action.onClicked.addListener(async (tab) => {
-  if (!tab.id) return;
-  await chrome.tabs.sendMessage(tab.id, { type: "TOGGLE_RECORDER" });
-});
+if (chrome.sidePanel) {
+  chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+} else {
+  chrome.action.onClicked.addListener(async (tab) => {
+    // Empty listener to enable activeTab permission
+    if (!tab.id) return; // Empty listener to enable activeTab permission
+    await chrome.tabs.sendMessage(tab.id, { type: "TOGGLE_RECORDER" });
+  });
+}

@@ -25,7 +25,7 @@ export default defineConfig({
   build: {
     outDir,
   },
-  publicDir: `public/${variant}`,
+  publicDir: `public`,
   define: {
     __MANIFEST__: JSON.stringify(generateManifest()),
   },

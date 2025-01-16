@@ -4,11 +4,15 @@
   "description": "Your friendly IT support",
   "{{chrome}}.action": {},
   "{{firefox}}.browser_action": {},
-  "permissions": ["storage", "tabCapture", "activeTab"],
+  "permissions": ["storage", "tabCapture", "activeTab", "tabs"],
+  "host_permissions": ["<all_urls>"],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["src/pages/content/recorder-modal.tsx"]
+      "js": [
+        "src/pages/content/content-app.tsx",
+        "src/pages/content/microphone-permissions.tsx"
+      ]
     }
   ],
   "background": {
@@ -16,7 +20,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["worklets/*", "style.css"],
+      "resources": ["worklets/*", "style.css", "permission/*"],
       "matches": ["<all_urls>"]
     }
   ]

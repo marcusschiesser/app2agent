@@ -11,8 +11,10 @@ export const handleCORS = async (request: NextRequest) => {
 
   if (!origin) {
     console.error("[CORS] No origin found in request");
-    return new NextResponse("Bad Request: No origin specified", {
-      status: 400,
+    return NextResponse.next({
+      request: {
+        headers: request.headers,
+      },
     });
   }
 

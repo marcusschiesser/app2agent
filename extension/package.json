@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "clean": "rm -rf dist",
-    "dev": "cross-env VARIANT=docs vite dev",
-    "build:docs": "tsc && cross-env VARIANT=docs vite build",
-    "build": "pnpm run clean && pnpm run build:docs",
+    "dev": "cross-env VARIANT=sidepanel vite dev",
+    "build:sidepanel": "tsc && cross-env VARIANT=sidepanel vite build",
+    "build:content": "tsc && cross-env VARIANT=content vite build",
+    "build": "pnpm run clean && pnpm run build:sidepanel && pnpm run build:content",
     "lint": "eslint .",
     "preview": "vite preview",
-    "release": "pnpm run build && node -e \"const AdmZip = require('adm-zip'); const zip = new AdmZip(); zip.addLocalFolder('./dist/docs'); zip.writeZip('./dist/extension.zip');\""
+    "release": "pnpm run build && node -e \"const AdmZip = require('adm-zip'); const zip = new AdmZip(); zip.addLocalFolder('./dist/content'); zip.addLocalFolder('./dist/content'); zip.writeZip('./dist/extension.zip');\""
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
@@ -22,10 +23,10 @@
     "clsx": "^2.1.1",
     "eventemitter3": "^5.0.1",
     "lodash": "^4.17.21",
+    "lucide-react": "^0.469.0",
     "pathe": "^1.1.2",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-icons": "^5.4.0",
+    "react": "^19",
+    "react-dom": "^19",
     "react-markdown": "^9.0.1",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7"
@@ -36,8 +37,8 @@
     "@types/chrome": "^0.0.254",
     "@types/lodash": "^4.17.13",
     "@types/node": "^20.17.6",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^4.3.3",
     "adm-zip": "^0.5.10",
     "autoprefixer": "^10.4.16",
