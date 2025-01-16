@@ -156,10 +156,7 @@ export default function Settings() {
 function extractDomain(url: string) {
   try {
     const parsedUrl = new URL(url);
-    const hostname = parsedUrl.hostname;
-    const parts = hostname.split(".");
-    const rootHostname = parts.slice(-2).join(".");
-    return rootHostname;
+    return parsedUrl.hostname;
   } catch {
     return url;
   }

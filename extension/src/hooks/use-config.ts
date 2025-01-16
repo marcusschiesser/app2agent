@@ -9,9 +9,9 @@ export type SiteConfig = {
 };
 
 async function getConfig(): Promise<Response> {
-  const rootHostname = await getCurrentDomain();
+  const domain = await getCurrentDomain();
   const response = await secureFetch(
-    `/api/config?url=${encodeURIComponent(rootHostname)}`,
+    `/api/config?url=${encodeURIComponent(domain)}`,
   );
   return response;
 }
@@ -58,10 +58,10 @@ export function useConfig(): SiteConfig {
 }
 
 /**
- * Extracts the root domain from the current URL.
+ * Extracts the full domain from the current URL.
  * When called from the sidepanel, gets the URL from the active tab.
- * Eg: current URL is https://www.linkedin.com/feed/ -> returns linkedin.com
- * @returns The root domain as a string.
+ * Eg: current URL is https://www.linkedin.com/feed/ -> returns www.linkedin.com
+ * @returns The full domain as a string.
  */
 async function getCurrentDomain(): Promise<string> {
   let url: string;
@@ -78,8 +78,5 @@ async function getCurrentDomain(): Promise<string> {
   }
 
   const parsedUrl = new URL(url);
-  const hostname = parsedUrl.hostname;
-  const parts = hostname.split(".");
-  const rootHostname = parts.slice(-2).join(".");
-  return rootHostname;
+  return parsedUrl.hostname;
 }
