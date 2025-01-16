@@ -32,7 +32,7 @@ export async function updateSettingsAction(
       content,
     },
     {
-      onConflict: "url", // TODO: should be unique by combination of user_id and url
+      onConflict: "user_id",
     },
   );
 

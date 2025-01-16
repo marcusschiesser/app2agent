@@ -36,10 +36,10 @@ export default function Settings({ userId }: { userId: string }) {
     const { data } = await supabase
       .from("user_manuals")
       .select("*")
-      .order("created_at", { ascending: false })
-      .eq("user_id", userId);
-    if (data?.[0]) {
-      setApp(data[0]); // TODO: A user can have multiple manuals, but we only want to show the first one for now
+      .eq("user_id", userId)
+      .single();
+    if (data) {
+      setApp(data);
     }
   }, [userId]);
 
