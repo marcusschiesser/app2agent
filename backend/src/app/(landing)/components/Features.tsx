@@ -2,27 +2,28 @@ import { Bot, Code2, Mic, LineChart } from "lucide-react";
 
 const features = [
   {
-    icon: Bot,
-    title: "24/7 App Support",
+    icon: Mic,
+    title: "Natural Voice Interaction",
     description:
-      "Intelligent agent that learns from your documentation to provide accurate app support 24/7",
+      "Control any web app with voice commands - from simple navigation to complex workflows. Speak naturally and get things done.",
   },
   {
-    icon: Mic,
-    title: "Voice Navigation",
-    description: "Navigate the app based on user goals using voice commands",
+    icon: Bot,
+    title: "Intelligent App Assistant",
+    description:
+      "AI agent learns from your documentation to provide accurate guidance and execute complex tasks through voice commands.",
   },
   {
     icon: Code2,
-    title: "No-Code Integration",
+    title: "10-Minute Setup",
     description:
-      "Add to your existing web app without writing a single line of code using a browser extension",
+      "Install our browser extension and upload your documentation. No coding required, works instantly with any web application.",
   },
-
   {
     icon: LineChart,
-    title: "Feedback",
-    description: "Gather anonymous feedback from users to improve the agent",
+    title: "Continuous Learning",
+    description:
+      "The AI assistant improves over time based on user interactions and feedback, becoming more helpful and accurate.",
   },
 ];
 

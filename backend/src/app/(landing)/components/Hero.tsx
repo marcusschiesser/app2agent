@@ -9,11 +9,11 @@ export default function Hero() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="text-left">
             <h1 className="text-5xl font-bold mb-6">
-              Add AI Agents to Your Enterprise Apps
+              AI Voice Assistant for Your Web App
             </h1>
             <p className="text-xl mb-8 text-blue-100">
-              Bring any enterprise web app into the AI era by using existing app
-              documentation - no-code required
+              Transform any enterprise web app with an AI voice assistant - just
+              upload your documentation and you&apos;re ready to go
             </p>
             <button
               onClick={() =>
