@@ -7,6 +7,14 @@ export type SettingState = {
   message?: string;
 };
 
+export type WebApp = {
+  id: string;
+  gemini_key: string;
+  url: string;
+  content: string;
+  user_id: string;
+};
+
 export async function updateSettingsAction(
   prevState: SettingState,
   formData: FormData,
@@ -41,4 +49,30 @@ export async function updateSettingsAction(
   }
 
   return { isError: false, message: "Settings saved" };
+}
+
+export async function fetchSettingsAction(): Promise<{
+  data: WebApp | null;
+  error: Error | null;
+}> {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { data: null, error: new Error("Not authenticated") };
+  }
+
+  const { data, error } = await supabase
+    .from("user_manuals")
+    .select("*")
+    .eq("user_id", user.id)
+    .single();
+
+  if (error) {
+    return { data: null, error };
+  }
+
+  return { data, error: null };
 }

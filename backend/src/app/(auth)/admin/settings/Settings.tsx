@@ -1,8 +1,11 @@
 "use client";
 
-import { updateSettingsAction } from "@/app/(auth)/actions/settings";
+import {
+  updateSettingsAction,
+  fetchSettingsAction,
+  type WebApp,
+} from "@/app/(auth)/actions/settings";
 import { useActionState, useCallback, useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,15 +19,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
 
-type WebApp = {
-  id: string;
-  gemini_key: string;
-  url: string;
-  content: string;
-  user_id: string;
-};
-
-export default function Settings({ userId }: { userId: string }) {
+export default function Settings() {
   const [app, setApp] = useState<WebApp>();
   const [state, formAction, isPending] = useActionState(
     updateSettingsAction,
@@ -32,22 +27,26 @@ export default function Settings({ userId }: { userId: string }) {
   );
 
   const fetchApp = useCallback(async () => {
-    const supabase = createClient();
-    const { data } = await supabase
-      .from("user_manuals")
-      .select("*")
-      .eq("user_id", userId)
-      .single();
+    const { data } = await fetchSettingsAction();
     if (data) {
       setApp(data);
     }
-  }, [userId]);
+  }, []);
 
   useEffect(() => {
-    if (!state.isError) {
-      fetchApp();
-    }
-  }, [fetchApp, state]);
+    fetchApp();
+  }, [fetchApp]);
+
+  const clientAction = async (formData: FormData) => {
+    const newApp = {
+      ...app,
+      gemini_key: formData.get("gemini_key")?.toString() || "",
+      url: formData.get("url")?.toString() || "",
+      content: formData.get("content")?.toString() || "",
+    };
+    setApp(newApp as WebApp);
+    await formAction(formData);
+  };
 
   return (
     <Card>
@@ -63,7 +62,7 @@ export default function Settings({ userId }: { userId: string }) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form action={formAction} className="space-y-6">
+        <form action={clientAction} className="space-y-6">
           <input type="hidden" name="id" value={app?.id || ""} />
 
           <div className="space-y-2">
