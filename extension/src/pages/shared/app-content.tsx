@@ -25,13 +25,13 @@ export function AppContent({ onClose }: AppContentProps) {
   const needsSetup = !localStorage.getItem("apiKey");
   if (needsSetup) {
     return (
-      <ConfigWrapper>
+      <LayoutWrapper>
         <Settings
           onSaved={() => {
             config.reload();
           }}
         />
-      </ConfigWrapper>
+      </LayoutWrapper>
     );
   }
 
@@ -47,7 +47,7 @@ export function AppContent({ onClose }: AppContentProps) {
 
   // If we have valid setup or user saved settings, show the main content
   return (
-    <div className="p-4">
+    <div className="p-4 space-y-10">
       <ToolsProvider>
         <AppProvider config={config} url={uri}>
           <div className="relative">
@@ -83,9 +83,9 @@ export function AppContent({ onClose }: AppContentProps) {
   );
 }
 
-function ConfigWrapper({ children }: { children: React.ReactNode }) {
+function LayoutWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <div className="p-4 h-[180px] space-y-16">
+    <div className="p-4 space-y-10">
       <Header />
       {children}
     </div>
@@ -94,15 +94,15 @@ function ConfigWrapper({ children }: { children: React.ReactNode }) {
 
 function LoadingConfig() {
   return (
-    <ConfigWrapper>
+    <LayoutWrapper>
       <Loading text="Loading configuration" />
-    </ConfigWrapper>
+    </LayoutWrapper>
   );
 }
 
 function NoConfig() {
   return (
-    <ConfigWrapper>
+    <LayoutWrapper>
       <div className="flex flex-col items-center">
         <p className="text-[14px] text-slate-500 text-center">
           No configuration found.
@@ -118,6 +118,6 @@ function NoConfig() {
           to setup
         </p>
       </div>
-    </ConfigWrapper>
+    </LayoutWrapper>
   );
 }
