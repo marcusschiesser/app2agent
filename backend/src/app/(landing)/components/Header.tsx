@@ -9,7 +9,9 @@ export default function Header() {
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <Logo />
+            <Link href="/">
+              <Logo />
+            </Link>
           </div>
 
           <nav className="flex items-center gap-4">
