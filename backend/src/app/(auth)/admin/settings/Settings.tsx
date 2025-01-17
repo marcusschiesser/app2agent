@@ -19,6 +19,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
 
+const MAX_DOCUMENTATION_LENGTH = 50000;
+
 export default function Settings() {
   const [app, setApp] = useState<WebApp>();
   const [state, formAction, isPending] = useActionState(
@@ -113,12 +115,13 @@ export default function Settings() {
               name="content"
               id="content"
               rows={20}
-              maxLength={4000}
+              maxLength={MAX_DOCUMENTATION_LENGTH}
               defaultValue={app?.content || ""}
               placeholder="The documentation of your web application. You can directly paste the documentation here."
             />
             <p className="text-sm text-muted-foreground">
-              Limited to one page. Larger documentations need{" "}
+              Limited to {MAX_DOCUMENTATION_LENGTH.toLocaleString()} characters.
+              Larger documentations need{" "}
               <a
                 href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation"
                 className="text-primary hover:underline"
