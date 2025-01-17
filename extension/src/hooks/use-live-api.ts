@@ -22,6 +22,7 @@ import {
 import { LiveConfig } from "../multimodal-live-types";
 import { AudioStreamer } from "../lib/audio-streamer";
 import { audioContext } from "../lib/audio-context";
+import { useConfig } from "@/hooks/use-config";
 
 export type UseLiveAPIResults = {
   client: MultimodalLiveClient;
@@ -35,6 +36,8 @@ type UseLiveAPIProps = MultimodalLiveAPIClientConnection & {
   config: LiveConfig;
 };
 
+const MAX_MANUAL_SIZE = 100000;
+
 export function useLiveAPI({
   url,
   apiKey,
@@ -47,6 +50,7 @@ export function useLiveAPI({
   const audioStreamerRef = useRef<AudioStreamer | null>(null);
   const [connected, setConnected] = useState(false);
   const [volume, setVolume] = useState(0);
+  const { manual } = useConfig();
 
   // register audio for streaming server -> speakers
   useEffect(() => {
@@ -94,8 +98,25 @@ export function useLiveAPI({
     }
     client.disconnect();
     await client.connect(config);
+    // Send manual system instruction first in chunks
+    if (manual) {
+      // Truncate manual if it's too long
+      const truncatedManual =
+        manual.length > MAX_MANUAL_SIZE
+          ? manual.slice(0, MAX_MANUAL_SIZE)
+          : manual;
+      // send manual
+      client.send(
+        {
+          text: `Use the following context if helpful during our conversation ${truncatedManual}`,
+        },
+        false,
+      );
+    }
+    // Send initial Hello message
+    client.send({ text: "Hello" });
     setConnected(true);
-  }, [client, setConnected, config]);
+  }, [client, setConnected, config, manual]);
 
   const disconnect = useCallback(async () => {
     client.disconnect();

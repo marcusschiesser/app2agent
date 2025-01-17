@@ -128,9 +128,6 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
         this._sendDirect(setupMessage);
         this.log("client.send", "setup");
 
-        // Send initial Hello message
-        this.send({ text: "Hello" });
-
         ws.removeEventListener("error", onError);
         ws.addEventListener("close", (ev: CloseEvent) => {
           console.log(ev);
