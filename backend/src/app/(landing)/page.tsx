@@ -2,6 +2,7 @@ import Header from "./components/Header";
 import Hero from "./components/Hero";
 import Features from "./components/Features";
 import EmailSignup from "./components/EmailSignup";
+import Footer from "./components/Footer";
 
 export default function Home() {
   return (
@@ -12,11 +13,7 @@ export default function Home() {
         <Features />
         <EmailSignup />
       </main>
-      <footer className="container mx-auto px-4 max-w-6xl py-8">
-        <p className="text-center text-gray-600 text-sm">
-          © 2025 Schiesser IT LLC. All rights reserved.
-        </p>
-      </footer>
+      <Footer />
     </>
   );
 }
