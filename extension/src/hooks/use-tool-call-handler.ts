@@ -1,4 +1,4 @@
-import { MultimodalLiveClient } from "@/lib/multimodal-live-client";
+import { MultimodalLiveClient } from "@/lib/realtime/gemini/multimodal-live-client";
 import { ToolCall } from "@/multimodal-live-types";
 import { SiteConfig } from "./use-config";
 import { ToolManager } from "@/lib/tools/manager";
