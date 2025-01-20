@@ -29,7 +29,8 @@
     "react-dom": "^19",
     "react-markdown": "^9.0.1",
     "tailwind-merge": "^2.5.4",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "turndown": "^7.1.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
@@ -39,6 +40,7 @@
     "@types/node": "^20.17.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/turndown": "^5.0.4",
     "@vitejs/plugin-react": "^4.3.3",
     "adm-zip": "^0.5.10",
     "autoprefixer": "^10.4.16",

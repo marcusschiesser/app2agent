@@ -96,6 +96,14 @@ export function Recorder({ onFinished, onCallActiveChange }: RecorderProps) {
 
       const data = await takeScreenshot();
       client.sendRealtimeInput([{ mimeType: "image/jpeg", data }]);
+      // const markdown = await takeScreenshotAsText();
+      // console.log("Sending screenshot", markdown);
+      // client.send(
+      //   {
+      //     text: `Here is the current screenshot of the web app in markdown format:\n\n${markdown}. Use it to help me answer my questions. Don't respond to this message.`,
+      //   },
+      //   false,
+      // );
 
       if (connected) {
         timeoutId = window.setTimeout(sendVideoFrame, 1000 / 0.5);

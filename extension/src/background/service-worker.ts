@@ -1,9 +1,13 @@
+import { handleGetTabHtml } from "./html-controller";
 import { handleTabScreenshot } from "./recorder-controller";
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.type) {
     case "TAKE_SCREENSHOT":
       handleTabScreenshot(sender, sendResponse);
+      return true;
+    case "GET_TAB_HTML":
+      handleGetTabHtml(sender, sendResponse);
       return true;
   }
 
