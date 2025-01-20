@@ -7,18 +7,18 @@
     "build": "cd ../extension && pnpm release && cd ../backend && next build",
     "start": "next start",
     "lint": "next lint",
-    "sp:init": "npx supabase init",
-    "sp:start": "npx supabase start",
-    "sp:stop": "npx supabase stop",
-    "sp:stop:all": "npx supabase stop --all",
-    "sp:status": "npx supabase status",
+    "sp:init": "supabase init",
+    "sp:start": "supabase start",
+    "sp:stop": "supabase stop",
+    "sp:stop:all": "supabase stop --all",
+    "sp:status": "supabase status",
     "sp:restart": "npm run sp:stop && npm run sp:start",
-    "sp:reset": "npx supabase db reset",
-    "sp:link": "npx supabase link",
-    "sp:generate-migration": "npx supabase db diff | npx supabase migration new",
-    "sp:generate-seed": "npx supabase db dump --data-only -f supabase/seed.sql",
-    "sp:push": "npx supabase db push",
-    "sp:pull": "npx supabase db pull"
+    "sp:reset": "supabase db reset",
+    "sp:link": "supabase link",
+    "sp:generate-migration": "supabase db diff | supabase migration new",
+    "sp:generate-seed": "supabase db dump --data-only -f supabase/seed.sql",
+    "sp:push": "supabase db push",
+    "sp:pull": "supabase db pull"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.2",
@@ -50,6 +50,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.1.2",
     "postcss": "^8",
+    "supabase": "^2.6.8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
