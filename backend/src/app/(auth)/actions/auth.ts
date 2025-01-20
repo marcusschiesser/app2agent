@@ -87,19 +87,24 @@ export const signInAction = async (
   formData: FormData,
 ): Promise<AuthState> => {
   const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
   const supabase = await createClient();
+  const origin = (await headers()).get("origin");
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { error } = await supabase.auth.signInWithOtp({
     email,
-    password,
+    options: {
+      emailRedirectTo: `${origin}/auth/callback`,
+    },
   });
 
   if (error) {
     return { type: "error", message: error.message };
   }
 
-  return redirect("/admin");
+  return {
+    type: "success",
+    message: "Check your email for the magic link to sign in!",
+  };
 };
 
 export const signOutAction = async () => {

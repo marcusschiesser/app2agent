@@ -57,7 +57,9 @@ export function SignIn({
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome back</CardTitle>
-          <CardDescription>Sign in to app2agent</CardDescription>
+          <CardDescription>
+            Sign in to app2agent using your email
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {state.type === "error" && state.message && (
@@ -77,12 +79,6 @@ export function SignIn({
                     required
                   />
                 </div>
-                <div className="grid gap-2">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
-                  </div>
-                  <Input name="password" type="password" required />
-                </div>
                 <Button disabled={isPending}>
                   {isPending && (
                     <div
@@ -91,7 +87,7 @@ export function SignIn({
                       aria-label="Loading"
                     />
                   )}
-                  Sign in
+                  Send Magic Link
                 </Button>
               </div>
               <div className="text-center text-sm">
