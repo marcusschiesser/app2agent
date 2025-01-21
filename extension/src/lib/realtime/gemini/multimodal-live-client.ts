@@ -309,6 +309,12 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
     this.log(`client.send`, clientContentRequest);
   }
 
+  sendMessage(text: string) {
+    this.send({
+      text,
+    });
+  }
+
   /**
    *  used internally to send all messages
    *  don't use directly unless trying to send an unsupported message type

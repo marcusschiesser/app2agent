@@ -84,28 +84,35 @@ export class OpenAIRealTimeClient extends EventEmitter<OpenAILiveClientEventType
       this.pc = pc;
       this.dc = dc;
 
-      dc.addEventListener("open", () => {
-        this.log("data_channel", "open");
-        this.emit("open");
+      return new Promise<boolean>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          reject(new Error("Connection timeout after 10 seconds"));
+        }, 10000);
 
-        // Send session update on connection
-        this.updateSession();
+        dc.addEventListener("open", () => {
+          clearTimeout(timeout);
+          this.log("data_channel", "open");
+          this.emit("open");
+
+          dc.addEventListener("close", (ev: Event) => {
+            this.log("data_channel", "close");
+            this.emit("close", ev);
+          });
+
+          dc.addEventListener("error", (err: any) => {
+            this.log("data_channel", `error: ${err}`);
+          });
+
+          dc.addEventListener("message", (e: MessageEvent) => {
+            this.handleServerEvent(JSON.parse(e.data));
+          });
+
+          // Send session update on connection
+          this.updateSession();
+
+          resolve(true);
+        });
       });
-
-      dc.addEventListener("close", (ev: Event) => {
-        this.log("data_channel", "close");
-        this.emit("close", ev);
-      });
-
-      dc.addEventListener("error", (err: any) => {
-        this.log("data_channel", `error: ${err}`);
-      });
-
-      dc.addEventListener("message", (e: MessageEvent) => {
-        this.handleServerEvent(JSON.parse(e.data));
-      });
-
-      return true;
     } catch (err) {
       console.error("Error connecting to realtime:", err);
       return false;
