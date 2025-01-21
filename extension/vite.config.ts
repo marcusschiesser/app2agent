@@ -8,6 +8,13 @@ if (!variant) {
   throw new Error("VARIANT environment variable is not defined");
 }
 
+// Check for API key in dev mode
+if (process.env.NODE_ENV !== "production" && !process.env.APP2AGENT_API_KEY) {
+  console.warn(
+    "\x1b[33m⚠️  Warning: APP2AGENT_API_KEY environment variable is not set. Set it to simplify API access in development mode.\x1b[0m",
+  );
+}
+
 const outDir = `dist/${variant}`;
 
 function generateManifest() {
@@ -28,6 +35,7 @@ export default defineConfig({
   publicDir: `public`,
   define: {
     __MANIFEST__: JSON.stringify(generateManifest()),
+    __API_KEY__: JSON.stringify(process.env.APP2AGENT_API_KEY || ""),
   },
   plugins: [
     react(),
