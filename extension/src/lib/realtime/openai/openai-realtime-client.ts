@@ -1,6 +1,7 @@
 import { EventEmitter } from "eventemitter3";
 import { createRealtimeConnection } from "./realtime-connection";
 import { v4 as uuidv4 } from "uuid";
+import { RefObject } from "react";
 
 export type OpenAILiveConfig = {
   modalities: string[];
@@ -49,10 +50,18 @@ export class OpenAIRealTimeClient extends EventEmitter<OpenAILiveClientEventType
   private dc: RTCDataChannel | null = null;
   protected config: OpenAILiveConfig | null = null;
   private ephemeralKey: string;
+  private audioElement: RefObject<HTMLAudioElement | null>;
 
-  constructor({ apiKey }: { apiKey: string }) {
+  constructor({
+    apiKey,
+    audioElement,
+  }: {
+    apiKey: string;
+    audioElement: RefObject<HTMLAudioElement | null>;
+  }) {
     super();
     this.ephemeralKey = apiKey;
+    this.audioElement = audioElement;
   }
 
   log(type: string, message: StreamingLog["message"]) {
@@ -68,33 +77,12 @@ export class OpenAIRealTimeClient extends EventEmitter<OpenAILiveClientEventType
     this.config = config;
 
     try {
-      const { pc, dc } = await createRealtimeConnection(this.ephemeralKey);
+      const { pc, dc } = await createRealtimeConnection(
+        this.ephemeralKey,
+        this.audioElement,
+      );
       this.pc = pc;
       this.dc = dc;
-
-      pc.ontrack = (e) => {
-        const stream = e.streams[0];
-        const audioContext = new AudioContext();
-        const source = audioContext.createMediaStreamSource(stream);
-        const processor = audioContext.createScriptProcessor(4096, 1, 1);
-
-        source.connect(processor);
-        processor.connect(audioContext.destination);
-
-        processor.onaudioprocess = (e) => {
-          const inputData = e.inputBuffer.getChannelData(0);
-          // Convert float32 to int16 for PCM16 format
-          const pcm16Data = new Int16Array(inputData.length);
-          for (let i = 0; i < inputData.length; i++) {
-            pcm16Data[i] = Math.max(
-              -32768,
-              Math.min(32767, Math.floor(inputData[i] * 32768)),
-            );
-          }
-          this.log("server.audio", `buffer (${pcm16Data.buffer.byteLength})`);
-          this.emit("audio", pcm16Data.buffer);
-        };
-      };
 
       dc.addEventListener("open", () => {
         this.log("data_channel", "open");
