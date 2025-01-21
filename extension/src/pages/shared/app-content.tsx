@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Recorder } from "@/components/recorder";
 import { useConfig } from "@/hooks/use-config";
 import { Loading } from "@/components/loading";
@@ -22,7 +22,15 @@ export function AppContent({ onClose }: AppContentProps) {
   const [isCallActive, setIsCallActive] = useState(false);
   const config = useConfig();
 
-  const needsSetup = !localStorage.getItem("apiKey");
+  // Use environment API key if available, otherwise check localStorage
+  useEffect(() => {
+    if (__API_KEY__) {
+      localStorage.setItem("apiKey", __API_KEY__);
+    }
+  }, []);
+
+  const needsSetup = !__API_KEY__ && !localStorage.getItem("apiKey");
+
   if (needsSetup) {
     return (
       <LayoutWrapper>
