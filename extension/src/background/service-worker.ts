@@ -14,6 +14,23 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return false;
 });
 
+// Listen for URL changes
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+  if (changeInfo.status === "complete" && tab.url) {
+    console.log("url tab:", tab);
+    const message = {
+      type: "URL_CHANGED",
+      url: tab.url,
+    };
+
+    if (chrome.sidePanel) {
+      await chrome.runtime.sendMessage(message);
+    } else {
+      await chrome.tabs.sendMessage(tabId, message);
+    }
+  }
+});
+
 if (chrome.sidePanel) {
   chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
 } else {
