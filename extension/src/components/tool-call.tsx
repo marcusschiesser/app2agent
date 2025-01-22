@@ -3,6 +3,7 @@ import { useToolCallHandler } from "@/hooks/use-tool-call-handler";
 import { useAppContext } from "@/contexts/AppContext";
 import { useEffect } from "react";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
+import { MultimodalLiveClient } from "@/lib/realtime/gemini/multimodal-live-client";
 
 export function ToolCall() {
   const tools = useTools();
@@ -11,7 +12,7 @@ export function ToolCall() {
 
   const { event, isStoppingExecution, handleStopExecution } =
     useToolCallHandler({
-      client: liveAPI?.client,
+      client: liveAPI?.client as unknown as MultimodalLiveClient,
       siteConfig,
       tools,
     });

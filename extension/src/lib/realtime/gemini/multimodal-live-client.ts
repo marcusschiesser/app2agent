@@ -36,8 +36,8 @@ import {
   ToolCallCancellation,
   ToolResponseMessage,
   type LiveConfig,
-} from "../multimodal-live-types";
-import { blobToJSON, base64ToArrayBuffer } from "./client-utils";
+} from "../../../multimodal-live-types";
+import { blobToJSON, base64ToArrayBuffer } from "../../client-utils";
 
 /**
  * the events that this client will emit
@@ -307,6 +307,12 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
 
     this._sendDirect(clientContentRequest);
     this.log(`client.send`, clientContentRequest);
+  }
+
+  sendMessage(text: string) {
+    this.send({
+      text,
+    });
   }
 
   /**

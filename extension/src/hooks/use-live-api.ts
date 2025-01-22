@@ -18,13 +18,17 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   MultimodalLiveAPIClientConnection,
   MultimodalLiveClient,
-} from "../lib/multimodal-live-client";
+} from "../lib/realtime/gemini/multimodal-live-client";
 import { LiveConfig } from "../multimodal-live-types";
 import { AudioStreamer } from "../lib/audio-streamer";
 import { audioContext } from "../lib/audio-context";
+import {
+  OpenAILiveConfig,
+  OpenAIRealTimeClient,
+} from "@/lib/realtime/openai/openai-realtime-client";
 
 export type UseLiveAPIResults = {
-  client: MultimodalLiveClient;
+  client: OpenAIRealTimeClient;
   connected: boolean;
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
@@ -32,7 +36,7 @@ export type UseLiveAPIResults = {
 };
 
 type UseLiveAPIProps = MultimodalLiveAPIClientConnection & {
-  config: LiveConfig;
+  config: OpenAILiveConfig;
 };
 
 export function useLiveAPI({
@@ -40,50 +44,55 @@ export function useLiveAPI({
   apiKey,
   config,
 }: UseLiveAPIProps): UseLiveAPIResults {
-  const client = useMemo(
-    () => new MultimodalLiveClient({ url, apiKey }),
-    [url, apiKey],
-  );
-  const audioStreamerRef = useRef<AudioStreamer | null>(null);
+  const audioElementRef = useRef<HTMLAudioElement | null>(null);
+  const client = useMemo(() => {
+    console.log("creating client");
+    if (!audioElementRef.current) {
+      audioElementRef.current = document.createElement("audio");
+    }
+    audioElementRef.current.autoplay = true;
+    return new OpenAIRealTimeClient({ apiKey, audioElement: audioElementRef });
+  }, [apiKey, audioElementRef]);
+  // const audioStreamerRef = useRef<AudioStreamer | null>(null);
   const [connected, setConnected] = useState(false);
   const [volume, setVolume] = useState(0);
 
   // register audio for streaming server -> speakers
-  useEffect(() => {
-    if (!audioStreamerRef.current) {
-      audioContext({ id: "audio-out" }).then((audioCtx: AudioContext) => {
-        audioStreamerRef.current = new AudioStreamer(audioCtx);
-        audioStreamerRef.current
-          .addWorklet<any>("vol-meter", (ev: any) => {
-            setVolume(ev.data.volume);
-          })
-          .then(() => {
-            // Successfully added worklet
-          });
-      });
-    }
-  }, [audioStreamerRef]);
+  // useEffect(() => {
+  //   if (!audioStreamerRef.current) {
+  //     audioContext({ id: "audio-out" }).then((audioCtx: AudioContext) => {
+  //       audioStreamerRef.current = new AudioStreamer(audioCtx);
+  //       audioStreamerRef.current
+  //         .addWorklet<any>("vol-meter", (ev: any) => {
+  //           setVolume(ev.data.volume);
+  //         })
+  //         .then(() => {
+  //           // Successfully added worklet
+  //         });
+  //     });
+  //   }
+  // }, [audioStreamerRef]);
 
   useEffect(() => {
     const onClose = () => {
       setConnected(false);
     };
 
-    const stopAudioStreamer = () => audioStreamerRef.current?.stop();
+    // const stopAudioStreamer = () => audioStreamerRef.current?.stop();
 
-    const onAudio = (data: ArrayBuffer) =>
-      audioStreamerRef.current?.addPCM16(new Uint8Array(data));
+    // const onAudio = (data: ArrayBuffer) =>
+    // audioStreamerRef.current?.addPCM16(new Uint8Array(data));
 
-    client
-      .on("close", onClose)
-      .on("interrupted", stopAudioStreamer)
-      .on("audio", onAudio);
+    client.on("close", onClose).on("log", (log: any) => {
+      console.log(log);
+    });
+    // .on("interrupted", stopAudioStreamer)
+    // .on("audio", onAudio);
 
     return () => {
-      client
-        .off("close", onClose)
-        .off("interrupted", stopAudioStreamer)
-        .off("audio", onAudio);
+      client.off("close", onClose);
+      // .off("interrupted", stopAudioStreamer)
+      // .off("audio", onAudio);
     };
   }, [client]);
 
