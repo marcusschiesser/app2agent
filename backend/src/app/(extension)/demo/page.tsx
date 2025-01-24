@@ -3,6 +3,11 @@
 import { useState, useCallback } from "react";
 import { Search, AlertCircle, ArrowRight, Loader2 } from "lucide-react";
 
+const baseUrl =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3000"
+    : `https://${process.env.VERCEL_URL}`;
+
 export default function DemoPage() {
   const [inputUrl, setInputUrl] = useState("https://www.google.com");
   const [currentUrl, setCurrentUrl] = useState("https://www.google.com");
@@ -10,7 +15,7 @@ export default function DemoPage() {
   const [isMainLoading, setIsMainLoading] = useState(true);
 
   const getProxyUrl = useCallback((targetUrl: string) => {
-    const apiUrl = new URL("/api/proxy", window.location.origin);
+    const apiUrl = new URL("/api/proxy", baseUrl);
     apiUrl.searchParams.set("url", targetUrl);
     return apiUrl.toString();
   }, []);
