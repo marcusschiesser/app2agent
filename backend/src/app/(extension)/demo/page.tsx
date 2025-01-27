@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { Search, AlertCircle, ArrowRight, Loader2 } from "lucide-react";
 
 const baseUrl =
@@ -9,10 +9,35 @@ const baseUrl =
     : `https://${process.env.VERCEL_URL}`;
 
 export default function DemoPage() {
-  const [inputUrl, setInputUrl] = useState("https://www.google.com");
-  const [currentUrl, setCurrentUrl] = useState("https://www.google.com");
+  const [inputUrl, setInputUrl] = useState("https://ezamowienia.gov.pl");
+  const [currentUrl, setCurrentUrl] = useState("https://ezamowienia.gov.pl");
   const [error, setError] = useState<string | null>(null);
   const [isMainLoading, setIsMainLoading] = useState(true);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const handleIframeLoad = useCallback(() => {
+    setIsMainLoading(false);
+
+    try {
+      const iframe = iframeRef.current;
+      if (!iframe?.contentWindow?.document) return;
+
+      const doc = iframe.contentWindow.document;
+      doc.addEventListener("click", (e: MouseEvent) => {
+        const target = e.target as HTMLElement;
+        const link = target.closest("a");
+        if (link?.href) {
+          e.preventDefault();
+          setInputUrl(link.href);
+          setCurrentUrl(link.href);
+          setError(null);
+          setIsMainLoading(true);
+        }
+      });
+    } catch (err) {
+      console.error("Failed to add click handler to iframe:", err);
+    }
+  }, []);
 
   const getProxyUrl = useCallback((targetUrl: string) => {
     const apiUrl = new URL("/api/proxy", baseUrl);
@@ -76,12 +101,13 @@ export default function DemoPage() {
         {/* Main Content */}
         <div className="flex-1 relative">
           <iframe
+            ref={iframeRef}
             src={getProxyUrl(currentUrl)}
             className="w-full h-full border-0"
             sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads"
             referrerPolicy="no-referrer"
             onError={handleIframeError}
-            onLoad={() => setIsMainLoading(false)}
+            onLoad={handleIframeLoad}
           />
           {isMainLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75">

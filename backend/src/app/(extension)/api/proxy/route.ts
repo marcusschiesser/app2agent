@@ -25,7 +25,7 @@ async function rewriteHtml(html: string, baseUrl: string): Promise<string> {
 
   // Rewrite element attributes
   const elementsToRewrite = {
-    a: ["href"],
+    // a: ["href"], // don't rewrite href as it's handled by the iframe
     img: ["src", "srcset"],
     script: ["src"],
     link: ["href"],
