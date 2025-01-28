@@ -9,8 +9,12 @@ const baseUrl =
     : `https://${process.env.VERCEL_URL}`;
 
 export default function DemoPage() {
-  const [inputUrl, setInputUrl] = useState("https://ezamowienia.gov.pl");
-  const [currentUrl, setCurrentUrl] = useState("https://ezamowienia.gov.pl");
+  const [inputUrl, setInputUrl] = useState(
+    "https://ezamowienia.gov.pl/mp-cient/search/list",
+  );
+  const [currentUrl, setCurrentUrl] = useState(
+    "https://ezamowienia.gov.pl/mp-client/search/list",
+  );
   const [error, setError] = useState<string | null>(null);
   const [isMainLoading, setIsMainLoading] = useState(true);
   const iframeRef = useRef<HTMLIFrameElement>(null);

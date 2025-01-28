@@ -204,6 +204,7 @@ export async function GET(request: NextRequest) {
         "Content-Type": contentType || "text/html",
         "Access-Control-Allow-Origin": "*",
       },
+      status: response.status,
     });
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch URL" }, { status: 500 });
