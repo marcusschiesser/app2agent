@@ -12,9 +12,9 @@ function rewriteUrl(originalUrl: string, baseUrl: string): string {
     }
 
     // Create absolute URL
-    const absoluteUrl = new URL(originalUrl, baseUrl);
+    const absoluteUrl = new URL(originalUrl, baseUrl).toString();
     // Return proxied URL
-    return `/api/proxy?url=${encodeURIComponent(absoluteUrl.toString())}`;
+    return `/api/proxy?url=${encodeURIComponent(absoluteUrl)}`;
   } catch {
     return originalUrl;
   }
@@ -22,6 +22,24 @@ function rewriteUrl(originalUrl: string, baseUrl: string): string {
 
 async function rewriteHtml(html: string, baseUrl: string): Promise<string> {
   const root = parse(html);
+
+  // Find base tag and update baseUrl if it exists
+  const baseElement = root.querySelector("base");
+  let documentBaseUrl = baseUrl; // Default to the document's URL
+  if (baseElement && baseElement.getAttribute("href")) {
+    const baseHref = baseElement.getAttribute("href")!;
+    try {
+      documentBaseUrl = new URL(baseHref, baseUrl).toString();
+      console.log("Base URL:", documentBaseUrl);
+    } catch (e) {
+      console.warn(
+        "Invalid base href:",
+        baseHref,
+        "falling back to document URL",
+      );
+      documentBaseUrl = baseUrl; // Fallback to document URL if base href is invalid
+    }
+  }
 
   // Rewrite element attributes
   const elementsToRewrite = {
@@ -50,12 +68,12 @@ async function rewriteHtml(html: string, baseUrl: string): Promise<string> {
               .split(",")
               .map((src) => {
                 const [url, size] = src.trim().split(/\s+/);
-                return `${rewriteUrl(url, baseUrl)}${size ? " " + size : ""}`;
+                return `${rewriteUrl(url, documentBaseUrl)}${size ? " " + size : ""}`;
               })
               .join(", ");
             element.setAttribute(attr, rewrittenSrcSet);
           } else {
-            element.setAttribute(attr, rewriteUrl(value, baseUrl));
+            element.setAttribute(attr, rewriteUrl(value, documentBaseUrl));
           }
         }
       });
@@ -71,7 +89,7 @@ async function rewriteHtml(html: string, baseUrl: string): Promise<string> {
         const url = match[1];
         element.setAttribute(
           "content",
-          content.replace(url, rewriteUrl(url, baseUrl)),
+          content.replace(url, rewriteUrl(url, documentBaseUrl)),
         );
       }
     }
@@ -85,7 +103,7 @@ async function rewriteHtml(html: string, baseUrl: string): Promise<string> {
     const style = element.getAttribute("style");
     if (style) {
       stylePromises.push(
-        rewriteCss(style, baseUrl).then((rewrittenStyle) => {
+        rewriteCss(style, documentBaseUrl).then((rewrittenStyle) => {
           element.setAttribute("style", rewrittenStyle);
         }),
       );
@@ -95,9 +113,11 @@ async function rewriteHtml(html: string, baseUrl: string): Promise<string> {
   // Rewrite <style> tags
   root.querySelectorAll("style").forEach((element) => {
     stylePromises.push(
-      rewriteCss(element.textContent || "", baseUrl).then((rewrittenCss) => {
-        element.textContent = rewrittenCss;
-      }),
+      rewriteCss(element.textContent || "", documentBaseUrl).then(
+        (rewrittenCss) => {
+          element.textContent = rewrittenCss;
+        },
+      ),
     );
   });
 
@@ -113,13 +133,16 @@ async function rewriteHtml(html: string, baseUrl: string): Promise<string> {
           (attr.name.includes("src") || attr.name.includes("url")),
       )
       .forEach((attr) => {
-        element.setAttribute(attr.name, rewriteUrl(attr.value, baseUrl));
+        element.setAttribute(
+          attr.name,
+          rewriteUrl(attr.value, documentBaseUrl),
+        );
       });
   });
 
   // Rewrite inline scripts
   root.querySelectorAll("script:not([src])").forEach((element) => {
-    element.textContent = rewriteJs(element.textContent || "", baseUrl);
+    element.textContent = rewriteJs(element.textContent || "", documentBaseUrl);
   });
 
   return root.toString();
