@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
 
-console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("Environment:", process.env.NODE_ENV);
 
 export default defineConfig({
   build: {
@@ -19,6 +19,7 @@ export default defineConfig({
     "process.env": {
       NODE_ENV: JSON.stringify(process.env.NODE_ENV || "production"),
     },
+    __NODE_ENV__: JSON.stringify(process.env.NODE_ENV || "production"),
     __API_KEY__: JSON.stringify(process.env.APP2AGENT_API_KEY || ""),
   },
   plugins: [react()],

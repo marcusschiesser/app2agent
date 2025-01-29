@@ -1,5 +1,5 @@
 const backend =
-  process.env.NODE_ENV === "development"
+  __NODE_ENV__ === "development"
     ? "http://localhost:3000"
     : "https://www.app2agent.com";
 
