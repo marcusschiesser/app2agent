@@ -10,9 +10,15 @@ const createAppRoot = async () => {
   if (!appRoot) {
     // Create a container for the app
     const appContainer = document.createElement("div");
-    appContainer.id = "form2content-modal";
-    appContainer.className =
-      "form2content-styles fixed top-4 right-4 z-[2147483647] pointer-events-auto inline-block";
+    appContainer.id = "app2agent-modal";
+    appContainer.style.cssText = `
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 2147483647;
+      pointer-events: auto;
+      display: inline-block;
+    `;
 
     // Add a shadow root for better style isolation
     const shadow = appContainer.attachShadow({ mode: "open" });
