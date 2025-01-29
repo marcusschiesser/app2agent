@@ -6,6 +6,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "dev": "cross-env VARIANT=sidepanel vite dev",
+    "dev:inject": "tsc && vite dev -c vite.inject.config.ts",
     "build:sidepanel": "tsc && cross-env VARIANT=sidepanel vite build",
     "build:content": "tsc && cross-env VARIANT=content vite build",
     "build:inject": "tsc && vite build -c vite.inject.config.ts",

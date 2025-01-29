@@ -11,19 +11,6 @@ export default defineConfig({
       formats: ["iife"],
       fileName: () => "inject.js",
     },
-    rollupOptions: {
-      external: [],
-      output: {
-        globals: {},
-        assetFileNames: (assetInfo) => {
-          // Embed the CSS into the JS bundle
-          if (assetInfo.name === "style.css") {
-            return "inject.js";
-          }
-          return "[name][extname]";
-        },
-      },
-    },
     cssCodeSplit: false,
   },
   define: {

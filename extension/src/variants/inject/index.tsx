@@ -1,10 +1,11 @@
 import React from "react";
 import { createRoot, Root } from "react-dom/client";
-import { FloatingContainer } from "./components/FloatingContainer";
+import { ModalApp } from "@/pages/shared/modal-app";
 
 // Create root only when needed
 let appRoot: Root | null = null;
 
+// TODO: merge with modal root code @modal.tsx
 const createAppRoot = async () => {
   if (!appRoot) {
     // Create a container for the app
@@ -16,43 +17,24 @@ const createAppRoot = async () => {
     // Add a shadow root for better style isolation
     const shadow = appContainer.attachShadow({ mode: "open" });
 
-    // Create and inject styles into shadow root
-    const style = document.createElement("style");
-    style.textContent = `
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-      
-      .form2content-styles {
-        font-family: 'Inter', sans-serif;
-      }
+    // Find our script tag and use it to construct the style.css path
+    const scripts = Array.from(document.getElementsByTagName("script"));
+    const injectScript = scripts.find((script) =>
+      script.src.includes("inject.js"),
+    );
+    if (!injectScript) {
+      throw new Error("Could not find inject.js script tag");
+    }
+    const styleUrl = injectScript.src.replace("inject.js", "style.css");
 
-      .floating-container {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 999999;
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        padding: 16px;
-        max-width: 400px;
-        width: 100%;
-      }
-
-      .close-button {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        cursor: pointer;
-        padding: 4px;
-        border-radius: 4px;
-        transition: background-color 0.2s;
-      }
-
-      .close-button:hover {
-        background-color: rgba(0, 0, 0, 0.05);
-      }
-    `;
-    shadow.appendChild(style);
+    // Fetch and inject styles into shadow root
+    await fetch(styleUrl)
+      .then((response) => response.text())
+      .then((css) => {
+        const style = document.createElement("style");
+        style.textContent = css;
+        shadow.appendChild(style);
+      });
 
     const styleContainer = document.createElement("div");
     styleContainer.className = "form2content-styles";
@@ -76,7 +58,7 @@ const initApp = async () => {
 
   root.render(
     <React.StrictMode>
-      <FloatingContainer />
+      <ModalApp />
     </React.StrictMode>,
   );
 };
