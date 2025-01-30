@@ -9,6 +9,7 @@ import { AppProvider } from "@/contexts/AppContext";
 import { ToolCall } from "@/components/tool-call";
 import { MicPermissionCheck } from "./microphone-permission-check";
 import { Settings } from "@/components/settings";
+import { Alert } from "@/components/ui/alert";
 
 const host = "generativelanguage.googleapis.com";
 const uri = `wss://${host}/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent`;
@@ -48,6 +49,16 @@ export function AppContent({ onClose, apiKey }: AppContentProps) {
 
   if (config.isLoading) {
     return <LoadingConfig />;
+  }
+
+  if (config.error) {
+    return (
+      <LayoutWrapper>
+        <Alert variant="destructive" className="m-4">
+          {config.error}
+        </Alert>
+      </LayoutWrapper>
+    );
   }
 
   const hasSetup = config.manual && config.apiKey;

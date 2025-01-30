@@ -20,6 +20,11 @@ export async function secureFetch(url: string, options: RequestInit = {}) {
 
   const response = await fetch(`${backend}${url}`, secureOptions);
   if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error(
+        "Invalid API key. Please check your settings and try again.",
+      );
+    }
     throw new Error(`HTTP error! status: ${response.status}`);
   }
   return response;

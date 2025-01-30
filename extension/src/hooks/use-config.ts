@@ -5,6 +5,7 @@ export type SiteConfig = {
   manual: string;
   apiKey: string;
   isLoading: boolean;
+  error?: string;
   reload: () => void;
 };
 
@@ -20,6 +21,7 @@ export function useConfig(): SiteConfig {
   const [isLoading, setIsLoading] = useState(false);
   const [manual, setManual] = useState<string>("");
   const [apiKey, setApiKey] = useState<string>("");
+  const [error, setError] = useState<string>();
   const [reloadCounter, setReloadCounter] = useState(0);
 
   const reload = useCallback(() => {
@@ -30,11 +32,9 @@ export function useConfig(): SiteConfig {
     async function fetchConfig() {
       try {
         setIsLoading(true);
+        setError(undefined);
 
         const response = await getConfig();
-        if (!response.ok) {
-          throw new Error("Failed to fetch config");
-        }
 
         const data = (await response.json()) as {
           content: string;
@@ -46,6 +46,9 @@ export function useConfig(): SiteConfig {
         console.error("Error fetching config:", error);
         setManual(""); // Reset to empty string on error
         setApiKey(""); // Reset API key on error
+        setError(
+          error instanceof Error ? error.message : "Failed to fetch config",
+        );
       } finally {
         setIsLoading(false);
       }
@@ -54,7 +57,13 @@ export function useConfig(): SiteConfig {
     fetchConfig();
   }, [reloadCounter]);
 
-  return { manual, apiKey, isLoading, reload };
+  return {
+    manual,
+    apiKey,
+    isLoading,
+    error,
+    reload,
+  };
 }
 
 /**
