@@ -9,14 +9,13 @@ export async function secureFetch(url: string, options: RequestInit = {}) {
 
   const secureOptions: RequestInit = {
     ...options,
-    credentials: "include",
+    // credentials: "include",
     headers: {
       "X-Requested-With": "XMLHttpRequest",
       "Content-Type": "application/json",
       ...(apiKey ? { "X-Api-Key": apiKey } : {}),
       ...options.headers,
     },
-    mode: "no-cors",
   };
 
   const response = await fetch(`${backend}${url}`, secureOptions);
