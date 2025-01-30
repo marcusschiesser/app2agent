@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoot, Root } from "react-dom/client";
 import { ModalApp } from "@/pages/shared/modal-app";
-import { getURL } from "@/lib/env";
+import { getURL, getInjectScript } from "@/lib/env";
 
 // Create root only when needed
 let appRoot: Root | null = null;
@@ -48,14 +48,12 @@ const initApp = async () => {
   const root = await createAppRoot();
 
   // Get configuration from script tag
-  const scriptTag = document.currentScript as HTMLScriptElement;
-  const config = {
-    apiKey: scriptTag?.dataset.apiKey || "",
-  };
+  const scriptTag = getInjectScript();
+  const apiKey = scriptTag?.getAttribute("data-api-key");
 
   root.render(
     <React.StrictMode>
-      <ModalApp />
+      <ModalApp apiKey={apiKey ?? undefined} />
     </React.StrictMode>,
   );
 };

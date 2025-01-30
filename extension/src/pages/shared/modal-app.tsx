@@ -7,7 +7,11 @@ interface ChromeMessage {
   type: "TOGGLE_RECORDER";
 }
 
-export function ModalApp() {
+interface ModalAppProps {
+  apiKey?: string;
+}
+
+export function ModalApp({ apiKey }: ModalAppProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -37,7 +41,7 @@ export function ModalApp() {
   return (
     <Modal onClose={handleClose}>
       <div className="w-[200px]">
-        <AppContent onClose={handleClose} />
+        <AppContent onClose={handleClose} apiKey={apiKey} />
       </div>
     </Modal>
   );

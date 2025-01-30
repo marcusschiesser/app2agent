@@ -15,21 +15,24 @@ const uri = `wss://${host}/ws/google.ai.generativelanguage.v1alpha.GenerativeSer
 
 interface AppContentProps {
   onClose: () => void;
+  apiKey?: string;
 }
 
-export function AppContent({ onClose }: AppContentProps) {
+export function AppContent({ onClose, apiKey }: AppContentProps) {
   const [showSettings, setShowSettings] = useState(false);
   const [isCallActive, setIsCallActive] = useState(false);
   const config = useConfig();
 
-  // Use environment API key if available, otherwise check localStorage
+  // Use provided API key if available, otherwise check localStorage
   useEffect(() => {
-    if (__API_KEY__) {
+    if (apiKey) {
+      localStorage.setItem("apiKey", apiKey);
+    } else if (__API_KEY__) {
       localStorage.setItem("apiKey", __API_KEY__);
     }
-  }, []);
+  }, [apiKey]);
 
-  const needsSetup = !__API_KEY__ && !localStorage.getItem("apiKey");
+  const needsSetup = !apiKey && !__API_KEY__ && !localStorage.getItem("apiKey");
 
   if (needsSetup) {
     return (

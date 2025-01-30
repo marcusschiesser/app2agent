@@ -4,6 +4,19 @@
 export const isExtension = typeof chrome !== "undefined" && chrome.runtime;
 
 /**
+ * Get the inject script element
+ * @returns The inject script element or null if not found
+ */
+export function getInjectScript(): HTMLScriptElement | null {
+  if (document.currentScript) {
+    return document.currentScript as HTMLScriptElement;
+  }
+
+  const scripts = Array.from(document.getElementsByTagName("script"));
+  return scripts.find((script) => script.src.includes("inject.js")) ?? null;
+}
+
+/**
  * Get URL for a resource in both browser extension and non-extension environments
  * @param path - The path to the resource
  * @returns The full URL to the resource
@@ -15,10 +28,7 @@ export function getURL(path: string): string {
   }
 
   // Fallback for non-extension environment
-  const scripts = Array.from(document.getElementsByTagName("script"));
-  const injectScript = scripts.find((script) =>
-    script.src.includes("inject.js"),
-  );
+  const injectScript = getInjectScript();
   if (!injectScript) {
     throw new Error("Could not find inject.js script tag");
   }
