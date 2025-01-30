@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import ReactMarkdown from "react-markdown";
+import { getURL } from "@/lib/env";
 
 // Create root only when needed
 let modalRoot: ReactDOM.Root | null = null;
@@ -17,7 +18,7 @@ export const getModalRoot = async () => {
     const shadow = modalContainer.attachShadow({ mode: "open" });
 
     // Fetch and inject styles into shadow root
-    await fetch(chrome.runtime.getURL("style.css"))
+    await fetch(getURL("style.css"))
       .then((response) => response.text())
       .then((css) => {
         const style = document.createElement("style");

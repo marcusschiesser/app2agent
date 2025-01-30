@@ -1,3 +1,5 @@
+import { getURL } from "@/lib/env";
+
 export type GetAudioContextOptions = AudioContextOptions & {
   id?: string;
 };
@@ -49,7 +51,7 @@ export const loadAudioWorklet = async (
   try {
     // In Chrome extensions, worklets need to be declared in web_accessible_resources
     // and loaded using the extension's URL pattern
-    const workletUrl = chrome.runtime.getURL(`worklets/${workletName}.js`);
+    const workletUrl = getURL(`worklets/${workletName}.js`);
     await context.audioWorklet.addModule(workletUrl);
     return new AudioWorkletNode(context, workletName);
   } catch (error) {

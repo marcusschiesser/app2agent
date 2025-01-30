@@ -1,6 +1,7 @@
 import React from "react";
 import { createRoot, Root } from "react-dom/client";
 import { ModalApp } from "@/pages/shared/modal-app";
+import { getURL } from "@/lib/env";
 
 // Create root only when needed
 let appRoot: Root | null = null;
@@ -23,18 +24,8 @@ const createAppRoot = async () => {
     // Add a shadow root for better style isolation
     const shadow = appContainer.attachShadow({ mode: "open" });
 
-    // Find our script tag and use it to construct the style.css path
-    const scripts = Array.from(document.getElementsByTagName("script"));
-    const injectScript = scripts.find((script) =>
-      script.src.includes("inject.js"),
-    );
-    if (!injectScript) {
-      throw new Error("Could not find inject.js script tag");
-    }
-    const styleUrl = injectScript.src.replace("inject.js", "style.css");
-
     // Fetch and inject styles into shadow root
-    await fetch(styleUrl)
+    await fetch(getURL("style.css"))
       .then((response) => response.text())
       .then((css) => {
         const style = document.createElement("style");
