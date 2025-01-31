@@ -73,15 +73,17 @@ export function AppContent({ onClose, apiKey }: AppContentProps) {
       <ToolsProvider>
         <AppProvider config={config} url={uri}>
           <div className="relative">
-            <MenuButton
-              disableSettings={isCallActive}
-              onSettingsChange={setShowSettings}
-            />
+            {!apiKey && (
+              <MenuButton
+                disableSettings={isCallActive}
+                onSettingsChange={setShowSettings}
+              />
+            )}
             <div className="flex justify-center">
               <Header />
             </div>
           </div>
-          {showSettings && (
+          {!apiKey && showSettings && (
             <Settings
               onSaved={() => {
                 setShowSettings(false);
