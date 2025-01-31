@@ -31,7 +31,7 @@ export default async function Page() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Link href="/api/admin/download" className="w-fit">
+            <Link href="/extension/extension.zip" className="w-fit">
               <Button>Download Extension</Button>
             </Link>
           </CardContent>

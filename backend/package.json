@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "cd ../extension && pnpm release && cd ../backend && next build",
+    "build": "cd ../extension && pnpm release && cd ../backend && pnpm run copy:extension && next build",
     "start": "next start",
     "lint": "next lint",
     "sp:init": "supabase init",
@@ -18,7 +18,8 @@
     "sp:generate-migration": "supabase db diff | supabase migration new",
     "sp:generate-seed": "supabase db dump --data-only -f supabase/seed.sql",
     "sp:push": "supabase db push",
-    "sp:pull": "supabase db pull"
+    "sp:pull": "supabase db pull",
+    "copy:extension": "rsync -av --delete ../extension/dist/ public/extension/"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.2",
