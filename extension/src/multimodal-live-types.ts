@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 /**
  * Copyright 2024 Google LLC
  *
@@ -148,7 +150,7 @@ export type StreamingLog = {
 
 // Type-Guards
 
-const prop = (a: any, prop: string, kind: string = "object") =>
+const prop = (a: any, prop: string) =>
   typeof a === "object" && typeof a[prop] === "object";
 
 // outgoing messages

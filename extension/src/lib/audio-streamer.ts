@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Copyright 2024 Google LLC
  *
@@ -156,7 +157,7 @@ export class AudioStreamer {
       const worklets = registeredWorklets.get(this.context);
 
       if (worklets) {
-        Object.entries(worklets).forEach(([workletName, graph]) => {
+        Object.entries(worklets).forEach(([, graph]) => {
           const { node, handlers } = graph;
           if (node) {
             source.connect(node);

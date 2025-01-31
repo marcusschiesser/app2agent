@@ -4,10 +4,7 @@ import {
   ToolResponse,
   LiveFunctionResponse,
 } from "@/multimodal-live-types";
-import {
-  navigationWorkflowConfig,
-  navigationWorkflow,
-} from "./navigation-workflow";
+
 import { SiteConfig } from "@/hooks/use-config";
 import { stopNavigation } from "../events";
 

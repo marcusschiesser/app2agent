@@ -5,3 +5,4 @@ build
 coverage
 .git
 pnpm-lock.yaml
+backend/public/extension
