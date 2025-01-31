@@ -14,7 +14,15 @@ Supabase is used for authentication and data storage and its configuration is in
 
 ## extension
 
-/extension folder is a Chrome extension built using React and Vite. It has as service-worker and two variants: content and sidepanel. The content variant is based on a content script whereas the sidepanel variant uses a side panel for displaying the UI.
+/extension folder is a browser plugin built using React and Vite. It has as service-worker and three variants:
+
+- content
+- sidepanel
+- inject
+
+The content variant is based on a Chrome extension with content script whereas the sidepanel variant is a Chrome extension that uses a side panel for displaying the UI. The inject variant is a javascript file that is added in the head tag of the page.
+
+All the variants use shadcn UI components with Tailwind CSS for rendering the UI.
 
 ## extension and backend
 

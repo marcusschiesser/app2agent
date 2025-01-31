@@ -46,6 +46,7 @@ interface MultimodalLiveClientEventTypes {
   open: () => void;
   log: (log: StreamingLog) => void;
   close: (event: CloseEvent) => void;
+  error: (error: string) => void;
   audio: (data: ArrayBuffer) => void;
   content: (data: ServerContent) => void;
   interrupted: () => void;
@@ -145,6 +146,9 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
                 Infinity,
               );
             }
+            this.emit("error", reason);
+          } else if (reason.includes("Invalid API key")) {
+            this.emit("error", "Invalid Gemini API key. Check your settings.");
           }
           this.log(
             `server.${ev.type}`,

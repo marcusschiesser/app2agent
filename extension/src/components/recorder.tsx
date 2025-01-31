@@ -7,6 +7,8 @@ import { createDialingTone } from "@/lib/dialing-tone";
 import { playConnectedTone } from "@/lib/connected-tone";
 import { useAppContext } from "@/contexts/AppContext";
 import { takeScreenshot } from "@/lib/screenshot";
+import { Alert, AlertDescription } from "./ui/alert";
+import { XCircle } from "lucide-react";
 export interface RecorderProps {
   onFinished?: () => void;
   onCallActiveChange?: (isActive: boolean) => void;
@@ -15,6 +17,7 @@ export interface RecorderProps {
 export function Recorder({ onFinished, onCallActiveChange }: RecorderProps) {
   const [isEnabled, setIsEnabled] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { liveAPI } = useAppContext();
   const connected = liveAPI?.connected ?? false;
   const client = liveAPI?.client;
@@ -49,6 +52,22 @@ export function Recorder({ onFinished, onCallActiveChange }: RecorderProps) {
   }, [connected, client, muted, isEnabled, audioRecorder]);
 
   useEffect(() => {
+    if (!client) return;
+
+    const handleError = (errorMessage: string) => {
+      setError(errorMessage);
+      setIsEnabled(false);
+      onCallActiveChange?.(false);
+    };
+
+    client.on("error", handleError);
+
+    return () => {
+      client.off("error", handleError);
+    };
+  }, [client, onCallActiveChange]);
+
+  useEffect(() => {
     if (isEnabled && !connected) {
       // Start dialing tone when attempting to connect
       audioContext({ id: "audio-out" }).then((ctx) => {
@@ -70,9 +89,10 @@ export function Recorder({ onFinished, onCallActiveChange }: RecorderProps) {
 
   const handleToggleEnabled = async (checked: boolean) => {
     if (!liveAPI) {
-      console.error("LiveAPI is not ready");
+      setError("LiveAPI is not ready");
       return;
     }
+    setError(null);
 
     if (checked) {
       setIsEnabled(true);
@@ -113,6 +133,12 @@ export function Recorder({ onFinished, onCallActiveChange }: RecorderProps) {
 
   return (
     <div>
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          <XCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
       <CallForm
         isEnabled={isEnabled}
         onToggle={handleToggleEnabled}
