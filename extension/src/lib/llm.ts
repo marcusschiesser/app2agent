@@ -13,11 +13,11 @@ export async function getLLMResponse(
 ): Promise<EnhancedGenerateContentResponse> {
   const requestContents: (string | Part)[] = [{ text: prompt }];
   if (includeScreenshot) {
-    const image = await takeScreenshot();
+    const screenshot = await takeScreenshot();
     requestContents.push({
       inlineData: {
-        data: image,
-        mimeType: "image/jpeg",
+        data: screenshot.data,
+        mimeType: screenshot.mimeType,
       },
     });
   }

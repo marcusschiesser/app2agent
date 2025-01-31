@@ -35,9 +35,7 @@ export function handleTabScreenshot(
           return;
         }
 
-        // Remove the data URL prefix
-        const base64Data = dataUrl.replace(/^data:image\/jpeg;base64,/, "");
-        sendResponse({ success: true, dataUrl: base64Data });
+        sendResponse({ success: true, dataUrl });
       },
     );
   });

@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { MicOff } from "lucide-react";
+import { isExtension } from "@/lib/env";
 
 const CHECK_INTERVAL = 1000; // Check every second
 
-export function MicPermissionCheck() {
+export const MicPermissionCheck = () => {
   const [permissionState, setPermissionState] =
     useState<PermissionState | null>(null);
 
@@ -36,31 +37,55 @@ export function MicPermissionCheck() {
           <MicOff className="h-4 w-4" />
           <AlertTitle>Microphone Access Denied</AlertTitle>
           <AlertDescription>
-            Please enable microphone access in your browser settings to use this
-            extension.
+            {isExtension ? (
+              <>
+                Please enable microphone access in your browser settings to use
+                this extension.
+              </>
+            ) : (
+              <>
+                Please enable microphone access for this website. Look for the
+                info icon in your browser's address bar and click it to manage
+                permissions.
+              </>
+            )}
           </AlertDescription>
         </Alert>
-        <Button
-          variant="destructive"
-          onClick={() => {
-            const extensionId = chrome.runtime.id;
-            chrome.tabs.create({
-              url: `chrome://settings/content/siteDetails?site=chrome-extension://${extensionId}`,
-            });
-          }}
-          className="w-full"
-        >
-          Open Settings
-        </Button>
+        {isExtension && (
+          <Button
+            variant="destructive"
+            onClick={async () => {
+              const extensionId = chrome.runtime.id;
+              await chrome.tabs.create({
+                url: `chrome://settings/content/siteDetails?site=chrome-extension://${extensionId}`,
+              });
+            }}
+            className="w-full"
+          >
+            Open Settings
+          </Button>
+        )}
       </div>
     );
   }
 
   return null;
-}
+};
 
 async function requestPermission() {
-  // sends request permission to the content script
+  if (typeof chrome === "undefined" || !chrome.runtime) {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Stop all tracks to release the microphone
+      stream.getTracks().forEach((track) => track.stop());
+      return;
+    } catch (error) {
+      console.error("Error requesting microphone permission:", error);
+      return;
+    }
+  }
+
+  // Extension environment: sends request permission to the content script
   const tabs = await chrome.tabs.query({
     active: true,
     lastFocusedWindow: true,

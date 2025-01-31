@@ -57,7 +57,7 @@ export default function Settings() {
         <CardDescription>
           Configure your web application to enhance it with AI agents using
           app2agent. After configuration, continue with the{" "}
-          <Link href="/admin/download" className="underline">
+          <Link href="/admin/integration" className="underline">
             integration
           </Link>
           .

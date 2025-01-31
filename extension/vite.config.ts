@@ -34,8 +34,8 @@ export default defineConfig({
   },
   publicDir: `public`,
   define: {
-    __MANIFEST__: JSON.stringify(generateManifest()),
     __API_KEY__: JSON.stringify(process.env.APP2AGENT_API_KEY || ""),
+    __NODE_ENV__: JSON.stringify(process.env.NODE_ENV || "production"),
   },
   plugins: [
     react(),

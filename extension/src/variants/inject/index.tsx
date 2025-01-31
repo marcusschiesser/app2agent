@@ -1,0 +1,66 @@
+import React from "react";
+import { createRoot, Root } from "react-dom/client";
+import { ModalApp } from "@/pages/shared/modal-app";
+import { getURL, getInjectScript } from "@/lib/env";
+
+// Create root only when needed
+let appRoot: Root | null = null;
+
+// TODO: merge with modal root code @modal.tsx
+const createAppRoot = async () => {
+  if (!appRoot) {
+    // Create a container for the app
+    const appContainer = document.createElement("div");
+    appContainer.id = "app2agent-modal";
+    appContainer.style.cssText = `
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 2147483647;
+      pointer-events: auto;
+      display: inline-block;
+    `;
+
+    // Add a shadow root for better style isolation
+    const shadow = appContainer.attachShadow({ mode: "open" });
+
+    // Fetch and inject styles into shadow root
+    await fetch(getURL("style.css"))
+      .then((response) => response.text())
+      .then((css) => {
+        const style = document.createElement("style");
+        style.textContent = css;
+        shadow.appendChild(style);
+      });
+
+    const styleContainer = document.createElement("div");
+    styleContainer.className = "form2content-styles";
+    shadow.appendChild(styleContainer);
+
+    document.body.appendChild(appContainer);
+    appRoot = createRoot(styleContainer);
+  }
+  return appRoot;
+};
+
+// Initialize app
+const initApp = async () => {
+  const root = await createAppRoot();
+
+  // Get configuration from script tag
+  const scriptTag = getInjectScript();
+  const apiKey = scriptTag?.getAttribute("data-api-key");
+
+  root.render(
+    <React.StrictMode>
+      <ModalApp apiKey={apiKey ?? undefined} />
+    </React.StrictMode>,
+  );
+};
+
+// Initialize when DOM is ready
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initApp);
+} else {
+  initApp();
+}

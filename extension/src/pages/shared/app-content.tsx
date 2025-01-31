@@ -9,27 +9,31 @@ import { AppProvider } from "@/contexts/AppContext";
 import { ToolCall } from "@/components/tool-call";
 import { MicPermissionCheck } from "./microphone-permission-check";
 import { Settings } from "@/components/settings";
+import { Alert } from "@/components/ui/alert";
 
 const host = "generativelanguage.googleapis.com";
 const uri = `wss://${host}/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent`;
 
 interface AppContentProps {
   onClose: () => void;
+  apiKey?: string;
 }
 
-export function AppContent({ onClose }: AppContentProps) {
+export function AppContent({ onClose, apiKey }: AppContentProps) {
   const [showSettings, setShowSettings] = useState(false);
   const [isCallActive, setIsCallActive] = useState(false);
   const config = useConfig();
 
-  // Use environment API key if available, otherwise check localStorage
+  // Use provided API key if available, otherwise check localStorage
   useEffect(() => {
-    if (__API_KEY__) {
+    if (apiKey) {
+      localStorage.setItem("apiKey", apiKey);
+    } else if (__API_KEY__) {
       localStorage.setItem("apiKey", __API_KEY__);
     }
-  }, []);
+  }, [apiKey]);
 
-  const needsSetup = !__API_KEY__ && !localStorage.getItem("apiKey");
+  const needsSetup = !apiKey && !__API_KEY__ && !localStorage.getItem("apiKey");
 
   if (needsSetup) {
     return (
@@ -47,6 +51,16 @@ export function AppContent({ onClose }: AppContentProps) {
     return <LoadingConfig />;
   }
 
+  if (config.error) {
+    return (
+      <LayoutWrapper>
+        <Alert variant="destructive" className="m-4">
+          {config.error}
+        </Alert>
+      </LayoutWrapper>
+    );
+  }
+
   const hasSetup = config.manual && config.apiKey;
 
   if (!hasSetup) {
@@ -59,15 +73,17 @@ export function AppContent({ onClose }: AppContentProps) {
       <ToolsProvider>
         <AppProvider config={config} url={uri}>
           <div className="relative">
-            <MenuButton
-              disableSettings={isCallActive}
-              onSettingsChange={setShowSettings}
-            />
+            {!apiKey && (
+              <MenuButton
+                disableSettings={isCallActive}
+                onSettingsChange={setShowSettings}
+              />
+            )}
             <div className="flex justify-center">
               <Header />
             </div>
           </div>
-          {showSettings && (
+          {!apiKey && showSettings && (
             <Settings
               onSaved={() => {
                 setShowSettings(false);

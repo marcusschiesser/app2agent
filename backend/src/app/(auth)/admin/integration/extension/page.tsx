@@ -16,7 +16,7 @@ export default async function Page() {
 
   return (
     <>
-      <PageHeader title="Download" />
+      <PageHeader title="Browser Extension Integration" />
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <Card>
           <CardHeader>
@@ -31,7 +31,7 @@ export default async function Page() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Link href="/api/admin/download" className="w-fit">
+            <Link href="/extension/extension.zip" className="w-fit">
               <Button>Download Extension</Button>
             </Link>
           </CardContent>
