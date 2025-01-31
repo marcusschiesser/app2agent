@@ -78,7 +78,9 @@ async function takeViewportScreenshot(): Promise<Screenshot> {
     const [, data] = dataUrl.split(",");
     return { mimeType: "image/jpeg", data };
   } catch (error) {
-    throw new Error(`Failed to capture viewport: ${error.message}`);
+    throw new Error(
+      `Failed to capture viewport: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
   }
 }
 

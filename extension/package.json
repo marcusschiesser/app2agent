@@ -5,15 +5,15 @@
   "type": "module",
   "scripts": {
     "clean": "rm -rf dist",
-    "dev": "cross-env VARIANT=content vite dev",
-    "dev:inject": "cross-env NODE_ENV=development concurrently \"cross-env vite build --watch --mode development -c vite.inject.config.ts\" \"node test/server.js\"",
+    "dev:sidepanel": "cross-env VARIANT=sidepanel vite dev",
+    "dev": "cross-env NODE_ENV=development concurrently \"cross-env vite build --watch --mode development -c vite.inject.config.ts\" \"node test/server.js\"",
     "build:sidepanel": "tsc && cross-env VARIANT=sidepanel vite build",
     "build:content": "tsc && cross-env VARIANT=content vite build",
     "build:inject": "tsc && vite build -c vite.inject.config.ts",
-    "build": "pnpm run clean && pnpm run build:sidepanel && pnpm run build:content && pnpm run build:inject",
+    "build": "pnpm run clean && pnpm run build:sidepanel && pnpm run build:inject",
     "lint": "eslint .",
     "preview": "vite preview",
-    "release": "pnpm run build:sidepanel && node -e \"const AdmZip = require('adm-zip'); const zip = new AdmZip(); zip.addLocalFolder('./dist/sidepanel'); zip.addLocalFolder('./dist/sidepanel'); zip.writeZip('./dist/extension.zip');\""
+    "release": "pnpm run build && node -e \"const AdmZip = require('adm-zip'); const zip = new AdmZip(); zip.addLocalFolder('./dist/sidepanel'); zip.addLocalFolder('./dist/sidepanel'); zip.writeZip('./dist/extension.zip');\""
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
