@@ -14,7 +14,7 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Download, Headset, Settings2 } from "lucide-react";
+import { Download, Headset, Settings2, PlugIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
@@ -35,8 +35,13 @@ const sidebarGroups = [
     label: "Integration",
     items: [
       {
+        name: "Javascript Plugin",
+        url: "/admin/integration/script",
+        icon: PlugIcon,
+      },
+      {
         name: "Browser Extension",
-        url: "/admin/download",
+        url: "/admin/integration/extension",
         icon: Download,
       },
     ],

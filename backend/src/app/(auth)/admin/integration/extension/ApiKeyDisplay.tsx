@@ -25,6 +25,7 @@ import {
 
 interface ApiKeyDisplayProps {
   apiKey: string | null;
+  onApiKeyChange?: (newKey: string) => void;
 }
 
 function maskApiKey(key: string) {
@@ -36,7 +37,10 @@ function maskApiKey(key: string) {
   return `${firstPart}${middlePart}${lastPart}`;
 }
 
-export function ApiKeyDisplay({ apiKey: initialApiKey }: ApiKeyDisplayProps) {
+export function ApiKeyDisplay({
+  apiKey: initialApiKey,
+  onApiKeyChange,
+}: ApiKeyDisplayProps) {
   const [showApiKey, setShowApiKey] = useState(false);
   const [copied, setCopied] = useState(false);
   const [regenerateSuccess, setRegenerateSuccess] = useState(false);
@@ -50,11 +54,13 @@ export function ApiKeyDisplay({ apiKey: initialApiKey }: ApiKeyDisplayProps) {
 
   useEffect(() => {
     if (!regenerateState.isError && regenerateState.data?.key) {
-      setCurrentApiKey(regenerateState.data.key);
+      const newKey = regenerateState.data.key;
+      setCurrentApiKey(newKey);
       setRegenerateSuccess(true);
       setTimeout(() => setRegenerateSuccess(false), 1000);
+      onApiKeyChange?.(newKey);
     }
-  }, [regenerateState]);
+  }, [regenerateState, onApiKeyChange]);
 
   const handleRegenerateKey = () => {
     startTransition(() => {
