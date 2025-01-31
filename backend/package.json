@@ -19,7 +19,7 @@
     "sp:generate-seed": "supabase db dump --data-only -f supabase/seed.sql",
     "sp:push": "supabase db push",
     "sp:pull": "supabase db pull",
-    "copy:extension": "rsync -av --delete ../extension/dist/ public/extension/"
+    "copy:extension": "rm -rf public/extension && mkdir -p public/extension && cp -r ../extension/dist/* public/extension/"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.2",
