@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Search, ChevronDown, FileText } from "lucide-react";
+import Script from "next/script";
 
 function Header() {
   return (
@@ -42,6 +43,7 @@ function Header() {
 export default function DemoPage() {
   return (
     <div>
+      <Script src="/extension/inject/inject.js" />
       <Header />
       <div className="max-w-4xl mx-auto p-6">
         <nav className="mb-6 text-sm breadcrumbs">
@@ -83,10 +85,9 @@ export default function DemoPage() {
             <iframe
               width="100%"
               height="100%"
-              src="https://www.youtube.com/embed/HAnw168huqA?autoplay=1"
-              title="Digital Literacy Video"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
+              src="https://www.youtube.com/embed/HAnw168huqA"
+              title="Think Fast, Talk Smart"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             />
           </div>
         </div>

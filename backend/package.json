@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "cd ../extension && pnpm release && cd ../backend && pnpm run copy:extension && next build",
+    "build:ext": "pushd ../extension && pnpm release && popd && pnpm run copy:extension",
+    "build": "pnpm run build:ext && next build",
     "start": "next start",
     "lint": "next lint",
     "sp:init": "supabase init",
