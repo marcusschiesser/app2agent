@@ -31,7 +31,7 @@ async function rewriteHtml(html: string, baseUrl: string): Promise<string> {
     try {
       documentBaseUrl = new URL(baseHref, baseUrl).toString();
       console.log("Base URL:", documentBaseUrl);
-    } catch (e) {
+    } catch {
       console.warn(
         "Invalid base href:",
         baseHref,
@@ -155,6 +155,7 @@ async function rewriteCss(css: string, baseUrl: string): Promise<string> {
 
     cssTree.walk(ast, {
       visit: "Url",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       enter: (node: any) => {
         if (node.value.type === "String") {
           // Remove quotes from the URL
@@ -230,6 +231,9 @@ export async function GET(request: NextRequest) {
       status: response.status,
     });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch URL" }, { status: 500 });
+    return NextResponse.json(
+      { error: `Failed to fetch URL: ${error}` },
+      { status: 500 },
+    );
   }
 }

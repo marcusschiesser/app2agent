@@ -2,11 +2,7 @@
 
 import { useState, useCallback, useRef } from "react";
 import { Search, AlertCircle, ArrowRight, Loader2 } from "lucide-react";
-
-const baseUrl =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:3000"
-    : `https://${process.env.VERCEL_URL}`;
+import { getBaseUrl } from "@/lib/url";
 
 export default function DemoPage() {
   const [inputUrl, setInputUrl] = useState(
@@ -44,7 +40,7 @@ export default function DemoPage() {
   }, []);
 
   const getProxyUrl = useCallback((targetUrl: string) => {
-    const apiUrl = new URL("/api/proxy", baseUrl);
+    const apiUrl = new URL("/api/proxy", getBaseUrl());
     apiUrl.searchParams.set("url", targetUrl);
     return apiUrl.toString();
   }, []);
