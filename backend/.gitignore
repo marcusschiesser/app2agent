@@ -42,3 +42,6 @@ next-env.d.ts
 
 # extension
 public/extension.zip
+
+# env file backups
+..env*

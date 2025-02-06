@@ -1,7 +1,8 @@
-const backend =
-  __NODE_ENV__ === "development"
+export function getBaseUrl() {
+  return __NODE_ENV__ === "development"
     ? "http://localhost:3000"
     : "https://www.app2agent.com";
+}
 
 // Secure fetch wrapper with extension authentication
 export async function secureFetch(url: string, options: RequestInit = {}) {
@@ -18,8 +19,8 @@ export async function secureFetch(url: string, options: RequestInit = {}) {
     },
   };
 
-  const response = await fetch(`${backend}${url}`, secureOptions);
-  if (!response.ok) {
+  const response = await fetch(`${getBaseUrl()}${url}`, secureOptions);
+  if (!response.ok && response.status !== 404) {
     if (response.status === 401) {
       throw new Error(
         "Invalid API key. Please check your settings and try again.",
