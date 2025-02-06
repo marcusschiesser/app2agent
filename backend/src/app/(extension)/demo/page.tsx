@@ -43,7 +43,7 @@ function Header() {
 export default function DemoPage() {
   return (
     <div>
-      <Script src="/extension/inject/inject.js" />
+      <Script src="/extension/inject/inject.js" data-top="4rem" />
       <Header />
       <div className="max-w-4xl mx-auto p-6">
         <nav className="mb-6 text-sm breadcrumbs">

@@ -9,13 +9,18 @@ let appRoot: Root | null = null;
 // TODO: merge with modal root code @modal.tsx
 const createAppRoot = async () => {
   if (!appRoot) {
+    // Get configuration from script tag for positioning
+    const scriptTag = getInjectScript();
+    const top = scriptTag?.getAttribute("data-top") ?? "1rem";
+    const right = scriptTag?.getAttribute("data-right") ?? "1rem";
+
     // Create a container for the app
     const appContainer = document.createElement("div");
     appContainer.id = "app2agent-modal";
     appContainer.style.cssText = `
       position: fixed;
-      top: 1rem;
-      right: 1rem;
+      top: ${top};
+      right: ${right};
       z-index: 2147483647;
       pointer-events: auto;
       display: inline-block;
