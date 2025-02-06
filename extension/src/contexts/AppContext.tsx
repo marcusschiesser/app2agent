@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ReactNode, createContext, useContext } from "react";
+import { ReactNode, createContext, useContext, useMemo } from "react";
 import { SiteConfig } from "../hooks/use-config";
 import { useLiveAPI, UseLiveAPIResults } from "../hooks/use-live-api";
 import { LiveConfig } from "@/multimodal-live-types";
@@ -41,22 +41,28 @@ export function AppProvider({ url, children, config }: AppProviderProps) {
   // if (!prompt) {
   //   throw new Error("Prompt is required");
   // }
-  const systemInstructions = prompt.replace(/{{context}}/g, context);
-  console.log("System Instructions built:", systemInstructions);
+  const systemInstructions = useMemo(() => {
+    const resolvedPrompt = prompt.replace(/{{context}}/g, context);
+    console.log("System Instructions:", resolvedPrompt);
+    return resolvedPrompt;
+  }, [prompt, context]);
 
-  // Create config with tools and prompts
-  const liveConfig: LiveConfig = {
-    model: "models/gemini-2.0-flash-exp",
-    systemInstruction: {
-      parts: [
-        {
-          text: systemInstructions,
-        },
-        ...toolManager.getPrompt(),
-      ],
-    },
-    tools: toolManager.getTools(),
-  };
+  // Create config with tools and prompts using memoization
+  const liveConfig = useMemo<LiveConfig>(
+    () => ({
+      model: "models/gemini-2.0-flash-exp",
+      systemInstruction: {
+        parts: [
+          {
+            text: systemInstructions,
+          },
+          ...toolManager.getPrompt(),
+        ],
+      },
+      tools: toolManager.getTools(),
+    }),
+    [systemInstructions, toolManager],
+  );
 
   const api = useLiveAPI({ url, apiKey, config: liveConfig });
 
