@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { secureFetch } from "@/lib/secure-fetch";
+import { getInjectScript } from "@/lib/env";
 
 export enum Mode {
   Support = "support",
@@ -25,6 +26,9 @@ async function getConfig(): Promise<Response> {
   return response;
 }
 
+const mode = (getInjectScript()?.getAttribute("data-mode") ??
+  Mode.Support) as Mode;
+
 export function useConfig(): SiteConfig {
   const [isLoading, setIsLoading] = useState(false);
   const [context, setContext] = useState<string>("");
@@ -32,7 +36,6 @@ export function useConfig(): SiteConfig {
   const [apiKey, setApiKey] = useState<string>("");
   const [error, setError] = useState<string>();
   const [configError, setConfigError] = useState<string>();
-  const [mode, setMode] = useState<Mode>(Mode.Tutor);
   const [reloadCounter, setReloadCounter] = useState(0);
 
   const reload = useCallback(() => {
@@ -77,7 +80,6 @@ export function useConfig(): SiteConfig {
         setPrompt(data.prompt);
         setContext(data.context);
         setApiKey(data.apiKey);
-        setMode(data.mode ? (data.mode as Mode) : Mode.Tutor);
       } catch (error) {
         console.error("Error fetching config:", error);
         setError(
