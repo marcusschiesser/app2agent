@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Search, ChevronDown, FileText } from "lucide-react";
 import Script from "next/script";
+import { VideoPlayer } from "./components/video-player";
 
 function Header() {
   return (
@@ -85,15 +86,7 @@ export default function DemoPage() {
             greater confidence and clarity.
           </p>
 
-          <div className="aspect-video w-full">
-            <iframe
-              width="100%"
-              height="100%"
-              src="https://www.youtube.com/embed/HAnw168huqA"
-              title="Think Fast, Talk Smart"
-              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            />
-          </div>
+          <VideoPlayer src="https://www.youtube.com/embed/HAnw168huqA" />
         </div>
       </div>
     </div>

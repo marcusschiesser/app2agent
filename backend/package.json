@@ -42,6 +42,7 @@
     "node-html-parser": "^7.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-player": "^2.16.0",
     "react-youtube": "^10.1.0",
     "resend": "^4.0.1",
     "tailwind-merge": "^2.6.0",
