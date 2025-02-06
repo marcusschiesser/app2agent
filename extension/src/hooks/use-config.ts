@@ -1,6 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { secureFetch } from "@/lib/secure-fetch";
 
+export enum Mode {
+  Support = "support",
+  Tutor = "tutor",
+}
+
 export type SiteConfig = {
   context: string;
   apiKey: string; // Gemini API key - not the app2agent one
@@ -9,6 +14,7 @@ export type SiteConfig = {
   reload: () => void;
   prompt: string;
   configError?: string;
+  mode: Mode;
 };
 
 async function getConfig(): Promise<Response> {
@@ -26,6 +32,7 @@ export function useConfig(): SiteConfig {
   const [apiKey, setApiKey] = useState<string>("");
   const [error, setError] = useState<string>();
   const [configError, setConfigError] = useState<string>();
+  const [mode, setMode] = useState<Mode>(Mode.Tutor);
   const [reloadCounter, setReloadCounter] = useState(0);
 
   const reload = useCallback(() => {
@@ -53,6 +60,7 @@ export function useConfig(): SiteConfig {
           context: string;
           apiKey: string;
           prompt: string;
+          mode?: string;
         };
         if (!data.context) {
           setConfigError("No context defined for this domain");
@@ -69,6 +77,7 @@ export function useConfig(): SiteConfig {
         setPrompt(data.prompt);
         setContext(data.context);
         setApiKey(data.apiKey);
+        setMode(data.mode ? (data.mode as Mode) : Mode.Tutor);
       } catch (error) {
         console.error("Error fetching config:", error);
         setError(
@@ -89,6 +98,7 @@ export function useConfig(): SiteConfig {
     error,
     reload,
     configError,
+    mode,
   };
 }
 
