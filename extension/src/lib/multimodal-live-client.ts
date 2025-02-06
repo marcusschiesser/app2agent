@@ -248,6 +248,12 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
    * send realtimeInput, this is base64 chunks of "audio/pcm" and/or "image/jpg"
    */
   sendRealtimeInput(chunks: GenerativeContentBlob[]) {
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+      console.warn(
+        "Cannot send screenshot or audio - connection already closed",
+      );
+      return;
+    }
     let hasAudio = false;
     let hasVideo = false;
     for (let i = 0; i < chunks.length; i++) {
