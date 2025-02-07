@@ -93,10 +93,7 @@ export function AppContent({ onClose, apiKey }: AppContentProps) {
           {!showSettings && (
             <>
               <MicPermissionCheck />
-              <Recorder
-                onFinished={onClose}
-                onCallActiveChange={setIsCallActive}
-              />
+              <Recorder onCallActiveChange={setIsCallActive} />
               <ToolCall />
             </>
           )}

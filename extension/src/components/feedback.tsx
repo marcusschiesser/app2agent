@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useConfig } from "@/hooks/use-config";
+import { Mode, useConfig } from "@/hooks/use-config";
 
 export interface FeedbackProps {
   onSubmit?: (rating: "good" | "neutral" | "bad") => void;
@@ -19,7 +19,9 @@ export function Feedback({ onSubmit }: FeedbackProps) {
   return (
     <div className="mt-4 px-4 pt-3 pb-4 border rounded-lg bg-white shadow-sm">
       <h3 className="font-medium mb-3">
-        {mode === "tutor" ? "How was your session?" : "How was your call?"}
+        {mode === Mode.Tutor
+          ? "How was the interaction?"
+          : "How was your call?"}
       </h3>
       <div className="flex justify-center gap-6">
         <button
