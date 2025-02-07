@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,16 +25,19 @@ const MAX_DOCUMENTATION_LENGTH = 50000;
 
 export default function Settings() {
   const [app, setApp] = useState<WebApp>();
+  const [isLoading, setIsLoading] = useState(true);
   const [state, formAction, isPending] = useActionState(
     updateSettingsAction,
     {},
   );
 
   const fetchApp = useCallback(async () => {
+    setIsLoading(true);
     const { data } = await fetchSettingsAction();
     if (data) {
       setApp(data);
     }
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
@@ -71,13 +75,17 @@ export default function Settings() {
 
           <div className="space-y-2">
             <Label htmlFor="gemini_key">Gemini API Key</Label>
-            <Input
-              type="password"
-              name="gemini_key"
-              id="gemini_key"
-              defaultValue={app?.gemini_key || ""}
-              placeholder="Enter your Gemini API Key"
-            />
+            {isLoading ? (
+              <Skeleton className="h-10 w-full" />
+            ) : (
+              <Input
+                type="password"
+                name="gemini_key"
+                id="gemini_key"
+                defaultValue={app?.gemini_key || ""}
+                placeholder="Enter your Gemini API Key"
+              />
+            )}
             <p className="text-sm text-muted-foreground">
               Get your API key from{" "}
               <a
@@ -94,17 +102,21 @@ export default function Settings() {
 
           <div className="space-y-2">
             <Label htmlFor="url">Domain</Label>
-            <Input
-              type="text"
-              name="url"
-              id="url"
-              defaultValue={app?.url || ""}
-              onBlur={(e) => {
-                const domain = extractDomain(e.target.value);
-                e.target.value = domain;
-              }}
-              placeholder="e.g., myapp.com"
-            />
+            {isLoading ? (
+              <Skeleton className="h-10 w-full" />
+            ) : (
+              <Input
+                type="text"
+                name="url"
+                id="url"
+                defaultValue={app?.url || ""}
+                onBlur={(e) => {
+                  const domain = extractDomain(e.target.value);
+                  e.target.value = domain;
+                }}
+                placeholder="e.g., myapp.com"
+              />
+            )}
             <p className="text-sm text-muted-foreground">
               Specify the domain of your web application. You can just paste an
               URL which will be converted to a domain.
@@ -113,12 +125,16 @@ export default function Settings() {
 
           <div className="space-y-2">
             <Label htmlFor="prompt">Prompt</Label>
-            <Textarea
-              name="prompt"
-              id="prompt"
-              rows={6}
-              defaultValue={app?.prompt || DEFAULT_PROMPT}
-            />
+            {isLoading ? (
+              <Skeleton className="h-[144px] w-full" />
+            ) : (
+              <Textarea
+                name="prompt"
+                id="prompt"
+                rows={6}
+                defaultValue={app?.prompt ?? DEFAULT_PROMPT}
+              />
+            )}
             <p className="text-sm text-muted-foreground">
               The prompt must contain{" "}
               <code>
@@ -130,14 +146,18 @@ export default function Settings() {
 
           <div className="space-y-2">
             <Label htmlFor="context">Context</Label>
-            <Textarea
-              name="context"
-              id="context"
-              rows={20}
-              maxLength={MAX_DOCUMENTATION_LENGTH}
-              defaultValue={app?.context || ""}
-              placeholder="The context referenced in your prompt. You can directly paste the context here."
-            />
+            {isLoading ? (
+              <Skeleton className="h-[480px] w-full" />
+            ) : (
+              <Textarea
+                name="context"
+                id="context"
+                rows={20}
+                maxLength={MAX_DOCUMENTATION_LENGTH}
+                defaultValue={app?.context || ""}
+                placeholder="The context referenced in your prompt. You can directly paste the context here."
+              />
+            )}
             <p className="text-sm text-muted-foreground">
               Limited to {MAX_DOCUMENTATION_LENGTH.toLocaleString()} characters.
               Larger documentations need{" "}
@@ -162,8 +182,12 @@ export default function Settings() {
             </p>
           </div>
 
-          <Button type="submit" disabled={isPending}>
-            {isPending ? "Saving..." : "Save Settings"}
+          <Button type="submit" disabled={isPending || isLoading}>
+            {isPending
+              ? "Saving..."
+              : isLoading
+                ? "Loading..."
+                : "Save Settings"}
           </Button>
 
           {state.isError && (
