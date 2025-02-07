@@ -34,3 +34,16 @@ export function getURL(path: string): string {
   }
   return injectScript.src.replace("inject.js", path);
 }
+
+export async function getActiveUrl(): Promise<string> {
+  // Check if we're in the sidepanel
+  if (isExtension && chrome.sidePanel) {
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
+    return tab.url || "";
+  } else {
+    return window.location.href;
+  }
+}

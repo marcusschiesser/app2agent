@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { secureFetch } from "@/lib/secure-fetch";
-import { getInjectScript } from "@/lib/env";
+import { getActiveUrl, getInjectScript } from "@/lib/env";
 
 export enum Mode {
   Support = "support",
@@ -110,19 +110,7 @@ export function useConfig(): SiteConfig {
  * @returns The full domain as a string.
  */
 async function getCurrentDomain(): Promise<string> {
-  let url: string;
-
-  // Check if we're in the sidepanel
-  if (chrome.sidePanel) {
-    const [tab] = await chrome.tabs.query({
-      active: true,
-      currentWindow: true,
-    });
-    url = tab.url || "";
-  } else {
-    url = window.location.href;
-  }
-
+  const url = await getActiveUrl();
   const parsedUrl = new URL(url);
   return parsedUrl.hostname;
 }
