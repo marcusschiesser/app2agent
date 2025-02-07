@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import ReactPlayer from "react-player/youtube";
 
 interface VideoPlayerProps {
@@ -10,8 +10,11 @@ interface VideoPlayerProps {
 export function VideoPlayer({ src }: VideoPlayerProps) {
   const playerRef = useRef<ReactPlayer>(null);
   const wasPlayingRef = useRef(false);
+  const [origin, setOrigin] = useState("");
 
   useEffect(() => {
+    setOrigin(window.location.origin);
+
     const handleCallEvent = (event: MessageEvent) => {
       if (!playerRef.current) return;
 
@@ -35,6 +38,8 @@ export function VideoPlayer({ src }: VideoPlayerProps) {
     };
   }, []);
 
+  if (!origin) return null;
+
   return (
     <div className="aspect-video w-full">
       <ReactPlayer
@@ -45,7 +50,7 @@ export function VideoPlayer({ src }: VideoPlayerProps) {
         controls
         config={{
           playerVars: {
-            origin: window.location.origin,
+            origin,
           },
         }}
       />

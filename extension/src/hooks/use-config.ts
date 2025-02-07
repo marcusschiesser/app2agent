@@ -63,7 +63,6 @@ export function useConfig(): SiteConfig {
           context: string;
           apiKey: string;
           prompt: string;
-          mode?: string;
         };
         if (!data.context) {
           setConfigError("No context defined for this domain");
