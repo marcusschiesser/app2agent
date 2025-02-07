@@ -48,6 +48,7 @@ export default function DemoPage() {
         src="/extension/inject/inject.js"
         data-top="4rem"
         data-mode="tutor"
+        data-api-key="d9892300-d672-436d-adf9-b67afa7a61dc"
       />
       <Header />
       <div className="max-w-4xl mx-auto p-6">
