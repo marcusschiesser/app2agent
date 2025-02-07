@@ -148,7 +148,8 @@ export function Recorder({ onFinished, onCallActiveChange }: RecorderProps) {
       <CallForm
         isEnabled={isEnabled}
         onToggle={handleToggleEnabled}
-        volume={inVolume}
+        inVolume={inVolume}
+        outVolume={liveAPI?.volume ?? 0}
       />
 
       {showFeedback && !isEnabled && (

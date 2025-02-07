@@ -5,12 +5,21 @@ import { Hand } from "./icons/hand";
 interface CallFormProps {
   isEnabled: boolean;
   onToggle: (checked: boolean) => void;
-  volume: number;
+  inVolume: number;
+  outVolume: number;
 }
 
-export function CallForm({ isEnabled, onToggle, volume }: CallFormProps) {
+export function CallForm({
+  isEnabled,
+  onToggle,
+  inVolume,
+  outVolume,
+}: CallFormProps) {
   const { mode } = useConfig();
-  const volumeSize = Math.max(8, Math.min(volume * 400, 24));
+  const volumeSize = Math.max(
+    8,
+    Math.min((inVolume > outVolume ? inVolume : outVolume) * 400, 24),
+  );
 
   return (
     <div className="flex flex-col items-center">
