@@ -1,13 +1,25 @@
 import { Call, CallOff } from "./icons/call";
+import { useConfig, Mode } from "../hooks/use-config";
+import { Hand } from "./icons/hand";
 
 interface CallFormProps {
   isEnabled: boolean;
   onToggle: (checked: boolean) => void;
-  volume: number;
+  inVolume: number;
+  outVolume: number;
 }
 
-export function CallForm({ isEnabled, onToggle, volume }: CallFormProps) {
-  const volumeSize = Math.max(8, Math.min(volume * 400, 24));
+export function CallForm({
+  isEnabled,
+  onToggle,
+  inVolume,
+  outVolume,
+}: CallFormProps) {
+  const { mode } = useConfig();
+  const volumeSize = Math.max(
+    8,
+    Math.min((inVolume > outVolume ? inVolume : outVolume) * 400, 24),
+  );
 
   return (
     <div className="flex flex-col items-center">
@@ -31,9 +43,15 @@ export function CallForm({ isEnabled, onToggle, volume }: CallFormProps) {
         {!isEnabled ? (
           <button
             onClick={() => onToggle(true)}
-            className="relative z-10 flex items-center justify-center w-full h-full bg-green-500 hover:bg-green-600 text-white rounded-full transition-all duration-200 transform hover:scale-105 disabled:bg-slate-500 disabled:hover:bg-slate-500"
+            className={`relative z-10 flex items-center justify-center w-full h-full rounded-full transition-all duration-200 transform
+              ${
+                mode === Mode.Tutor
+                  ? "text-gray-600 hover:text-gray-800 hover:scale-125 hover:animate-wave"
+                  : "bg-green-500 hover:bg-green-600 text-white hover:scale-105"
+              } 
+              disabled:bg-slate-500 disabled:hover:bg-slate-500`}
           >
-            <Call />
+            {mode === Mode.Tutor ? <Hand /> : <Call />}
           </button>
         ) : (
           <button
@@ -45,7 +63,13 @@ export function CallForm({ isEnabled, onToggle, volume }: CallFormProps) {
         )}
       </div>
       <span className="text-sm text-gray-500">
-        {isEnabled ? "End Call" : "Start Call"}
+        {isEnabled
+          ? mode === Mode.Tutor
+            ? "Stop"
+            : "End Call"
+          : mode === Mode.Tutor
+            ? "Ask Question"
+            : "Start Call"}
       </span>
     </div>
   );

@@ -14,9 +14,20 @@ module.exports = {
           "0%, 100%": { transform: "scale(0.95)", opacity: "0.5" },
           "50%": { transform: "scale(1)", opacity: "0.3" },
         },
+        wave: {
+          "0%": { transform: "rotate(0deg)" },
+          "10%": { transform: "rotate(14deg)" },
+          "20%": { transform: "rotate(-8deg)" },
+          "30%": { transform: "rotate(14deg)" },
+          "40%": { transform: "rotate(-4deg)" },
+          "50%": { transform: "rotate(10deg)" },
+          "60%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(0deg)" },
+        },
       },
       animation: {
         "pulse-slow": "pulse 2s infinite",
+        wave: "wave 2.5s ease-in-out infinite",
       },
       borderRadius: {
         lg: "var(--radius)",

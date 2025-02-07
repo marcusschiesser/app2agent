@@ -103,7 +103,7 @@ Your answer:
 }
 
 Check if these information is useful to determine the next action:
-${this.siteConfig.manual}
+${this.siteConfig.context}
 
 Here is what has been done so far:
 ${executionHistory}

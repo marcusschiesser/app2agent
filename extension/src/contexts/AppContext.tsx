@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ReactNode, createContext, useContext } from "react";
+import { ReactNode, createContext, useContext, useMemo } from "react";
 import { SiteConfig } from "../hooks/use-config";
 import { useLiveAPI, UseLiveAPIResults } from "../hooks/use-live-api";
 import { LiveConfig } from "@/multimodal-live-types";
@@ -34,25 +34,35 @@ export type AppProviderProps = {
 };
 
 export function AppProvider({ url, children, config }: AppProviderProps) {
-  const { manual, apiKey } = config;
+  const { context, apiKey, prompt } = config;
   const toolManager = useTools();
 
-  // Create config with tools and prompts
-  const liveConfig: LiveConfig = {
-    model: "models/gemini-2.0-flash-exp",
-    systemInstruction: {
-      parts: [
-        {
-          text: "You're IT support. If the user connects, welcome him/her with a suitable greeting. Your task is to help the user with his requests. Analyze the request first and then decide what to do next. Don't be verbose or ask for information for other actions which are not in your capabilities.",
-        },
-        {
-          text: `Use the following context if helpful:\n###\n${manual}\n###\n`,
-        },
-        ...toolManager.getPrompt(),
-      ],
-    },
-    tools: toolManager.getTools(),
-  };
+  // Replace 'context' variable with the desired resolved value
+  // if (!prompt) {
+  //   throw new Error("Prompt is required");
+  // }
+  const systemInstructions = useMemo(() => {
+    const resolvedPrompt = prompt.replace(/{{context}}/g, context);
+    console.log("System Instructions:", resolvedPrompt);
+    return resolvedPrompt;
+  }, [prompt, context]);
+
+  // Create config with tools and prompts using memoization
+  const liveConfig = useMemo<LiveConfig>(
+    () => ({
+      model: "models/gemini-2.0-flash-exp",
+      systemInstruction: {
+        parts: [
+          {
+            text: systemInstructions,
+          },
+          ...toolManager.getPrompt(),
+        ],
+      },
+      tools: toolManager.getTools(),
+    }),
+    [systemInstructions, toolManager],
+  );
 
   const api = useLiveAPI({ url, apiKey, config: liveConfig });
 

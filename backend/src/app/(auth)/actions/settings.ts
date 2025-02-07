@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { DEFAULT_PROMPT } from "../../../config/promptDefaults";
 
 export type SettingState = {
   isError?: boolean;
@@ -11,8 +12,9 @@ export type WebApp = {
   id: string;
   gemini_key: string;
   url: string;
-  content: string;
+  context: string;
   user_id: string;
+  prompt: string;
 };
 
 export async function updateSettingsAction(
@@ -30,14 +32,16 @@ export async function updateSettingsAction(
 
   const gemini_key = formData.get("gemini_key")?.toString();
   const url = formData.get("url")?.toString();
-  const content = formData.get("content")?.toString();
+  const context = formData.get("context")?.toString();
+  const prompt = formData.get("prompt")?.toString() || DEFAULT_PROMPT;
 
   const { error } = await supabase.from("user_manuals").upsert(
     {
       url,
       user_id: user.id,
       gemini_key,
-      content,
+      context,
+      prompt,
     },
     {
       onConflict: "user_id",

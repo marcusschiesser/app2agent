@@ -9,6 +9,7 @@ import { useAppContext } from "@/contexts/AppContext";
 import { takeScreenshot } from "@/lib/screenshot";
 import { Alert, AlertDescription } from "./ui/alert";
 import { XCircle } from "lucide-react";
+import { sendCallStartEvent, sendCallEndEvent } from "@/lib/events";
 export interface RecorderProps {
   onFinished?: () => void;
   onCallActiveChange?: (isActive: boolean) => void;
@@ -97,12 +98,17 @@ export function Recorder({ onFinished, onCallActiveChange }: RecorderProps) {
     if (checked) {
       setIsEnabled(true);
       onCallActiveChange?.(true);
+      // Send call start event before connecting
+      sendCallStartEvent();
       liveAPI.connect();
     } else {
+      // First disconnect
+      liveAPI.disconnect();
+      // Then update state and send event
       setIsEnabled(false);
       setShowFeedback(true);
       onCallActiveChange?.(false);
-      liveAPI.disconnect();
+      sendCallEndEvent();
     }
   };
 
@@ -142,7 +148,8 @@ export function Recorder({ onFinished, onCallActiveChange }: RecorderProps) {
       <CallForm
         isEnabled={isEnabled}
         onToggle={handleToggleEnabled}
-        volume={inVolume}
+        inVolume={inVolume}
+        outVolume={liveAPI?.volume ?? 0}
       />
 
       {showFeedback && !isEnabled && (

@@ -1,12 +1,21 @@
 import { useEffect, useState, useCallback } from "react";
 import { secureFetch } from "@/lib/secure-fetch";
+import { getInjectScript } from "@/lib/env";
+
+export enum Mode {
+  Support = "support",
+  Tutor = "tutor",
+}
 
 export type SiteConfig = {
-  manual: string;
-  apiKey: string;
+  context: string;
+  apiKey: string; // Gemini API key - not the app2agent one
   isLoading: boolean;
   error?: string;
   reload: () => void;
+  prompt: string;
+  configError?: string;
+  mode: Mode;
 };
 
 async function getConfig(): Promise<Response> {
@@ -17,11 +26,16 @@ async function getConfig(): Promise<Response> {
   return response;
 }
 
+const mode = (getInjectScript()?.getAttribute("data-mode") ??
+  Mode.Support) as Mode;
+
 export function useConfig(): SiteConfig {
   const [isLoading, setIsLoading] = useState(false);
-  const [manual, setManual] = useState<string>("");
+  const [context, setContext] = useState<string>("");
+  const [prompt, setPrompt] = useState<string>("");
   const [apiKey, setApiKey] = useState<string>("");
   const [error, setError] = useState<string>();
+  const [configError, setConfigError] = useState<string>();
   const [reloadCounter, setReloadCounter] = useState(0);
 
   const reload = useCallback(() => {
@@ -33,19 +47,40 @@ export function useConfig(): SiteConfig {
       try {
         setIsLoading(true);
         setError(undefined);
+        setConfigError(undefined);
+        setPrompt("");
+        setContext("");
+        setApiKey("");
 
         const response = await getConfig();
 
+        if (response.status === 404) {
+          setConfigError("No configuration found for this domain");
+          return;
+        }
+
         const data = (await response.json()) as {
-          content: string;
+          context: string;
           apiKey: string;
+          prompt: string;
         };
-        setManual(data.content);
+        if (!data.context) {
+          setConfigError("No context defined for this domain");
+          return;
+        }
+        if (!data.apiKey) {
+          setConfigError("No Gemini API key defined for this domain");
+          return;
+        }
+        if (!data.prompt) {
+          setConfigError("No prompt defined for this domain");
+          return;
+        }
+        setPrompt(data.prompt);
+        setContext(data.context);
         setApiKey(data.apiKey);
       } catch (error) {
         console.error("Error fetching config:", error);
-        setManual(""); // Reset to empty string on error
-        setApiKey(""); // Reset API key on error
         setError(
           error instanceof Error ? error.message : "Failed to fetch config",
         );
@@ -53,16 +88,18 @@ export function useConfig(): SiteConfig {
         setIsLoading(false);
       }
     }
-
     fetchConfig();
   }, [reloadCounter]);
 
   return {
-    manual,
+    prompt,
+    context,
     apiKey,
     isLoading,
     error,
     reload,
+    configError,
+    mode,
   };
 }
 

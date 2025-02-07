@@ -10,6 +10,7 @@ import { ToolCall } from "@/components/tool-call";
 import { MicPermissionCheck } from "./microphone-permission-check";
 import { Settings } from "@/components/settings";
 import { Alert } from "@/components/ui/alert";
+import { getBaseUrl } from "@/lib/secure-fetch";
 
 const host = "generativelanguage.googleapis.com";
 const uri = `wss://${host}/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent`;
@@ -61,10 +62,8 @@ export function AppContent({ onClose, apiKey }: AppContentProps) {
     );
   }
 
-  const hasSetup = config.manual && config.apiKey;
-
-  if (!hasSetup) {
-    return <NoConfig />;
+  if (config.configError) {
+    return <NoConfig reason={config.configError} />;
   }
 
   // If we have valid setup or user saved settings, show the main content
@@ -94,10 +93,7 @@ export function AppContent({ onClose, apiKey }: AppContentProps) {
           {!showSettings && (
             <>
               <MicPermissionCheck />
-              <Recorder
-                onFinished={onClose}
-                onCallActiveChange={setIsCallActive}
-              />
+              <Recorder onCallActiveChange={setIsCallActive} />
               <ToolCall />
             </>
           )}
@@ -124,15 +120,15 @@ function LoadingConfig() {
   );
 }
 
-function NoConfig() {
+function NoConfig({ reason }: { reason: string }) {
   return (
     <LayoutWrapper>
       <div className="flex flex-col items-center">
         <p className="text-[14px] text-slate-500 text-center">
-          No configuration found.
+          {reason}
           <br /> Go to{" "}
           <a
-            href="https://app2agent.com/"
+            href={`${getBaseUrl()}/admin`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-500 underline"

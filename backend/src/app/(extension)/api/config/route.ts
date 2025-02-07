@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/utils/supabase/admin";
+import { DEFAULT_PROMPT } from "@/config/promptDefaults";
 
 export async function GET(request: Request) {
   try {
@@ -17,7 +18,7 @@ export async function GET(request: Request) {
     // Get the manual for this URL and user
     const { data } = await supabaseAdmin
       .from("user_manuals")
-      .select("content,gemini_key")
+      .select("context,gemini_key,prompt")
       .eq("url", url)
       .eq("user_id", userId)
       .single();
@@ -27,7 +28,8 @@ export async function GET(request: Request) {
     }
 
     return NextResponse.json({
-      content: data.content,
+      context: data.context,
+      prompt: data.prompt || DEFAULT_PROMPT,
       apiKey: data.gemini_key,
     });
   } catch (error) {

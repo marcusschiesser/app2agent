@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
+import { DEFAULT_PROMPT } from "@/config/promptDefaults";
 
 const MAX_DOCUMENTATION_LENGTH = 50000;
 
@@ -44,7 +45,8 @@ export default function Settings() {
       ...app,
       gemini_key: formData.get("gemini_key")?.toString() || "",
       url: formData.get("url")?.toString() || "",
-      content: formData.get("content")?.toString() || "",
+      context: formData.get("context")?.toString() || "",
+      prompt: formData.get("prompt")?.toString() || "",
     };
     setApp(newApp as WebApp);
     await formAction(formData);
@@ -110,14 +112,31 @@ export default function Settings() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="content">Documentation</Label>
+            <Label htmlFor="prompt">Prompt</Label>
             <Textarea
-              name="content"
-              id="content"
+              name="prompt"
+              id="prompt"
+              rows={6}
+              defaultValue={app?.prompt || DEFAULT_PROMPT}
+            />
+            <p className="text-sm text-muted-foreground">
+              The prompt must contain{" "}
+              <code>
+                {"{{"}context{"}}"}
+              </code>{" "}
+              to reference the context.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="context">Context</Label>
+            <Textarea
+              name="context"
+              id="context"
               rows={20}
               maxLength={MAX_DOCUMENTATION_LENGTH}
-              defaultValue={app?.content || ""}
-              placeholder="The documentation of your web application. You can directly paste the documentation here."
+              defaultValue={app?.context || ""}
+              placeholder="The context referenced in your prompt. You can directly paste the context here."
             />
             <p className="text-sm text-muted-foreground">
               Limited to {MAX_DOCUMENTATION_LENGTH.toLocaleString()} characters.
