@@ -1,7 +1,6 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
-import { DEFAULT_PROMPT } from "../../../config/promptDefaults";
 
 export type SettingState = {
   isError?: boolean;
@@ -33,7 +32,7 @@ export async function updateSettingsAction(
   const gemini_key = formData.get("gemini_key")?.toString();
   const url = formData.get("url")?.toString();
   const context = formData.get("context")?.toString();
-  const prompt = formData.get("prompt")?.toString() || DEFAULT_PROMPT;
+  const prompt = formData.get("prompt")?.toString();
 
   const { error } = await supabase.from("user_manuals").upsert(
     {

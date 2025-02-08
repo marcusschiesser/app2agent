@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/utils/supabase/admin";
-import { DEFAULT_PROMPT } from "@/config/promptDefaults";
 
 export async function GET(request: Request) {
   try {
@@ -29,7 +28,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       context: data.context,
-      prompt: data.prompt || DEFAULT_PROMPT,
+      prompt: data.prompt,
       apiKey: data.gemini_key,
     });
   } catch (error) {

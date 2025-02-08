@@ -19,13 +19,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
-import { DEFAULT_PROMPT } from "@/config/promptDefaults";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { PROMPT_TEMPLATES } from "@/config/promptDefaults";
 
 const MAX_DOCUMENTATION_LENGTH = 50000;
 
 export default function Settings() {
   const [app, setApp] = useState<WebApp>();
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedPrompt, setSelectedPrompt] = useState<string>("");
   const [state, formAction, isPending] = useActionState(
     updateSettingsAction,
     {},
@@ -124,24 +132,64 @@ export default function Settings() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="prompt">Prompt</Label>
+            <div className="flex justify-between items-center">
+              <Label htmlFor="prompt">Prompt</Label>
+              {!isLoading && (
+                <Select
+                  value={selectedPrompt}
+                  onValueChange={(value) => {
+                    setSelectedPrompt(value);
+                    const template = PROMPT_TEMPLATES.find(
+                      (t) => t.id === value,
+                    );
+                    if (template) {
+                      const textarea = document.getElementById(
+                        "prompt",
+                      ) as HTMLTextAreaElement;
+                      if (textarea) {
+                        textarea.value = template.content;
+                      }
+                    }
+                  }}
+                >
+                  <SelectTrigger className="w-[200px] h-8 text-sm">
+                    <SelectValue placeholder="Copy a template..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PROMPT_TEMPLATES.map((template) => (
+                      <SelectItem key={template.id} value={template.id}>
+                        {template.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
             {isLoading ? (
               <Skeleton className="h-[144px] w-full" />
             ) : (
-              <Textarea
-                name="prompt"
-                id="prompt"
-                rows={6}
-                defaultValue={app?.prompt ?? DEFAULT_PROMPT}
-              />
+              <>
+                <Textarea
+                  name="prompt"
+                  id="prompt"
+                  rows={6}
+                  defaultValue={app?.prompt ?? ""}
+                  onChange={() => {
+                    // Clear selected template when user manually edits the prompt
+                    setSelectedPrompt("");
+                  }}
+                  placeholder="Enter your prompt or use a template above."
+                />
+                <p className="text-sm text-muted-foreground">
+                  The prompt must contain{" "}
+                  <code>
+                    {"{{"}
+                    context{"}}"}
+                  </code>{" "}
+                  to reference the context.
+                </p>
+              </>
             )}
-            <p className="text-sm text-muted-foreground">
-              The prompt must contain{" "}
-              <code>
-                {"{{"}context{"}}"}
-              </code>{" "}
-              to reference the context.
-            </p>
           </div>
 
           <div className="space-y-2">
