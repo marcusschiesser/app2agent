@@ -7,13 +7,13 @@ export default function Hero() {
     <section className="bg-gradient-to-b from-blue-900 to-blue-800 text-white py-20">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="text-left">
+          <div className="text-left lg:pr-8">
             <h1 className="text-5xl font-bold mb-6">
-              AI Voice Assistant for Your Web App
+              AI Voice Assistants for Web Apps
             </h1>
             <p className="text-xl mb-8 text-blue-100">
-              Transform any enterprise web app with an AI voice assistant - just
-              upload your documentation and you&apos;re ready to go
+              Automatically solve your users&apos; problems with an AI voice
+              assistant! Added to your app in minutes.
             </p>
             <button
               onClick={() =>
@@ -26,10 +26,11 @@ export default function Hero() {
               Try app2agent
             </button>
           </div>
+
           <div className="relative rounded-xl overflow-hidden shadow-2xl bg-blue-950/30 backdrop-blur-sm">
             <div className="aspect-video">
               <YouTube
-                videoId="hgT6yjZoU1c"
+                videoId="gfQyuHSQE1I"
                 className="w-full h-full"
                 opts={{
                   width: "100%",
