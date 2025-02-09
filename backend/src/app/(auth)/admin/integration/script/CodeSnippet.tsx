@@ -11,11 +11,18 @@ import {
 } from "@/components/ui/tooltip";
 import { getBaseUrl } from "@/lib/url";
 
-export function CodeSnippet({ apiKey }: { apiKey: string | null }) {
+export function CodeSnippet({
+  apiKey,
+  theme,
+}: {
+  apiKey: string | null;
+  theme: "support" | "tutor";
+}) {
   const [copied, setCopied] = useState(false);
   const domain = getBaseUrl();
   const snippet = `<script src="${domain}/extension/inject/inject.js"
   data-api-key="${apiKey}"
+  data-theme="${theme}"
 ></script>`;
 
   return (

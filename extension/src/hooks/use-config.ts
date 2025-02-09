@@ -26,7 +26,7 @@ async function getConfig(): Promise<Response> {
   return response;
 }
 
-const mode = (getInjectScript()?.getAttribute("data-mode") ??
+const mode = (getInjectScript()?.getAttribute("data-theme") ??
   Mode.Support) as Mode;
 
 export function useConfig(): SiteConfig {

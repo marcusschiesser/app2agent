@@ -47,7 +47,7 @@ export default function DemoPage() {
       <Script
         src="/extension/inject/inject.js"
         data-top="4rem"
-        data-mode="tutor"
+        data-theme="tutor"
         data-api-key="d9892300-d672-436d-adf9-b67afa7a61dc"
       />
       <Header />
