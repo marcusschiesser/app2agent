@@ -64,7 +64,7 @@ export default function EmailSignup() {
           className="mb-12"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
-            Ready to Transform Your Apps?
+            Ready to Boost User Adoption?
           </h2>
           <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-xl mx-auto">
             Join for early access and special pricing

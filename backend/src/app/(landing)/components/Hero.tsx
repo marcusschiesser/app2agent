@@ -7,7 +7,7 @@ import { useState, useRef } from "react";
 
 export default function Hero() {
   const [isPlaying, setIsPlaying] = useState(false);
-  const playerRef = useRef<any>(null);
+  const playerRef = useRef<YouTube | null>(null);
 
   const videoOptions = {
     width: "100%",
@@ -20,7 +20,7 @@ export default function Hero() {
     },
   };
 
-  const onReady = (event) => {
+  const onReady = (event: { target: YouTube }) => {
     playerRef.current = event.target;
   };
 

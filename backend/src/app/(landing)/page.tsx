@@ -1,6 +1,7 @@
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import Features from "./components/Features";
+import Platforms from "./components/Platforms";
 import EmailSignup from "./components/EmailSignup";
 import Footer from "./components/Footer";
 import { Metadata } from "next";
@@ -51,6 +52,7 @@ export default function Home() {
         <article>
           <Hero />
           <Features />
+          <Platforms />
           <EmailSignup />
         </article>
       </main>
