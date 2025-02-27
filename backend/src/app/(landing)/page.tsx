@@ -7,30 +7,31 @@ import Footer from "./components/Footer";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "app2agent - AI Voice Assistants for Web Apps",
+  title: "app2agent - Boost User Adoption for Low-Code Apps",
   description:
-    "Automatically solve your users' problems with an AI voice assistant! Added to your app in minutes.",
+    "Bridge the gap between low-code app creation and user adoption. It's easy to build apps, but how do users know how to use them? Our AI voice assistant is the answer.",
   keywords: [
+    "low-code user adoption",
+    "voice-based IT support",
+    "low-code apps",
     "AI voice assistant",
-    "web app support",
-    "voice-first experience",
-    "instant problem solving",
-    "AI support",
+    "user onboarding",
+    "no-code support",
   ],
   authors: [{ name: "app2agent Team" }],
   openGraph: {
-    title: "app2agent - AI Voice Assistants for Web Apps",
+    title: "app2agent - Boost User Adoption for Low-Code Apps",
     description:
-      "Automatically solve your users' problems with an AI voice assistant! Added to your app in minutes.",
+      "Bridge the gap between app creation and user adoption. It's easy to build low-code apps, but how do users know how to use them? Our AI voice assistant is the answer.",
     type: "website",
     locale: "en_US",
     siteName: "app2agent",
   },
   twitter: {
     card: "summary_large_image",
-    title: "app2agent - AI Voice Assistants for Web Apps",
+    title: "app2agent - Boost User Adoption for Low-Code Apps",
     description:
-      "Add AI voice assistants to your web app in minutes for automated user support.",
+      "Bridge the gap between low-code app creation and user adoption with AI voice assistants.",
   },
   robots: {
     index: true,
@@ -50,7 +51,6 @@ export default function Home() {
         <article>
           <Hero />
           <Features />
-          <UseCases />
           <EmailSignup />
         </article>
       </main>

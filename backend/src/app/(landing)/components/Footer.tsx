@@ -8,7 +8,7 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold text-gray-900 mb-4">App2Agent</h3>
             <p className="text-gray-600 text-sm">
-              AI Voice Assistants for Web Apps
+              Voice-Based IT Support for Low-Code Apps
             </p>
           </div>
           <div>

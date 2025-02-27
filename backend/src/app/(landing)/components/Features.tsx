@@ -1,23 +1,29 @@
-import { Bot, Code2, Mic, LineChart } from "lucide-react";
+import { Bot, Code2, Mic, LineChart, Users } from "lucide-react";
 
 const features = [
   {
     icon: Bot,
-    title: "Instant Problem Solving",
+    title: "Specialized for Low-Code Apps",
     description:
-      "AI voice assistants automatically understand and solve your users' problems, reducing support tickets and improving satisfaction.",
+      "AI voice assistants specifically designed to understand and support the unique needs of low-code applications and their users.",
+  },
+  {
+    icon: Users,
+    title: "Boost User Adoption",
+    description:
+      "Bridge the gap between app creation and usage. Help users understand how to use your app effectively, increasing adoption and reducing abandonment.",
   },
   {
     icon: Mic,
-    title: "Voice-First Experience",
+    title: "Voice-Driven IT Support",
     description:
-      "Natural conversations with AI that guides users through complex tasks, making your web app more accessible and user-friendly.",
+      "Natural voice conversations that guide users through technical issues, eliminating the need for complex support tickets.",
   },
   {
     icon: Code2,
-    title: "Minutes to Deploy",
+    title: "No-Code Integration",
     description:
-      "Add the AI voice assistant to your web app in minutes. No complex integration - just install app2agent and you're ready to go.",
+      "Easily integrate the AI voice assistant into any app in minutes, without requiring advanced programming skills.",
   },
   {
     icon: LineChart,
@@ -32,9 +38,9 @@ export default function Features() {
     <section className="py-20 bg-gray-50">
       <div className="container mx-auto px-4 max-w-6xl">
         <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-          Empower Your Web App with AI Voice Support
+          From App Creation to User Adoption
         </h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
           {features.map((feature, index) => (
             <div key={index} className="bg-white p-6 rounded-lg shadow-md">
               <feature.icon className="w-12 h-12 text-blue-600 mb-4" />

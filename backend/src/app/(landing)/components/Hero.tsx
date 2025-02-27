@@ -9,11 +9,11 @@ export default function Hero() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="text-left lg:pr-8">
             <h1 className="text-5xl font-bold mb-6">
-              AI Voice Assistants for Web Apps
+              Voice-Based IT Support for Low-Code Apps
             </h1>
             <p className="text-xl mb-8 text-blue-100">
-              Automatically solve your users&apos; problems with an AI voice
-              assistant! Added to your app in minutes.
+              Empower users of low-code apps with our AI voice assistant. Boost
+              adoption and reduce support costs.
             </p>
             <button
               onClick={() =>
@@ -30,13 +30,13 @@ export default function Hero() {
           <div className="relative rounded-xl overflow-hidden shadow-2xl bg-blue-950/30 backdrop-blur-sm">
             <div className="aspect-video">
               <YouTube
-                videoId="gfQyuHSQE1I"
+                videoId="tIX_qZDNghI"
                 className="w-full h-full"
                 opts={{
                   width: "100%",
                   height: "100%",
                   playerVars: {
-                    autoplay: 0,
+                    autoplay: 1,
                     modestbranding: 1,
                     rel: 0,
                   },
