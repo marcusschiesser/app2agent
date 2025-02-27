@@ -1,7 +1,6 @@
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import Features from "./components/Features";
-import UseCases from "./components/UseCases";
 import EmailSignup from "./components/EmailSignup";
 import Footer from "./components/Footer";
 import { Metadata } from "next";
@@ -31,7 +30,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "app2agent - Boost User Adoption for Low-Code Apps",
     description:
-      "Bridge the gap between low-code app creation and user adoption with AI voice assistants.",
+      "Bridge the gap between app creation and user adoption. It's easy to build low-code apps, but how do users know how to use them? Our AI voice assistant is the answer.",
+    creator: "@app2agent",
   },
   robots: {
     index: true,
