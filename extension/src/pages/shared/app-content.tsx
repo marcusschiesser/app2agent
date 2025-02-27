@@ -28,13 +28,14 @@ export function AppContent({ onClose, apiKey }: AppContentProps) {
   // Use provided API key if available, otherwise check localStorage
   useEffect(() => {
     if (apiKey) {
-      localStorage.setItem("apiKey", apiKey);
+      localStorage.setItem("app2agent_apiKey", apiKey);
     } else if (__API_KEY__) {
-      localStorage.setItem("apiKey", __API_KEY__);
+      localStorage.setItem("app2agent_apiKey", __API_KEY__);
     }
   }, [apiKey]);
 
-  const needsSetup = !apiKey && !__API_KEY__ && !localStorage.getItem("apiKey");
+  const needsSetup =
+    !apiKey && !__API_KEY__ && !localStorage.getItem("app2agent_apiKey");
 
   if (needsSetup) {
     return (

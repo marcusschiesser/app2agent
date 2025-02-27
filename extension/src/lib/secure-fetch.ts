@@ -6,7 +6,7 @@ export function getBaseUrl() {
 
 // Secure fetch wrapper with extension authentication
 export async function secureFetch(url: string, options: RequestInit = {}) {
-  const apiKey = localStorage.getItem("apiKey");
+  const apiKey = localStorage.getItem("app2agent_apiKey");
 
   const secureOptions: RequestInit = {
     ...options,

@@ -18,7 +18,7 @@ interface SettingsProps {
 
 export function Settings({ onSaved }: SettingsProps) {
   const [apiKey, setApiKey] = useState(
-    () => localStorage.getItem("apiKey") || "",
+    () => localStorage.getItem("app2agent_apiKey") || "",
   );
   const [error, setError] = useState("");
   const [isValidating, setIsValidating] = useState(false);
@@ -26,7 +26,7 @@ export function Settings({ onSaved }: SettingsProps) {
   const handleValidation = async () => {
     setError("");
     setIsValidating(true);
-    const oldApiKey = localStorage.getItem("apiKey");
+    const oldApiKey = localStorage.getItem("app2agent_apiKey");
 
     try {
       const response = await secureFetch(`/api/validate`, {
@@ -37,18 +37,18 @@ export function Settings({ onSaved }: SettingsProps) {
 
       const data = await response.json();
       if (data.valid) {
-        localStorage.setItem("apiKey", apiKey);
+        localStorage.setItem("app2agent_apiKey", apiKey);
         onSaved();
       } else {
         setError("Invalid API key. Please try again.");
         if (oldApiKey) {
-          localStorage.setItem("apiKey", oldApiKey);
+          localStorage.setItem("app2agent_apiKey", oldApiKey);
         }
       }
     } catch {
       setError("Failed to validate API key. Please try again.");
       if (oldApiKey) {
-        localStorage.setItem("apiKey", oldApiKey);
+        localStorage.setItem("app2agent_apiKey", oldApiKey);
       }
     } finally {
       setIsValidating(false);

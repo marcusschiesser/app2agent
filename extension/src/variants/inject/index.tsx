@@ -1,7 +1,14 @@
 import React from "react";
 import { createRoot, Root } from "react-dom/client";
 import { ModalApp } from "@/pages/shared/modal-app";
-import { getURL, getInjectScript } from "@/lib/env";
+import { getInjectScript } from "@/lib/env";
+
+// Extend Window interface to include our CSS variable
+declare global {
+  interface Window {
+    APP2AGENT_INJECT_CSS?: string;
+  }
+}
 
 // Create root only when needed
 let appRoot: Root | null = null;
@@ -29,14 +36,17 @@ const createAppRoot = async () => {
     // Add a shadow root for better style isolation
     const shadow = appContainer.attachShadow({ mode: "open" });
 
-    // Fetch and inject styles into shadow root
-    await fetch(getURL("style.css"))
-      .then((response) => response.text())
-      .then((css) => {
-        const style = document.createElement("style");
-        style.textContent = css;
-        shadow.appendChild(style);
-      });
+    // Create style element and add our CSS from the global variable
+    const style = document.createElement("style");
+
+    // Use the CSS from our global variable that was set by the Vite plugin
+    if (window.APP2AGENT_INJECT_CSS) {
+      style.textContent = window.APP2AGENT_INJECT_CSS;
+    } else {
+      console.warn("App2Agent: CSS not found in global variable");
+    }
+
+    shadow.appendChild(style);
 
     const styleContainer = document.createElement("div");
     styleContainer.className = "form2content-styles";

@@ -20,7 +20,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["worklets/*", "style.css", "permission/*"],
+      "resources": ["permission/*"],
       "matches": ["<all_urls>"]
     }
   ]
