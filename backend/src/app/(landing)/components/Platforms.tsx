@@ -113,10 +113,12 @@ export default function Platforms() {
   return (
     <section
       id="platforms"
-      className="py-20 bg-white dark:bg-gray-800 relative overflow-hidden"
+      className="py-20 relative overflow-hidden bg-gradient-to-b from-blue-50 to-indigo-100 dark:from-blue-950 dark:to-indigo-900"
     >
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden -z-10">
+        <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-blue-300/30 rounded-full filter blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-1/3 h-1/3 bg-indigo-300/30 rounded-full filter blur-3xl"></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 bg-gradient-conic from-blue-200/30 via-sky-200/20 to-indigo-200/30 blur-3xl rounded-full opacity-30"></div>
       </div>
 
