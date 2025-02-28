@@ -19,3 +19,34 @@ export function useIsMobile() {
 
   return !!isMobile;
 }
+
+// General media query hook for any breakpoint
+export function useMediaQuery(query: string) {
+  const [matches, setMatches] = React.useState(false);
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const media = window.matchMedia(query);
+
+      const updateMatches = () => {
+        setMatches(media.matches);
+      };
+
+      // Set initial value
+      updateMatches();
+
+      // Setup listeners
+      if (media.addEventListener) {
+        media.addEventListener("change", updateMatches);
+        return () => media.removeEventListener("change", updateMatches);
+      } else {
+        // Fallback for older browsers
+        media.addListener(updateMatches);
+        return () => media.removeListener(updateMatches);
+      }
+    }
+    return undefined;
+  }, [query]);
+
+  return matches;
+}

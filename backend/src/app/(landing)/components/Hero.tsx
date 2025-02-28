@@ -1,31 +1,19 @@
 "use client";
 
-import YouTube from "react-youtube";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles, PlayCircle } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState } from "react";
+import VideoModal from "./VideoModal";
 
 export default function Hero() {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const playerRef = useRef<YouTube | null>(null);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
-  const videoOptions = {
-    width: "100%",
-    height: "100%",
-    playerVars: {
-      autoplay: 1,
-      modestbranding: 1,
-      controls: 1,
-      rel: 0,
-    },
+  const openVideoModal = () => {
+    setIsVideoModalOpen(true);
   };
 
-  const onReady = (event: { target: YouTube }) => {
-    playerRef.current = event.target;
-  };
-
-  const playVideo = () => {
-    setIsPlaying(true);
+  const closeVideoModal = () => {
+    setIsVideoModalOpen(false);
   };
 
   return (
@@ -78,7 +66,7 @@ export default function Hero() {
               </motion.button>
 
               <motion.button
-                onClick={playVideo}
+                onClick={openVideoModal}
                 className="inline-flex items-center justify-center px-6 py-4 font-medium text-gray-800 dark:text-white transition-all duration-300 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-blue-500 dark:hover:border-blue-500 group"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -99,42 +87,38 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="rounded-2xl overflow-hidden shadow-2xl border border-blue-100 bg-white"
           >
-            {!isPlaying ? (
-              <motion.div
-                className="relative aspect-video bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center cursor-pointer"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={playVideo}
-              >
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <motion.div
-                    className="w-20 h-20 rounded-full bg-blue-600 flex items-center justify-center shadow-lg"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <PlayCircle className="h-10 w-10 text-white" />
-                  </motion.div>
-                </div>
-                <div className="absolute bottom-6 left-6 right-6">
-                  <h3 className="text-xl font-semibold text-blue-900">
-                    Watch: Outsystems App with IT-support
-                  </h3>
-                  <p className="text-blue-700">1:07 min</p>
-                </div>
-              </motion.div>
-            ) : (
-              <div className="aspect-video">
-                <YouTube
-                  videoId="AbTvlj_eSJc"
-                  opts={videoOptions}
-                  onReady={onReady}
-                  className="w-full h-full"
-                />
+            <motion.div
+              className="relative aspect-video bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center cursor-pointer"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={openVideoModal}
+            >
+              <div className="absolute inset-0 flex items-center justify-center">
+                <motion.div
+                  className="w-20 h-20 rounded-full bg-blue-600 flex items-center justify-center shadow-lg"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <PlayCircle className="h-10 w-10 text-white" />
+                </motion.div>
               </div>
-            )}
+              <div className="absolute bottom-6 left-6 right-6">
+                <h3 className="text-xl font-semibold text-blue-900">
+                  Watch: Outsystems App with IT-support
+                </h3>
+                <p className="text-blue-700">1:07 min</p>
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </div>
+
+      {/* Video Modal */}
+      <VideoModal
+        isOpen={isVideoModalOpen}
+        onClose={closeVideoModal}
+        videoId="AbTvlj_eSJc"
+      />
     </section>
   );
 }
