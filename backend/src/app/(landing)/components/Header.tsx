@@ -90,19 +90,6 @@ export default function Header() {
               Features
             </Link>
             <Link
-              href="#use-cases"
-              className="block py-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium"
-              onClick={(e) => {
-                e.preventDefault();
-                document
-                  .getElementById("use-cases")
-                  ?.scrollIntoView({ behavior: "smooth" });
-                setMobileMenuOpen(false);
-              }}
-            >
-              Use Cases
-            </Link>
-            <Link
               href="/auth"
               className="block py-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium"
               onClick={() => setMobileMenuOpen(false)}
