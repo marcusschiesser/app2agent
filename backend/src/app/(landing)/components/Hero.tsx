@@ -117,15 +117,15 @@ export default function Hero() {
                 </div>
                 <div className="absolute bottom-6 left-6 right-6">
                   <h3 className="text-xl font-semibold text-blue-900">
-                    Watch: AI Powered Support for Low-Code Apps
+                    Watch: Outsystems App with IT-support
                   </h3>
-                  <p className="text-blue-700">2:15 min</p>
+                  <p className="text-blue-700">1:07 min</p>
                 </div>
               </motion.div>
             ) : (
               <div className="aspect-video">
                 <YouTube
-                  videoId="tIX_qZDNghI"
+                  videoId="AbTvlj_eSJc"
                   opts={videoOptions}
                   onReady={onReady}
                   className="w-full h-full"
