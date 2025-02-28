@@ -67,7 +67,7 @@ export default function Hero() {
 
               <motion.button
                 onClick={openVideoModal}
-                className="inline-flex items-center justify-center px-6 py-4 font-medium text-gray-800 dark:text-white transition-all duration-300 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-blue-500 dark:hover:border-blue-500 group"
+                className="hidden md:inline-flex items-center justify-center px-6 py-4 font-medium text-gray-800 dark:text-white transition-all duration-300 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-blue-500 dark:hover:border-blue-500 group"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -88,7 +88,7 @@ export default function Hero() {
             className="rounded-2xl overflow-hidden shadow-2xl border border-blue-100 bg-white"
           >
             <motion.div
-              className="relative aspect-video bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center cursor-pointer"
+              className="relative aspect-video bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center cursor-pointer group"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={openVideoModal}
@@ -108,6 +108,7 @@ export default function Hero() {
                 </h3>
                 <p className="text-blue-700">1:07 min</p>
               </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </motion.div>
           </motion.div>
         </div>
