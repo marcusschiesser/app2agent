@@ -34,7 +34,7 @@ export default function Features() {
   return (
     <section
       id="features"
-      className="py-24 bg-gray-50/50 dark:bg-gray-900/50 relative overflow-hidden"
+      className="py-24 bg-gray-50 dark:bg-gray-900 relative overflow-hidden"
     >
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden -z-10">
