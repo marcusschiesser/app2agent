@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Sparkles, PlayCircle } from "lucide-react";
 import { useState } from "react";
 import VideoModal from "./VideoModal";
+import Image from "next/image";
 
 export default function Hero() {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -88,11 +89,18 @@ export default function Hero() {
             className="rounded-2xl overflow-hidden shadow-2xl border border-blue-100 bg-white"
           >
             <motion.div
-              className="relative aspect-video bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center cursor-pointer group"
+              className="relative aspect-video flex items-center justify-center cursor-pointer group"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={openVideoModal}
             >
+              <Image
+                src="/video_thumbnail.png"
+                alt="Video thumbnail"
+                className="absolute inset-0 w-full h-full object-cover rounded-t-2xl"
+                width={780}
+                height={480}
+              />
               <div className="absolute inset-0 flex items-center justify-center">
                 <motion.div
                   className="w-20 h-20 rounded-full bg-blue-600 flex items-center justify-center shadow-lg"
