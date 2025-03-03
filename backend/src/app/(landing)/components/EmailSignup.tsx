@@ -64,7 +64,7 @@ export default function EmailSignup() {
           className="mb-12"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
-            Ready to Boost User Adoption?
+            Ready to Boost User Satisfaction?
           </h2>
           <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-xl mx-auto">
             Join for early access and special pricing

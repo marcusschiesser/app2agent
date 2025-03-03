@@ -1,48 +1,32 @@
 "use client";
 
-import { Bot, Code2, Mic, LineChart, Users } from "lucide-react";
+import { Code2, Mic, LineChart } from "lucide-react";
 import { motion } from "framer-motion";
 
 const features = [
   {
-    icon: Bot,
-    title: "Specialized for Low-Code Apps",
+    icon: Mic,
+    title: "Instant User Support",
     description:
-      "AI voice assistants specifically designed to understand and support the unique needs of low-code applications and their users.",
-    gradient: "from-blue-600 to-sky-400",
-    delay: 0.1,
-  },
-  {
-    icon: Users,
-    title: "Boost User Adoption",
-    description:
-      "Bridge the gap between app creation and usage. Help users understand how to use your app effectively, increasing adoption and reducing abandonment.",
+      "Answer any user question about your low-code app instantly through natural voice conversations, eliminating frustration and reducing support tickets.",
     gradient: "from-purple-600 to-pink-400",
     delay: 0.2,
   },
   {
-    icon: Mic,
-    title: "Voice-Driven IT Support",
+    icon: LineChart,
+    title: "Reduce Onboarding & Support Costs",
     description:
-      "Natural voice conversations that guide users through technical issues, eliminating the need for complex support tickets.",
+      "Cut training and support expenses significantly by automating responses to common questions and providing 24/7 assistance to your app users.",
     gradient: "from-emerald-600 to-green-400",
     delay: 0.3,
   },
   {
     icon: Code2,
-    title: "No-Code Integration",
+    title: "Simple Integration, No Coding",
     description:
-      "Easily integrate the AI voice assistant into any app in minutes, without requiring advanced programming skills.",
+      "Just upload your app's FAQ and integrate the AI voice assistant in minutes—no programming skills required, perfect for low-code environments.",
     gradient: "from-amber-600 to-yellow-400",
     delay: 0.4,
-  },
-  {
-    icon: LineChart,
-    title: "Self-Improving",
-    description:
-      "The AI assistant learns from every interaction, continuously getting better at solving your users' specific problems.",
-    gradient: "from-red-600 to-orange-400",
-    delay: 0.5,
   },
 ];
 
@@ -66,11 +50,11 @@ export default function Features() {
           transition={{ duration: 0.5 }}
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-blue-200">
-            From App Creation to User Adoption
+            Maximize User Satisfaction
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300">
-            Our AI assistant transforms how users interact with your low-code
-            applications
+            Empower your users to understand your low-code app — let our AI
+            assistant guide them instantly
           </p>
         </motion.div>
 

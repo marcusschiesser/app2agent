@@ -7,31 +7,31 @@ import Footer from "./components/Footer";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "app2agent - Boost User Adoption for Low-Code Apps",
+  title: "app2agent - Solve User Adoption Challenges for OutSystems Apps",
   description:
-    "Bridge the gap between low-code app creation and user adoption. It's easy to build apps, but how do users know how to use them? Our AI voice assistant is the answer.",
+    "Struggling with user adoption in your OutSystems app? Our AI voice assistant instantly answers any user question about your app, reducing onboarding and support costs.",
   keywords: [
-    "low-code user adoption",
-    "voice-based IT support",
-    "low-code apps",
-    "AI voice assistant",
-    "user onboarding",
-    "no-code support",
+    "OutSystems user adoption",
+    "low-code user support",
+    "AI voice assistant for OutSystems",
+    "reduce app support costs",
+    "low-code onboarding solution",
+    "OutSystems support",
   ],
   authors: [{ name: "app2agent Team" }],
   openGraph: {
-    title: "app2agent - Boost User Adoption for Low-Code Apps",
+    title: "app2agent - Solve User Adoption Challenges for OutSystems Apps",
     description:
-      "Bridge the gap between app creation and user adoption. It's easy to build low-code apps, but how do users know how to use them? Our AI voice assistant is the answer.",
+      "Struggling with user adoption? Our AI voice assistant instantly answers any user question about your OutSystems app, reducing onboarding and support costs.",
     type: "website",
     locale: "en_US",
     siteName: "app2agent",
   },
   twitter: {
     card: "summary_large_image",
-    title: "app2agent - Boost User Adoption for Low-Code Apps",
+    title: "app2agent - Solve User Adoption Challenges for OutSystems Apps",
     description:
-      "Bridge the gap between app creation and user adoption. It's easy to build low-code apps, but how do users know how to use them? Our AI voice assistant is the answer.",
+      "Struggling with user adoption? Our AI voice assistant instantly answers any user question about your OutSystems app, reducing onboarding and support costs.",
     creator: "@app2agent",
   },
   robots: {
