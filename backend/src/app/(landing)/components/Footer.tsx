@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Twitter, Linkedin, Github, Mail } from "lucide-react";
+import { Twitter, Linkedin, Mail } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -10,10 +10,7 @@ export default function Footer() {
   const footerLinks = [
     {
       title: "Product",
-      links: [
-        { label: "Features", href: "#features" },
-        { label: "Pricing", href: "#email-signup" },
-      ],
+      links: [{ label: "Features", href: "#features" }],
     },
     {
       title: "Resources",
@@ -26,10 +23,7 @@ export default function Footer() {
     },
     {
       title: "Legal",
-      links: [
-        { label: "Privacy Policy", href: "/privacy" },
-        { label: "Terms of Service", href: "#" },
-      ],
+      links: [{ label: "Privacy Policy", href: "/privacy" }],
     },
   ];
 
@@ -45,12 +39,6 @@ export default function Footer() {
       href: "https://www.linkedin.com/in/marcusschiesser/",
       label: "LinkedIn",
       hoverColor: "hover:text-blue-600",
-    },
-    {
-      icon: Github,
-      href: "https://github.com",
-      label: "GitHub",
-      hoverColor: "hover:text-gray-900 dark:hover:text-white",
     },
     {
       icon: Mail,
@@ -112,6 +100,12 @@ export default function Footer() {
                     <Link
                       href={link.href}
                       className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 text-sm transition-colors"
+                      target={
+                        link.href.startsWith("http") ? "_blank" : undefined
+                      }
+                      rel={
+                        link.href.startsWith("http") ? "noreferrer" : undefined
+                      }
                     >
                       {link.label}
                     </Link>
