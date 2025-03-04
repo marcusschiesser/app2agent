@@ -27,6 +27,7 @@ async function getConfig(): Promise<Response> {
 }
 
 const mode = (getInjectScript()?.getAttribute("data-theme") ??
+  window.APP2AGENT_THEME ??
   Mode.Support) as Mode;
 
 export function useConfig(): SiteConfig {

@@ -56,7 +56,6 @@ export default defineConfig({
             const mainJsChunk = bundle[jsChunks[0]];
             const { code } = mainJsChunk;
             mainJsChunk.code = `
-            // Store CSS content in a global variable instead of injecting it to document.head
             window.APP2AGENT_INJECT_CSS = ${JSON.stringify(cssCode)};
             ${code}`;
 
