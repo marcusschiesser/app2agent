@@ -1,24 +1,17 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Copy, Check } from "lucide-react";
 import { useState, useEffect } from "react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { getBaseUrl } from "@/lib/url";
+import { type Theme } from "../components/ThemeSelector";
+import { CodeSnippetDisplay } from "../components/CodeSnippetDisplay";
 
 export function OutsystemsCodeSnippet({
   apiKey,
   theme,
 }: {
   apiKey: string | null;
-  theme: "support" | "tutor";
+  theme: Theme;
 }) {
-  const [copied, setCopied] = useState(false);
   const [injectScript, setInjectScript] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const domain = getBaseUrl();
@@ -58,42 +51,20 @@ ${scriptContent}`;
     ? injectScript.substring(0, previewCharLimit)
     : "Loading script...";
 
+  // When using the CodeSnippetDisplay, we want to copy the full script, not just the preview
+  const handleCopy = () => {
+    return injectScript || "";
+  };
+
   return (
-    <div className="group relative w-full max-w-full">
-      <pre className="rounded-lg bg-muted p-4 text-sm font-mono text-muted-foreground overflow-auto max-h-[400px] overflow-x-auto whitespace-pre-wrap break-all max-w-full">
-        <code>{loading ? "Loading script..." : scriptPreview}</code>
-      </pre>
-      <div className="absolute right-2 top-2">
-        <TooltipProvider>
-          <Tooltip delayDuration={0}>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                disabled={loading || !injectScript}
-                onClick={() => {
-                  if (injectScript) {
-                    // The script already includes the variables, just copy it directly
-                    navigator.clipboard.writeText(injectScript);
-                    setCopied(true);
-                    setTimeout(() => setCopied(false), 1000);
-                  }
-                }}
-              >
-                {copied ? (
-                  <Check className="h-4 w-4" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="left">
-              <p>{copied ? "Copied!" : "Copy"}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
-    </div>
+    <CodeSnippetDisplay
+      codeContent={scriptPreview}
+      isLoading={loading}
+      disabled={!injectScript}
+      className="group relative w-full max-w-full"
+      preClassName="rounded-lg bg-muted p-4 text-sm font-mono text-muted-foreground overflow-auto max-h-[400px] overflow-x-auto whitespace-pre-wrap break-all max-w-full"
+      tooltipText="Copy script to clipboard"
+      onCopy={handleCopy}
+    />
   );
 }
