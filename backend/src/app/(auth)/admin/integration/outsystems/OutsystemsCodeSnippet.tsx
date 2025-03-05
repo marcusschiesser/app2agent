@@ -44,7 +44,7 @@ ${scriptContent}`;
     fetchInjectScript();
   }, [domain, apiKey, theme]);
 
-  const previewCharLimit = 5000; // Number of characters to show in preview
+  const previewCharLimit = 1000; // Number of characters to show in preview
   const scriptPreview = injectScript
     ? injectScript.substring(0, previewCharLimit)
     : "Loading script...";
@@ -60,7 +60,7 @@ ${scriptContent}`;
       isLoading={loading}
       disabled={!injectScript}
       className="group relative w-full max-w-full"
-      preClassName="rounded-lg bg-muted p-4 text-sm font-mono text-muted-foreground overflow-auto max-h-[400px] overflow-x-auto whitespace-pre-wrap break-all max-w-full"
+      preClassName="rounded-lg bg-muted p-4 text-sm font-mono text-muted-foreground whitespace-pre-wrap break-all max-w-full"
       tooltipText="Copy script to clipboard"
       onCopy={handleCopy}
     />
