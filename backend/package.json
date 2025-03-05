@@ -2,6 +2,7 @@
   "name": "@app2agent/backend",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "pnpm run build:ext:dev && next dev --turbopack",
     "build:ext": "pushd ../extension && pnpm release && popd && pnpm run copy:extension",
@@ -9,6 +10,10 @@
     "build": "pnpm run build:ext && next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
     "sp:init": "supabase init",
     "sp:start": "supabase start",
     "sp:stop": "supabase stop",
@@ -51,14 +56,19 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.3.3",
     "eslint": "^9",
     "eslint-config-next": "15.1.2",
+    "jsdom": "^26.0.0",
     "postcss": "^8",
     "supabase": "^2.9.6",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.0.7"
   }
 }
