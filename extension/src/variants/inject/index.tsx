@@ -3,13 +3,6 @@ import { createRoot, Root } from "react-dom/client";
 import { ModalApp } from "@/pages/shared/modal-app";
 import { getInjectScript } from "@/lib/env";
 
-// Extend Window interface to include our CSS variable
-declare global {
-  interface Window {
-    APP2AGENT_INJECT_CSS?: string;
-  }
-}
-
 // Create root only when needed
 let appRoot: Root | null = null;
 
@@ -64,11 +57,14 @@ const initApp = async () => {
 
   // Get configuration from script tag
   const scriptTag = getInjectScript();
-  const apiKey = scriptTag?.getAttribute("data-api-key");
+  const apiKey =
+    scriptTag?.getAttribute("data-api-key") ??
+    window.APP2AGENT_API_KEY ??
+    undefined;
 
   root.render(
     <React.StrictMode>
-      <ModalApp apiKey={apiKey ?? undefined} />
+      <ModalApp apiKey={apiKey} />
     </React.StrictMode>,
   );
 };

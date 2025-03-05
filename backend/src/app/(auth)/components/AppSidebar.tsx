@@ -35,14 +35,20 @@ const sidebarGroups = [
     label: "Integration",
     items: [
       {
-        name: "Javascript Plugin",
-        url: "/admin/integration/script",
+        name: "Outsystems",
+        url: "/admin/integration/outsystems",
         icon: PlugIcon,
       },
+
       {
         name: "Browser Extension",
         url: "/admin/integration/extension",
         icon: Download,
+      },
+      {
+        name: "Javascript Plugin",
+        url: "/admin/integration/script",
+        icon: PlugIcon,
       },
     ],
   },

@@ -3,5 +3,5 @@
 import { redirect } from "next/navigation";
 
 export default function Page() {
-  return redirect("/admin/integration/script");
+  return redirect("/admin/integration/outsystems");
 }

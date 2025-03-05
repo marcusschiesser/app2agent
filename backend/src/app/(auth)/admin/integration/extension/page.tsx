@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ApiKeyDisplay } from "./ApiKeyDisplay";
+import { ApiKeyDisplay } from "../components/ApiKeyDisplay";
 import { getApiKeyAction } from "@/app/(auth)/actions/api-keys";
 
 export default async function Page() {
