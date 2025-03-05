@@ -1,9 +1,6 @@
-import { expect, afterEach, vi, beforeAll } from "vitest";
+import { afterEach, vi, beforeAll } from "vitest";
 import { cleanup } from "@testing-library/react";
-import * as matchers from "@testing-library/jest-dom";
-
-// Extend Vitest's expect method with methods from react-testing-library
-expect.extend(matchers);
+import "@testing-library/jest-dom";
 
 // Suppress React act() warnings
 beforeAll(() => {
@@ -34,15 +31,18 @@ if (!window.navigator.clipboard) {
 }
 
 // Mock for setTimeout
-global.setTimeout = vi.fn().mockImplementation((callback, timeout) => {
-  return {
-    unref: vi.fn(),
-  } as unknown as NodeJS.Timeout;
-});
+global.setTimeout = Object.assign(
+  vi.fn().mockImplementation(() => {
+    return {
+      unref: vi.fn(),
+    } as unknown as NodeJS.Timeout;
+  }),
+  { __promisify__: vi.fn() },
+) as unknown as typeof setTimeout;
 
 // Mock for useTransition
 vi.mock("react", async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = (await importOriginal()) as Record<string, unknown>;
   return {
     ...actual,
     useTransition: () => [false, (callback: () => void) => callback()],

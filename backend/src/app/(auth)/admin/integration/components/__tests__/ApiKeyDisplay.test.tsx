@@ -12,7 +12,7 @@ vi.mock("react", async (importOriginal) => {
   const actual = await importOriginal();
   return {
     ...actual,
-    useActionState: vi.fn().mockImplementation((fn, initialState) => {
+    useActionState: vi.fn().mockImplementation(() => {
       return [{ isError: false, data: null }, vi.fn()];
     }),
   };
