@@ -55,8 +55,7 @@ export default defineConfig({
             // Store CSS as a global variable in the JS bundle instead of injecting to document.head
             const mainJsChunk = bundle[jsChunks[0]];
             const { code } = mainJsChunk;
-            mainJsChunk.code = `
-            window.APP2AGENT_INJECT_CSS = ${JSON.stringify(cssCode)};
+            mainJsChunk.code = `window.APP2AGENT_INJECT_CSS = ${JSON.stringify(cssCode)};
             ${code}`;
 
             // Remove CSS chunks since they're now inlined

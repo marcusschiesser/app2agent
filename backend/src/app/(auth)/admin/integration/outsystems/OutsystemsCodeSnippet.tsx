@@ -26,9 +26,7 @@ export function OutsystemsCodeSnippet({
           throw new Error(`Failed to fetch script: ${response.status}`);
         }
         // Get script content and trim leading spaces
-        let scriptContent = await response.text();
-        scriptContent = scriptContent.trimStart();
-
+        const scriptContent = await response.text();
         // Prepend the API key and theme variables directly to the script
         const completeScript = `// Set the API key and theme as global variables
 window.APP2AGENT_API_KEY = "${apiKey}";

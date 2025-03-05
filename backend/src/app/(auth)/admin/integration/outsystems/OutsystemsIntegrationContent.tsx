@@ -18,7 +18,9 @@ export function OutsystemsIntegrationContent({
       <ThemeSelector theme={theme} onThemeChange={setTheme} />
       <OutsystemsCodeSnippet apiKey={currentApiKey} theme={theme} />
       <div className="mt-4">
-        <p className="text-sm text-muted-foreground mb-2">Your API key:</p>
+        <p className="text-sm text-muted-foreground mb-2">
+          API key used by the script:
+        </p>
         <ApiKeyDisplay
           apiKey={currentApiKey}
           onApiKeyChange={(newKey) => setCurrentApiKey(newKey)}
