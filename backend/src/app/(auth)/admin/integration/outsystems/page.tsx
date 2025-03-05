@@ -25,8 +25,8 @@ export default async function OutsystemsIntegrationPage() {
             <CardTitle>Integration Instructions</CardTitle>
             <CardDescription>
               Add the following script to your Outsystems application to
-              integrate app2agent. You can customize the script&apos;s apperance
-              by changing the theme.
+              integrate app2agent. You can customize the script&apos;s
+              appearance by changing the theme.
             </CardDescription>
           </CardHeader>
           <CardContent>
