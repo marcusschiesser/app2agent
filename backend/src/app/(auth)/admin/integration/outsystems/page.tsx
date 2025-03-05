@@ -26,9 +26,7 @@ export default async function OutsystemsIntegrationPage() {
             <CardDescription>
               Follow these steps to integrate app2agent into your OutSystems
               application. The process involves adding a JavaScript resource to
-              your application and then applying it to each layout where you
-              want app2agent to be available. You can customize the appearance
-              by selecting a theme that matches your application design.
+              your application and then applying it to each layout.
             </CardDescription>
           </CardHeader>
           <CardContent>
