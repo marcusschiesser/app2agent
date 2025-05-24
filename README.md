@@ -24,6 +24,7 @@ pnpm install
 
 ```bash
 cd backend
+pnpm sp:start # to start the supabase server
 pnpm dev
 ```
 
@@ -37,12 +38,7 @@ pnpm dev
 ## Development Workflow
 
 1. The backend service will run on `http://localhost:3000` by default
-2. The extension development server will provide a development build of the extension
-3. Load the extension in your browser:
-   - For Chrome/Edge: Go to `chrome://extensions/`
-   - Enable "Developer mode"
-   - Click "Load unpacked"
-   - Select the `extension/dist` directory
+2. The extension development server will provide a development build of the extension, you can load it in your browser by going to `http://localhost:3001`
 
 ## Additional Information
 
