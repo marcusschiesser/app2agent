@@ -16,35 +16,30 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  MultimodalLiveAPIClientConnection,
-  MultimodalLiveClient,
-} from "../lib/multimodal-live-client";
-import { LiveConfig } from "../multimodal-live-types";
+
 import { AudioStreamer } from "../lib/audio-streamer";
 import { audioContext } from "../lib/audio-context";
+import { LiveClient } from "@/lib/live-client";
+import { LiveConnectConfig } from "llamaindex";
 
 export type UseLiveAPIResults = {
-  client: MultimodalLiveClient;
+  client: LiveClient;
   connected: boolean;
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
   volume: number;
 };
 
-type UseLiveAPIProps = MultimodalLiveAPIClientConnection & {
-  config: LiveConfig;
+type UseLiveAPIProps = {
+  apiKey: string;
+  config: LiveConnectConfig;
 };
 
 export function useLiveAPI({
-  url,
   apiKey,
   config,
 }: UseLiveAPIProps): UseLiveAPIResults {
-  const client = useMemo(
-    () => new MultimodalLiveClient({ url, apiKey }),
-    [url, apiKey],
-  );
+  const client = useMemo(() => new LiveClient({ apiKey }), [apiKey]);
   const audioStreamerRef = useRef<AudioStreamer | null>(null);
   const [connected, setConnected] = useState(false);
   const [volume, setVolume] = useState(0);
