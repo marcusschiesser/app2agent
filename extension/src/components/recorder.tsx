@@ -121,7 +121,9 @@ export function Recorder({ onFinished, onCallActiveChange }: RecorderProps) {
       }
 
       const screenshot = await takeScreenshot();
-      client.sendRealtimeInput([screenshot]);
+      if (screenshot) {
+        client.sendRealtimeInput([screenshot]);
+      }
 
       if (connected) {
         timeoutId = window.setTimeout(sendVideoFrame, 1000 / 0.5);

@@ -112,14 +112,18 @@ async function takeExtensionScreenshot(): Promise<Screenshot> {
  * In non-extension mode: captures the visible viewport using HTML5 Canvas
  * @returns Promise<Screenshot> - The screenshot data and mime type
  */
-export async function takeScreenshot(): Promise<Screenshot> {
-  const screenshot = await (isExtension
-    ? takeExtensionScreenshot()
-    : takeViewportScreenshot());
+export async function takeScreenshot(): Promise<Screenshot | undefined> {
+  try {
+    const screenshot = await (isExtension
+      ? takeExtensionScreenshot()
+      : takeViewportScreenshot());
 
-  if (DEBUG_SCREENSHOTS) {
-    displayScreenshotDebug(screenshot);
+    if (DEBUG_SCREENSHOTS) {
+      displayScreenshotDebug(screenshot);
+    }
+
+    return screenshot;
+  } catch (error) {
+    console.error("Failed to take screenshot", error);
   }
-
-  return screenshot;
 }

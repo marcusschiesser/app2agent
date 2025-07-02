@@ -6,6 +6,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "dev:sidepanel": "cross-env VARIANT=sidepanel vite dev",
+    "dev:content": "cross-env VARIANT=content vite dev",
     "dev": "cross-env NODE_ENV=development concurrently \"cross-env vite build --watch --mode development -c vite.inject.config.ts\" \"node test/server.js\"",
     "build:sidepanel": "tsc && cross-env VARIANT=sidepanel vite build",
     "build:content": "tsc && cross-env VARIANT=content vite build",

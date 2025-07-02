@@ -6,14 +6,10 @@ import { Header } from "@/components/header";
 import { MenuButton } from "@/components/menu-button";
 import { ToolsProvider } from "@/contexts/ToolsContext";
 import { AppProvider } from "@/contexts/AppContext";
-// import { ToolCall } from "@/components/tool-call";
 import { MicPermissionCheck } from "./microphone-permission-check";
 import { Settings } from "@/components/settings";
 import { Alert } from "@/components/ui/alert";
 import { getBaseUrl } from "@/lib/secure-fetch";
-
-// const host = "generativelanguage.googleapis.com";
-// const uri = `wss://${host}/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent`;
 
 interface AppContentProps {
   onClose: () => void;

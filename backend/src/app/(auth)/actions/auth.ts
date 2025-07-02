@@ -90,16 +90,6 @@ export const signInAction = async (
   const password = formData.get("password") as string;
   const supabase = await createClient();
 
-  // const { error: updateError } = await supabase.auth.updateUser({
-  //   email,
-  //   password,
-  // });
-
-  // if (updateError) {
-  //   console.log("updateError", updateError);
-  //   return { type: "error", message: updateError.message };
-  // }
-
   const { error } = await supabase.auth.signInWithPassword({
     email,
     password,
