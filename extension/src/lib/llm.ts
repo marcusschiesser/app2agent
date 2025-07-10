@@ -14,12 +14,14 @@ export async function getLLMResponse(
   const requestContents: (string | Part)[] = [{ text: prompt }];
   if (includeScreenshot) {
     const screenshot = await takeScreenshot();
-    requestContents.push({
-      inlineData: {
-        data: screenshot.data,
-        mimeType: screenshot.mimeType,
-      },
-    });
+    if (screenshot) {
+      requestContents.push({
+        inlineData: {
+          data: screenshot.data,
+          mimeType: screenshot.mimeType,
+        },
+      });
+    }
   }
   const genAI = new GoogleGenerativeAI(apiKey);
   const client = genAI.getGenerativeModel(

@@ -6,20 +6,16 @@ import { Header } from "@/components/header";
 import { MenuButton } from "@/components/menu-button";
 import { ToolsProvider } from "@/contexts/ToolsContext";
 import { AppProvider } from "@/contexts/AppContext";
-import { ToolCall } from "@/components/tool-call";
 import { MicPermissionCheck } from "./microphone-permission-check";
 import { Settings } from "@/components/settings";
 import { Alert } from "@/components/ui/alert";
 import { getBaseUrl } from "@/lib/secure-fetch";
 
-const host = "generativelanguage.googleapis.com";
-const uri = `wss://${host}/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent`;
-
 interface AppContentProps {
   onClose: () => void;
   apiKey?: string;
 }
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function AppContent({ onClose, apiKey }: AppContentProps) {
   const [showSettings, setShowSettings] = useState(false);
   const [isCallActive, setIsCallActive] = useState(false);
@@ -71,7 +67,7 @@ export function AppContent({ onClose, apiKey }: AppContentProps) {
   return (
     <div className="p-4 space-y-10">
       <ToolsProvider>
-        <AppProvider config={config} url={uri}>
+        <AppProvider config={config}>
           <div className="relative">
             {!apiKey && (
               <MenuButton
@@ -95,7 +91,7 @@ export function AppContent({ onClose, apiKey }: AppContentProps) {
             <>
               <MicPermissionCheck />
               <Recorder onCallActiveChange={setIsCallActive} />
-              <ToolCall />
+              {/* <ToolCall /> */}
             </>
           )}
         </AppProvider>

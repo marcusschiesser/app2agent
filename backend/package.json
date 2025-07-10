@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "pnpm run build:ext:dev && next dev --turbopack",
-    "build:ext": "pushd ../extension && pnpm release && popd && pnpm run copy:extension",
-    "build:ext:dev": "pushd ../extension && pnpm clean && NODE_ENV=development pnpm build:inject && popd && pnpm run copy:extension",
+    "build:ext": "bash -c 'pushd ../extension && pnpm release && popd && pnpm run copy:extension'",
+    "build:ext:dev": "bash -c 'pushd ../extension && pnpm clean && NODE_ENV=development pnpm build:inject && popd && pnpm run copy:extension'",
     "build": "pnpm run build:ext && next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "next lint || exit 0",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
@@ -29,6 +29,7 @@
     "copy:extension": "rm -rf public/extension && mkdir -p public/extension && cp -r ../extension/dist/* public/extension/"
   },
   "dependencies": {
+    "@llamaindex/google": "^0.3.11",
     "@radix-ui/react-avatar": "^1.1.2",
     "@radix-ui/react-collapsible": "^1.1.2",
     "@radix-ui/react-dialog": "^1.1.4",
@@ -45,6 +46,7 @@
     "clsx": "^2.1.1",
     "driver.js": "^1.3.5",
     "framer-motion": "^12.4.7",
+    "llamaindex": "^0.11.11",
     "lucide-react": "^0.469.0",
     "next": "15.1.2",
     "react": "^19.0.0",

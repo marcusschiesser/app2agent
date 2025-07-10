@@ -17,8 +17,8 @@
 import { ReactNode, createContext, useContext, useMemo } from "react";
 import { SiteConfig } from "../hooks/use-config";
 import { useLiveAPI, UseLiveAPIResults } from "../hooks/use-live-api";
-import { LiveConfig } from "@/multimodal-live-types";
 import { useTools } from "./ToolsContext";
+import { BaseTool, LiveConnectConfig, ModalityType } from "llamaindex";
 
 type AppContextValue = {
   liveAPI: UseLiveAPIResults | null;
@@ -33,38 +33,30 @@ export type AppProviderProps = {
   config: SiteConfig;
 };
 
-export function AppProvider({ url, children, config }: AppProviderProps) {
+export function AppProvider({ children, config }: AppProviderProps) {
   const { context, apiKey, prompt } = config;
   const toolManager = useTools();
 
   // Replace 'context' variable with the desired resolved value
-  // if (!prompt) {
-  //   throw new Error("Prompt is required");
-  // }
+  if (!prompt) {
+    throw new Error("Prompt is required");
+  }
+
   const systemInstructions = useMemo(() => {
     const resolvedPrompt = prompt.replace(/{{context}}/g, context);
-    console.log("System Instructions:", resolvedPrompt);
     return resolvedPrompt;
   }, [prompt, context]);
 
-  // Create config with tools and prompts using memoization
-  const liveConfig = useMemo<LiveConfig>(
+  const liveConfig = useMemo<LiveConnectConfig>(
     () => ({
-      model: "models/gemini-2.0-flash-exp",
-      systemInstruction: {
-        parts: [
-          {
-            text: systemInstructions,
-          },
-          ...toolManager.getPrompt(),
-        ],
-      },
-      tools: toolManager.getTools(),
+      tools: toolManager.getTools() as BaseTool[],
+      responseModality: [ModalityType.AUDIO],
+      systemInstruction: systemInstructions,
     }),
-    [systemInstructions, toolManager],
+    [toolManager, systemInstructions],
   );
 
-  const api = useLiveAPI({ url, apiKey, config: liveConfig });
+  const api = useLiveAPI({ apiKey, config: liveConfig });
 
   const contextValue: AppContextValue = {
     liveAPI: api,

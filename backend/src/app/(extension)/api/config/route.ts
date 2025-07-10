@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/utils/supabase/admin";
-
+import { gemini, GEMINI_MODEL } from "@llamaindex/google";
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -26,10 +26,19 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Manual not found" }, { status: 404 });
     }
 
+    //get the ephemeral key
+    const serverLLM = gemini({
+      apiKey: data.gemini_key,
+      model: GEMINI_MODEL.GEMINI_2_0_FLASH_LIVE,
+      httpOptions: { apiVersion: "v1alpha" },
+    });
+
+    const ephemeralKey = await serverLLM.live.getEphemeralKey();
+
     return NextResponse.json({
       context: data.context,
       prompt: data.prompt,
-      apiKey: data.gemini_key,
+      apiKey: ephemeralKey,
     });
   } catch (error) {
     console.error("Error fetching manual:", error);

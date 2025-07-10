@@ -1,5 +1,3 @@
-import { worklets } from "./inlined-worklets";
-
 export type GetAudioContextOptions = AudioContextOptions & {
   id?: string;
 };
@@ -50,21 +48,9 @@ export const loadAudioWorklet = async (
 ): Promise<AudioWorkletNode> => {
   try {
     // Instead of loading from a URL, create a Blob URL from the inlined code
-    if (!worklets[workletName]) {
-      throw new Error(`Worklet ${workletName} not found in inlined worklets`);
-    }
 
-    // Create a Blob with the worklet code
-    const blob = new Blob([worklets[workletName]], {
-      type: "application/javascript",
-    });
-
-    // Create a URL for the Blob
-    const workletUrl = URL.createObjectURL(blob);
-
-    // Add the worklet module and clean up the Blob URL
+    const workletUrl = chrome.runtime.getURL(`worklets/${workletName}.js`);
     await context.audioWorklet.addModule(workletUrl);
-    URL.revokeObjectURL(workletUrl); // Clean up the blob URL
 
     return new AudioWorkletNode(context, workletName);
   } catch (error) {
