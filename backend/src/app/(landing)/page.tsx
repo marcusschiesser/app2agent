@@ -8,31 +8,30 @@ import Footer from "./components/Footer";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "app2agent - Solve User Adoption Challenges for OutSystems Apps",
+  title: "app2agent - Add a configurable voice agent to any website",
   description:
-    "Struggling with user adoption in your OutSystems app? Our AI voice assistant instantly answers any user question about your app, reducing onboarding and support costs.",
+    "App2Agent adds a configurable voice agent to any website. It is build using the Live API from LLamaIndexTS.",
   keywords: [
-    "OutSystems user adoption",
-    "low-code user support",
-    "AI voice assistant for OutSystems",
-    "reduce app support costs",
-    "low-code onboarding solution",
-    "OutSystems support",
+    "voice agent",
+    "website",
+    "AI voice assistant",
+    "LLamaIndexTS",
+    "real-time conversations",
   ],
   authors: [{ name: "app2agent Team" }],
   openGraph: {
-    title: "app2agent - Solve User Adoption Challenges for OutSystems Apps",
+    title: "app2agent - Add a configurable voice agent to any website",
     description:
-      "Struggling with user adoption? Our AI voice assistant instantly answers any user question about your OutSystems app, reducing onboarding and support costs.",
+      "App2Agent adds a configurable voice agent to any website. It is build using the Live API from LLamaIndexTS.",
     type: "website",
     locale: "en_US",
     siteName: "app2agent",
   },
   twitter: {
     card: "summary_large_image",
-    title: "app2agent - Solve User Adoption Challenges for OutSystems Apps",
+    title: "app2agent - Add a configurable voice agent to any website",
     description:
-      "Struggling with user adoption? Our AI voice assistant instantly answers any user question about your OutSystems app, reducing onboarding and support costs.",
+      "App2Agent adds a configurable voice agent to any website. It is build using the Live API from LLamaIndexTS.",
     creator: "@app2agent",
   },
   robots: {

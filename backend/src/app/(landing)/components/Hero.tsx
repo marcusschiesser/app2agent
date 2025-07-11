@@ -36,16 +36,24 @@ export default function Hero() {
           >
             <div className="inline-flex items-center px-3 py-1 mb-6 text-sm font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 rounded-full">
               <Sparkles size={16} className="mr-2" />
-              <span>Struggling with User Satisfaction in OutSystems Apps?</span>
+              <span>Struggling with User Satisfaction in your WebApp?</span>
             </div>
 
             <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-blue-200">
-              Voice-Based IT Support for Low-Code Apps
+              App2Agent adds a configurable voice agent to any website.
             </h1>
 
             <p className="text-xl md:text-2xl mb-8 text-gray-600 dark:text-gray-300 leading-relaxed">
-              Instantly answers any user question, reduces onboarding time, and
-              cuts support costs — no coding required.
+              It is build using the{" "}
+              <a
+                href="https://ts.llamaindex.ai/docs/llamaindex/modules/models/llms/gemini#live-api-real-time-conversations"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                Live API from LLamaIndexTS
+              </a>
+              .
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mt-8">

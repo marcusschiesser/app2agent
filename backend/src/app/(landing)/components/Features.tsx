@@ -6,25 +6,25 @@ import { motion } from "framer-motion";
 const features = [
   {
     icon: Mic,
-    title: "Instant User Support",
+    title: "Natural Voice Conversations",
     description:
-      "Answer any user question about your low-code app instantly through natural voice conversations, eliminating frustration and reducing support tickets.",
+      "Engage your users with a voice agent that can have natural, real-time conversations, powered by the latest in AI technology.",
     gradient: "from-purple-600 to-pink-400",
     delay: 0.2,
   },
   {
     icon: LineChart,
-    title: "Reduce Onboarding & Support Costs",
+    title: "Highly Configurable",
     description:
-      "Cut training and support expenses significantly by automating responses to common questions and providing 24/7 assistance to your app users.",
+      "Customize the voice, language, and knowledge base of your agent to perfectly match your brand and your users' needs.",
     gradient: "from-emerald-600 to-green-400",
     delay: 0.3,
   },
   {
     icon: Code2,
-    title: "Simple Integration, No Coding",
+    title: "Simple Integration",
     description:
-      "Just upload your app's FAQ and integrate the AI voice assistant in minutes—no programming skills required, perfect for low-code environments.",
+      "Integrate the voice agent into any website with just a few lines of code and a simple configuration file.",
     gradient: "from-amber-600 to-yellow-400",
     delay: 0.4,
   },
@@ -50,11 +50,12 @@ export default function Features() {
           transition={{ duration: 0.5 }}
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-blue-200">
-            Maximize User Satisfaction
+            A Voice Agent for Any Website
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300">
-            Empower your users to understand your low-code app — let our AI
-            assistant guide them instantly
+            Empower your users with a configurable voice assistant that can
+            answer questions, provide support, and guide them through your
+            website.
           </p>
         </motion.div>
 
