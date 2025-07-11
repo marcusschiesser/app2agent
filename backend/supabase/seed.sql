@@ -1,8 +1,36 @@
--- First create a test user
-INSERT INTO auth.users (id, email)
-VALUES ('d0e7df0e-3f3a-4d3c-9e4b-b7d286e7a5f2', 'test@example.com')
-ON CONFLICT (id) DO NOTHING;
-
+INSERT INTO auth.users (
+    instance_id,
+    id,
+    aud,
+    role,
+    email,
+    encrypted_password,
+    email_confirmed_at,
+    created_at,
+    updated_at,
+    raw_app_meta_data,
+    raw_user_meta_data,
+    confirmation_token,
+    email_change,
+    email_change_token_new,
+    recovery_token
+) VALUES (
+    '00000000-0000-0000-0000-000000000000',
+    'd0e7df0e-3f3a-4d3c-9e4b-b7d286e7a5f2'::uuid,
+    'authenticated',
+    'authenticated',
+    'test@example.com',
+    crypt('password123', gen_salt('bf')),
+    now(),
+    now(),
+    now(),
+    '{"provider":"email","providers":["email"]}',
+    '{}',
+    '',
+    '',
+    '',
+    ''
+) ON CONFLICT (id) DO NOTHING;
 -- Seed data for user_manuals table
 INSERT INTO
     user_manuals (
